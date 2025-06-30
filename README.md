@@ -6,21 +6,20 @@
 
 # 博客系统二次开发问题与解决方案（作者泪心）
 ## 项目展示
-
 ### 1. 项目启动界面
-<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart1.png" width="600" alt="项目软件启动展示" style="max-width:100%;">
+<img src="博客blog/projectStart1.png" width="600" alt="项目软件启动展示" style="max-width:100%;">
 
 ### 2. 博客首页
-<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart2.png" width="600" alt="项目首页展示" style="max-width:100%;">
+<img src="博客blog/projectStart2.png" width="600" alt="项目首页展示" style="max-width:100%;">
 
 ### 3. 关于我页面
-<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectAboutMeTear.png" width="600" alt="关于我页面展示" style="max-width:100%;">
+<img src="博客blog/projectAboutMeTear.png" width="600" alt="关于我页面展示" style="max-width:100%;">
 
 ### 4. 音乐播放页面
-<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectMusicLocalmp3.png" width="600" alt="音乐页面展示" style="max-width:100%;">
+<img src="博客blog/projectMusicLocalmp3.png" width="600" alt="音乐页面展示" style="max-width:100%;">
 
 ### 5. 文章展示页面
-<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/blog1png.png" width="600" alt="文章展示页面" style="max-width:100%;">
+<img src="博客blog/blog1png.png" width="600" alt="文章展示页面" style="max-width:100%;">
 
 ## 遇到的小问题
 ##温馨提醒
