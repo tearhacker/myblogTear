@@ -6,20 +6,23 @@
 
 # 博客系统二次开发问题与解决方案（作者泪心）
 ## 项目展示
+
 ### 1. 项目启动界面
-[![项目软件启动展示](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart1.png)](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart1.png)
+![项目软件启动展示](https://cdn.jsdelivr.net/gh/thoughtful123/tearyoByCompanyLife/photosuse/myblog/projectStart1.png)
 
 ### 2. 博客首页
-[![项目首页展示](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart2.png)](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart2.png)
+![项目首页展示](https://cdn.jsdelivr.net/gh/thoughtful123/tearyoByCompanyLife/photosuse/myblog/projectStart2.png)
 
 ### 3. 关于我页面
-[![关于我页面展示](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectAboutMeTear.png)](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectAboutMeTear.png)
+![关于我页面展示](https://cdn.jsdelivr.net/gh/thoughtful123/tearyoByCompanyLife/photosuse/myblog/projectAboutMeTear.png)
 
 ### 4. 音乐播放页面
-[![音乐页面展示](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectMusicLocalmp3.png)](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectMusicLocalmp3.png)
+![音乐页面展示](https://cdn.jsdelivr.net/gh/thoughtful123/tearyoByCompanyLife/photosuse/myblog/projectMusicLocalmp3.png)
 
 ### 5. 文章展示页面
-[![文章展示页面](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/blog1png.png)](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/blog1png.png)
+![文章展示页面](https://cdn.jsdelivr.net/gh/thoughtful123/tearyoByCompanyLife/photosuse/myblog/blog1png.png)
+
+
 ## 遇到的小问题
 ##温馨提醒
 音乐功能 友人帐功能 等其他功能 您必须先启动redis服务器哦 否则无法使用的!
