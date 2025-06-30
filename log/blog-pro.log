@@ -1,0 +1,3 @@
+2021-01-10 16:00:45.551  INFO 496 --- [restartedMain] com.star.MyblogApplication               : Starting MyblogApplication on DESKTOP-AGDM093 with PID 496 (D:\Project\blog\myblog-mybatis-2.0\target\classes started by ONESTAR in D:\Project\blog\myblog-mybatis-2.0)
+2021-01-10 16:00:45.551  INFO 496 --- [restartedMain] com.star.MyblogApplication               : The following profiles are active: pro
+2021-01-10 16:00:48.154  INFO 496 --- [restartedMain] com.star.MyblogApplication               : Started MyblogApplication in 3.028 seconds (JVM running for 3.767)
