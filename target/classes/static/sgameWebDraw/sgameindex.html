@@ -1,0 +1,944 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>王者荣耀 - 共享房间TG@TearGame</title>
+	<link rel="stylesheet" href="layui/css/layui.css">
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<style>
+	* {
+		box-sizing: border-box;
+	}
+	
+	body {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin: 0;
+		background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+		padding: 20px 10px;
+		min-height: 100vh;
+		font-family: 'Noto Sans SC', sans-serif;
+		position: relative;
+		overflow-x: hidden;
+	}
+	
+	body::before {
+		content: '';
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+					radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+					radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+		pointer-events: none;
+		z-index: -1;
+	}
+	
+	#myCanvas {
+		background-size: cover;
+		width: 80%;
+		height: 80%;
+		border-radius: 12px;
+		transition: all 0.3s ease;
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+	}
+	
+	.rotate0 {
+		background: url('map.png') no-repeat center center;
+		background-size: cover;
+	}
+	
+	.rotate180 {
+		background: url('map2.png') no-repeat center center;
+		background-size: cover;
+	}
+	
+	.canvas-container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+		position: relative;
+		overflow: hidden;
+		border-radius: 12px;
+	}
+	
+	.canvas-container::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.05) 100%);
+		pointer-events: none;
+		border-radius: 12px;
+	}
+	
+	.shadow-box {
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 
+					0 2px 16px rgba(0, 0, 0, 0.2),
+					inset 0 1px 0 rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(10px);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		transition: all 0.3s ease;
+	}
+	
+	.shadow-box:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 
+					0 4px 20px rgba(0, 0, 0, 0.3),
+					inset 0 1px 0 rgba(255, 255, 255, 0.15);
+	}
+	
+	.layui-menu {
+		background: linear-gradient(135deg, rgba(35, 41, 46, 0.95) 0%, rgba(47, 54, 60, 0.95) 100%);
+		border-radius: 8px;
+		overflow: hidden;
+	}
+	
+	.layui-menu-body-title {
+		background: linear-gradient(135deg, #2f363c 0%, #3a4248 100%) !important;
+		color: #FFF !important;
+		padding: 15px 20px !important;
+		font-weight: 500;
+		position: relative;
+		overflow: hidden;
+	}
+	
+	.layui-menu-body-title::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+		transition: left 0.5s ease;
+	}
+	
+	.layui-menu-body-title:hover::before {
+		left: 100%;
+	}
+	
+	.layui-menu-body-title a {
+		color: #FFF !important;
+		text-align: center;
+		text-decoration: none;
+		transition: color 0.3s ease;
+	}
+	
+	.layui-menu-body-title a:hover {
+		color: #64b5f6 !important;
+	}
+	
+	.layui-menu-body-title span {
+		color: #FFF;
+		margin: 0 10px;
+		font-weight: 400;
+	}
+	
+	.layui-col-md8 {
+		padding: 30px;
+	}
+	
+	.layui-col-xs12 {
+		padding: 10px;
+	}
+	
+	@media only screen and (min-width: 320px) and (max-width: 480px) {
+		#myCanvas {
+			width: 100%;
+			height: 80%;
+		}
+		body {
+			padding: 10px 5px;
+		}
+		.layui-col-md8 {
+			padding: 15px;
+		}
+	}
+	
+	.heroliHF {
+		border-left: 3px solid #ff4444;
+		background: linear-gradient(90deg, rgba(255, 68, 68, 0.1) 0%, transparent 100%);
+		transition: all 0.3s ease;
+	}
+	
+	.heroliHF:hover {
+		background: linear-gradient(90deg, rgba(255, 68, 68, 0.2) 0%, transparent 100%);
+		transform: translateX(5px);
+	}
+	
+	.heroliLF {
+		border-left: 3px solid #42a5f5;
+		background: linear-gradient(90deg, rgba(66, 165, 245, 0.1) 0%, transparent 100%);
+		transition: all 0.3s ease;
+	}
+	
+	.heroliLF:hover {
+		background: linear-gradient(90deg, rgba(66, 165, 245, 0.2) 0%, transparent 100%);
+		transform: translateX(5px);
+	}
+	
+	.homeList_li {
+		border-bottom: 1px solid rgba(47, 54, 60, 0.5);
+		transition: all 0.3s ease;
+		cursor: pointer;
+	}
+	
+	.homeList_li:hover {
+		background: rgba(255, 255, 255, 0.05);
+		transform: translateX(3px);
+	}
+	
+	.homeListSelectLi {
+		background: linear-gradient(135deg, rgba(49, 189, 236, 0.3) 0%, rgba(255, 87, 34, 0.3) 100%);
+		box-shadow: inset 0 0 20px rgba(49, 189, 236, 0.2);
+		animation: pulse 2s infinite;
+	}
+	
+	@keyframes pulse {
+		0%, 100% { box-shadow: inset 0 0 20px rgba(49, 189, 236, 0.2); }
+		50% { box-shadow: inset 0 0 30px rgba(49, 189, 236, 0.4); }
+	}
+	
+	.heroTxHF {
+		width: 40px;
+		height: 40px;
+		border: 3px solid #ff4444;
+		border-radius: 50%;
+		transition: all 0.3s ease;
+		box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+	}
+	
+	.heroTxHF:hover {
+		transform: scale(1.1);
+		box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
+	}
+	
+	.heroTxLF {
+		width: 40px;
+		height: 40px;
+		border: 3px solid #42a5f5;
+		border-radius: 50%;
+		transition: all 0.3s ease;
+		box-shadow: 0 0 10px rgba(66, 165, 245, 0.3);
+	}
+	
+	.heroTxLF:hover {
+		transform: scale(1.1);
+		box-shadow: 0 0 15px rgba(66, 165, 245, 0.5);
+	}
+	
+	.layui-form-checkbox[lay-skin=primary] > div {
+		color: #FFF;
+	}
+	
+	.layui-btn {
+		border-radius: 6px;
+		transition: all 0.3s ease;
+		font-weight: 500;
+	}
+	
+	.layui-btn:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	}
+	
+	.layui-panel {
+		border-radius: 8px;
+		overflow: hidden;
+	}
+	
+	/* 添加加载动画 */
+	.loading {
+		display: inline-block;
+		width: 20px;
+		height: 20px;
+		border: 3px solid rgba(255, 255, 255, 0.3);
+		border-radius: 50%;
+		border-top-color: #fff;
+		animation: spin 1s ease-in-out infinite;
+	}
+	
+	@keyframes spin {
+		to { transform: rotate(360deg); }
+	}
+	
+	/* 状态指示器 */
+	.status-indicator {
+		display: inline-block;
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		margin-right: 8px;
+		animation: blink 1.5s infinite;
+	}
+	
+	.status-connected { background-color: #4caf50; }
+	.status-connecting { background-color: #ff9800; }
+	.status-disconnected { background-color: #f44336; }
+	
+	@keyframes blink {
+		0%, 50% { opacity: 1; }
+		51%, 100% { opacity: 0.3; }
+	}
+	
+	/* 滚动条美化 */
+	::-webkit-scrollbar {
+		width: 6px;
+	}
+	
+	::-webkit-scrollbar-track {
+		background: rgba(255, 255, 255, 0.1);
+		border-radius: 3px;
+	}
+	
+	::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.3);
+		border-radius: 3px;
+	}
+	
+	::-webkit-scrollbar-thumb:hover {
+		background: rgba(255, 255, 255, 0.5);
+	}
+	
+	/* 英雄列表项悬停效果 */
+	.heroliHF:hover, .heroliLF:hover {
+		background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+		transform: translateX(3px);
+	}
+	
+	/* 房间列表项悬停效果增强 */
+	.homeList_li:hover {
+		background: linear-gradient(90deg, rgba(100, 181, 246, 0.1) 0%, transparent 100%);
+		transform: translateX(5px);
+		box-shadow: inset 0 0 10px rgba(100, 181, 246, 0.1);
+	}
+	
+	/* 按钮悬停效果增强 */
+	.layui-btn:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+	}
+	
+	/* 画布容器悬停效果 */
+	.canvas-container:hover {
+		transform: scale(1.02);
+		transition: transform 0.3s ease;
+	}
+	
+	/* 血量条动画效果 */
+	@keyframes hpPulse {
+		0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+		50% { box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1); }
+		100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+	}
+	
+	@keyframes hpLow {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.7; }
+	}
+	
+	/* 低血量警告效果 */
+	.hp-low {
+		animation: hpLow 1s infinite;
+	}
+	
+	.hp-critical {
+		animation: hpPulse 0.5s infinite;
+	}
+	
+	/* 血量条样式优化 */
+	.hp-bar {
+		position: relative;
+		overflow: hidden;
+	}
+	
+	.hp-bar::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+		animation: shimmer 2s infinite;
+	}
+	
+	@keyframes shimmer {
+		0% { transform: translateX(-100%); }
+		100% { transform: translateX(100%); }
+	}
+	
+	/* 响应式优化 */
+	@media (max-width: 768px) {
+		.layui-col-md8 {
+			padding: 15px;
+		}
+		.layui-col-md4 {
+			padding: 10px;
+		}
+		#myCanvas {
+			width: 100%;
+			height: 70%;
+		}
+		.layui-menu-body-title {
+			padding: 10px 15px !important;
+			font-size: 14px;
+		}
+	}
+	
+	@media (max-width: 480px) {
+		body {
+			padding: 5px;
+		}
+		.layui-col-md8, .layui-col-md4 {
+			padding: 5px;
+		}
+		#myCanvas {
+			width: 100%;
+			height: 60%;
+		}
+		.layui-menu-body-title {
+			padding: 8px 12px !important;
+			font-size: 12px;
+		}
+	}
+</style>
+<body>
+  <div class="layui-row" style="width:100%;">
+    <div class="layui-col-xs12 layui-col-sm8 layui-col-md8">
+      <div class="canvas-container shadow-box" style="background: linear-gradient(135deg, #2f363c 0%, #3a4248 100%);padding:15px;">
+        <canvas id="myCanvas" width="340" height="340"></canvas>
+      </div>
+    </div>
+    <div class="layui-col-xs12 layui-col-sm4 layui-col-md4">
+		<div class="layui-panel ws-menu shadow-box" style="margin-bottom:15px;background: linear-gradient(135deg, #2f363c 0%, #3a4248 100%);border:none;margin-top:-5px;">
+		  <ul class="layui-menu layui-menu-lg">
+			<li class="layui-menu-item-group" id="heroInfo">
+			  <div class="layui-menu-body-title" style="background: linear-gradient(135deg, #2f363c 0%, #3a4248 100%);color:#FFF;">
+				<i class="layui-icon layui-icon-user" style="margin-right:8px;"></i>人物技能信息
+				<button class="layui-btn layui-btn-sm layui-btn-normal" style="float:right;margin-right:-35px;display:none;" onclick="showThisFunction()" id="showThis">显示我方</button>
+			  </div>
+			  <ul id="heroList" style="margin: 5px -15px 0px -15px;"></ul>
+			</li>
+		  </ul>
+		</div>
+		<div class="layui-panel ws-menu shadow-box" style="margin-bottom:15px;background: linear-gradient(135deg, #2f363c 0%, #3a4248 100%);border:none;margin-top:15px;">
+		  <ul class="layui-menu layui-menu-lg ws-docs-menu">
+			<li class="layui-menu-item-group">
+			  <div class="layui-menu-body-title" style="background: linear-gradient(135deg, #2f363c 0%, #3a4248 100%);color:#FFF;">
+				<i class="layui-icon layui-icon-home" style="margin-right:8px;"></i>房间列表
+				<span id="homeText" style="margin-left:10px;font-size:12px;">
+					<span class="status-indicator status-connecting"></span>服务器连接中...
+				</span>
+				<button class="layui-btn layui-btn-sm layui-btn-danger" style="float:right;margin-right:-35px;" onclick="homeId=''">断开连接</button>
+			  </div>
+			  <ul id="homeList" style="margin: 5px -15px 0px -15px;"></ul>
+			</li>
+		  </ul>
+		</div>
+    </div>
+  </div>
+</body>
+
+<script src="layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript">
+	document.onkeydown = function () {    
+		if (window.event && window.event.keyCode == 123) {    
+			window.event.returnValue = false;    
+		}    
+	}
+	
+	var ip='121.35.251.197:8888';
+    var socket;
+	var homeId="";
+	var gameDataTime=20;
+	var showThisData=0;
+	var mapImageRotate=0;
+	var connectionStatus = 'connecting'; // 连接状态：connecting, connected, disconnected
+	const heroInfo = document.getElementById("heroInfo");
+	const homeText = document.getElementById("homeText");
+	const homeList = document.getElementById("homeList");
+	const heroList = document.getElementById("heroList");
+	const showThis = document.getElementById("showThis");
+	const canvas = document.getElementById("myCanvas");
+	const context = canvas.getContext("2d");
+	var 血条背景颜色="#FFFFFF95";
+	var 野怪颜色="#FFb800";
+	var 红方头像边框颜色="#ff4444";
+	var 蓝方头像边框颜色="#42a5f5";
+	var 红方血条颜色="#ff4444";
+	var 蓝方血条颜色="#4caf50";
+	var 红方兵线颜色="#ff4444";
+	var 蓝方兵线颜色="#42a5f5";
+	var 野怪满CD时间=[0,60,70,90,120,240];
+	const 防御塔 = new Image();
+	防御塔.src = "防御塔.png";
+	const 回城 = new Image();
+	回城.src = "回城.png";
+	var 英雄信息=[];
+	
+	// 更新连接状态显示
+	function updateConnectionStatus(status) {
+		connectionStatus = status;
+		const statusIndicator = homeText.querySelector('.status-indicator');
+		if (statusIndicator) {
+			statusIndicator.className = 'status-indicator status-' + status;
+		}
+		
+		switch(status) {
+			case 'connecting':
+				homeText.innerHTML = '<span class="status-indicator status-connecting"></span>服务器连接中...';
+				break;
+			case 'connected':
+				homeText.innerHTML = '<span class="status-indicator status-connected"></span>已连接服务器';
+				break;
+			case 'disconnected':
+				homeText.innerHTML = '<span class="status-indicator status-disconnected"></span>与服务器断开连接';
+				break;
+		}
+	}
+	
+	
+	function showThisFunction(){
+		showThisData=showThisData==1?0:1;
+		showThis.textContent=showThisData==1?"不显示我方":"显示我方";
+	}
+	
+	// 英雄ID
+	const imagePaths = ["545","162","187","142","191","179","141","190","564","112","130","194","515","125","527","157","124","508","505","129","149","156","144","126","504","175","119","513","506","170","540","109","177","511","136","544","116","110","166","514","537","118","182","524","152","132","196","525","523","174","531","509","503","184","178","137","534","134","150","171","146","192","133","168","183","538","507","117","111","528","548","169","139","131","193","199","113","198","536","140","153","106","127","148","114","155","135","108","115","521","529","501","163","533","173","542","180","128","518","121","195","197","154","510","107","502","105","176","123","167","522","312","120","189","186"];
+	const 防御塔图片Paths = ["5","10","20","30","40","50","60","70","80","90","100"];
+	
+	const images = imagePaths.map(path => {
+		const image = new Image();
+		image.src = "https://game.gtimg.cn/images/yxzj/img201606/heroimg/"+path+"/"+path+".jpg";
+		return image;
+	});
+	const 蓝方防御塔 = 防御塔图片Paths.map(path => {
+		const image = new Image();
+		image.src = "蓝方防御塔"+path+".png";
+		return image;
+	});
+	const 红方防御塔 = 防御塔图片Paths.map(path => {
+		const image = new Image();
+		image.src = "红方防御塔"+path+".png";
+		return image;
+	});
+	
+	for (const key in 防御塔图片Paths) {
+		const imagePath = 防御塔图片Paths[key];
+		const image = new Image();
+		image.src = "蓝方防御塔"+imagePath+".png";
+		蓝方防御塔[imagePath] = image;
+		const image2 = new Image();
+		image2.src = "红方防御塔"+imagePath+".png";
+		红方防御塔[imagePath] = image2;
+	}
+
+	for (const key in imagePaths) {
+		const imagePath = imagePaths[key];
+		const image = new Image();
+		image.src = "https://game.gtimg.cn/images/yxzj/img201606/heroimg/"+imagePath+"/"+imagePath+".jpg";
+		images[imagePath] = image;
+	}
+	
+	function clearCanvas() {
+		context.clearRect(0, 0, canvas.width, canvas.height);
+	}
+
+	// 绘制兵线
+	function drawFilledCircle(x, y, radius, zy) {
+		x=Number(x);
+		y=Number(y);
+		zy = Number(zy);
+		context.beginPath();
+		context.arc(x, y, radius, 0, Math.PI * 2);
+		context.fillStyle = zy === 1 ? 蓝方兵线颜色:红方兵线颜色;
+		context.fill();
+		context.closePath();
+	}
+	//绘制野怪
+	function drawText(x, y, text) {
+		x=Number(x);
+		y=Number(y);
+		var 野怪cd=Number(text);
+		野怪满CD时间.forEach(cd => {
+			if(cd==Number(text)){
+				野怪cd=0;
+			}
+		});
+		if(0==野怪cd){
+			context.beginPath();
+			context.arc(x, y, 4, 0, Math.PI * 2);
+			context.fillStyle =野怪颜色;
+			context.fill();
+			context.closePath();
+		}else{
+			context.font = "12px Arial";
+			context.fillStyle = 野怪颜色;
+			context.fillText(野怪cd, x, y);
+		}
+	}
+	//绘制头像
+	function drawImageAtPosition(x, y, image, width, height, zy, hc) {
+		x = Number(x);
+		y = Number(y);
+		zy = Number(zy);
+		hc = Number(hc);
+		context.save();
+		const radius = Math.max(width, height) / 2 - 2;
+		context.beginPath();
+		context.arc(x + width / 2, y + height / 2, radius, 0, Math.PI * 2);
+		context.clip();
+		context.drawImage(image, x, y, width, height);
+		context.beginPath();
+		context.arc(x + width / 2, y + height / 2, radius, 0, Math.PI * 2);
+		context.strokeStyle =  zy === 1 ? 蓝方头像边框颜色:红方头像边框颜色;
+		context.lineWidth = 7;
+		context.stroke();
+		context.restore();
+	}
+	//绘制血条
+	function drawHP(x, y, hp,zy) {
+		x=Number(x);
+		y=Number(y)+40;
+		if (y+10 > canvas.height) {
+			y -= 40;
+		}else if (y <= 10) {
+			y+=40;
+		}
+		hp=Number(hp);
+		zy = Number(zy);
+		const maxWidth = 40;
+		const hpWidth = (hp / 100) * maxWidth;
+		context.beginPath();
+		context.moveTo(x, y); 
+		context.lineTo(x+maxWidth, y); 
+		context.strokeStyle = 血条背景颜色;
+		context.lineWidth = 5;
+		context.stroke(); 
+		context.beginPath();
+		context.moveTo(x, y);
+		context.lineTo(x + hpWidth, y);
+		context.strokeStyle = zy === 1 ? 蓝方血条颜色:红方血条颜色;
+		context.lineWidth = 5;
+		context.stroke();
+		context.closePath();
+	}
+	
+	
+	//绘制防御塔
+	function 绘制防御塔(x, y, hp, zy , width, height) {
+		x = Number(x);
+		y = Number(y);
+		hp = Number(hp);
+		if(0<hp){
+			zy = Number(zy);
+			context.save();
+			const radius = Math.max(width, height) / 2 - 2;
+			context.beginPath();
+			context.arc(x + width / 2, y + height / 2, radius, 0, Math.PI * 2);
+			context.clip();
+			context.drawImage(防御塔, x, y, width, height);
+			context.beginPath();
+			context.arc(x + width / 2, y + height / 2, radius, 0, Math.PI * 2);
+			context.clip();
+			var index=100;
+			if(100==hp){
+				index=100;
+			}else if(89<hp && 100>hp){
+				index=90;
+			}else if(79<hp && 90>hp){
+				index=80;
+			}else if(69<hp && 80>hp){
+				index=70;
+			}else if(59<hp && 70>hp){
+				index=60;
+			}else if(49<hp && 60>hp){
+				index=50;
+			}else if(39<hp && 50>hp){
+				index=40;
+			}else if(29<hp && 40>hp){
+				index=30;
+			}else if(19<hp && 30>hp){
+				index=20;
+			}else if(9<hp && 20>hp){
+				index=10;
+			}else if(10>hp){
+				index=5;
+			}
+			
+			if(1==zy){
+				context.drawImage(蓝方防御塔[index], x, y, width, height);
+			}else{
+				context.drawImage(红方防御塔[index], x, y, width, height);
+			}
+			context.restore();
+		}
+	}
+
+	
+    //如果浏览器支持WebSocket
+    if(window.WebSocket){
+        //参数就是与服务器连接的地址
+        updateConnectionStatus('connecting');
+        socket = new WebSocket("ws://121.35.251.197:8888/ws");
+
+        //客户端收到服务器消息的时候就会执行这个回调方法
+        socket.onmessage = function (event) {
+			 var datas = event.data.split("##");
+			 if("homeData"===datas[0]){
+				datas = datas[1].split(",");
+				var listHtml='';
+				if(0<datas.length&&""!=datas){
+					datas.forEach((buttonName,index) => {
+						var listClass=index === datas.length - 1?'':'homeList_li';
+						listClass+=((buttonName==homeId)?' homeListSelectLi':'');
+						var isSelected = buttonName==homeId;
+						listHtml+='<li onclick="homeId=\''+buttonName+'\'" class="'+listClass+'">'
+									+'  <div class="layui-menu-body-title" style="padding:12px 20px;">'
+									+'	<a style="display:flex;align-items:center;">'
+									+'	  <i class="layui-icon layui-icon-home" style="margin-right:8px;color:'+(isSelected?'#64b5f6':'#999')+'"></i>'
+									+'	  <span>'+buttonName+'</span>' 
+									+'	  '+(isSelected?'<i class="layui-icon layui-icon-ok" style="margin-left:auto;color:#4caf50;"></i>':'')
+									+'	</a>'
+									+'  </div>'
+									+'</li>';
+					});
+				}else{
+					 listHtml+='<li onclick="homeId=">'
+								+'  <div class="layui-menu-body-title" style="padding:12px 20px;">'
+								+'	<a style="display:flex;align-items:center;">'
+								+'	  <i class="layui-icon layui-icon-home" style="margin-right:8px;color:#999;"></i>'
+								+'	  <span>暂时没人开启共享</span>' 
+								+'	</a>'
+								+'  </div>'
+								+'</li>';
+				}
+				homeList.innerHTML = listHtml;
+				homeText.textContent=homeId==''?"未连接房间":homeId;
+			 }else if("gameData"===datas[0]){
+				clearCanvas();
+				datas = datas[1].split("---");
+				
+				if(2==mapImageRotate){
+					//蓝方上路
+					绘制防御塔(12,70,100,1,15,30);//一塔
+					绘制防御塔(12,170,100,1,15,30);//二塔
+					绘制防御塔(12,225,100,1,15,30);//高地
+					
+					//蓝方中路
+					绘制防御塔(125,175,100,1,15,30);//一塔
+					绘制防御塔(95,225,100,1,15,30);//二塔
+					绘制防御塔(62,250,100,1,15,30);//高地
+					
+					//蓝方下路
+					绘制防御塔(240,300,100,1,15,30);
+					绘制防御塔(155,300,100,1,15,30);
+					绘制防御塔(85,300,100,1,15,30);
+					
+					绘制防御塔(200,120,100,2,15,30);
+					绘制防御塔(230,75,100,2,15,30);
+					绘制防御塔(265,50,100,2,15,30);
+					
+					绘制防御塔(90,0,100,2,15,30);
+					绘制防御塔(175,0,100,2,15,30);
+					绘制防御塔(240,0,100,2,15,30);
+					
+					绘制防御塔(315,70,100,2,15,30);
+					绘制防御塔(315,130,100,2,15,30);
+					绘制防御塔(315,240,100,2,15,30);
+				}else if(1==mapImageRotate){
+					绘制防御塔(12,70,100,2,15,30);//一塔
+					绘制防御塔(12,170,100,2,15,30);//二塔
+					绘制防御塔(12,225,100,2,15,30);//高地
+					
+					绘制防御塔(125,175,100,2,15,30);//一塔
+					绘制防御塔(95,225,100,2,15,30);//二塔
+					绘制防御塔(62,250,100,2,15,30);//高地
+					
+					绘制防御塔(240,300,100,2,15,30);
+					绘制防御塔(155,300,100,2,15,30);
+					绘制防御塔(85,300,100,2,15,30);
+					
+					绘制防御塔(200,120,100,1,15,30);
+					绘制防御塔(230,75,100,1,15,30);
+					绘制防御塔(265,50,100,1,15,30);
+					
+					绘制防御塔(90,0,100,1,15,30);
+					绘制防御塔(175,0,100,1,15,30);
+					绘制防御塔(240,0,100,1,15,30);
+					
+					绘制防御塔(315,70,100,1,15,30);
+					绘制防御塔(315,130,100,1,15,30);
+					绘制防御塔(315,240,100,1,15,30);
+				}
+				
+				ygData = datas[1].split("==");
+				ygData.forEach(ygAll => {
+					var yg = ygAll.split(",");
+					drawText(yg[3], yg[4], yg[1]);
+				});
+				bxData = datas[2].split("==");
+				bxData.forEach(bxAll => {
+					var bx = bxAll.split(",");
+					drawFilledCircle(bx[0], bx[1], 4, bx[2]);
+				});
+				
+				rwData = datas[0].split("==");
+				英雄信息=rwData;
+				rwData.forEach(rwAll => {
+					var rw = rwAll.split(",");
+					if(""!=rw[0]){	
+						drawImageAtPosition(rw[5], rw[6], images[rw[0]], 40, 40,rw[8],1);
+						drawHP(rw[5],rw[6],rw[7],rw[8]);
+					}
+				});
+				
+				zyData = datas[4].split("");
+				if(""!=zyData[0]&&undefined!=zyData[0]){
+					mapImageRotate=Number(zyData[0]);
+				}
+			 }
+        }
+
+        //连接建立的回调函数
+        socket.onopen = function(event){
+			updateConnectionStatus('connected');
+			getHome();
+			setInterval(getHome, 1200);
+			setInterval(getGameData, gameDataTime);
+			setInterval(刷新英雄信息, 600);
+        }
+
+        //连接断掉的回调函数
+        socket.onclose = function (event) {
+			updateConnectionStatus('disconnected');
+        }
+        
+        //连接错误处理
+        socket.onerror = function(error) {
+			updateConnectionStatus('disconnected');
+			console.error('WebSocket连接错误:', error);
+        }
+    }else{
+		homeText.textContent="浏览器不支持WebSocket";
+    }
+
+    //发送数据
+    function send(message){
+        if(!window.WebSocket){
+            return;
+        }
+        if(socket.readyState == WebSocket.OPEN){
+            socket.send(message);
+        }else{
+			homeText.textContent="连接不上服务器";
+        }
+    }
+	function getHome() {
+		send("getHome");
+	}
+
+	function getGameData() {
+		if(""!=homeId){
+			send("getGameData[==]"+homeId);
+		}
+		heroInfo.className="layui-menu-item-group";
+	}
+	function buttonClicked(buttonText) {
+		homeId=buttonText;
+	}
+	function 刷新英雄信息(){
+		canvas.className=mapImageRotate==1?"rotate180":"rotate0";
+		var heroListHtml='';
+		var heroListHtml2='';
+		英雄信息.forEach(rwAll => {
+			var rw = rwAll.split(",");
+			if(""!=rw[0]){	
+			
+				var listClass=Number(rw[8]) === 1?'heroliLF':'heroliHF';				
+				var imgClass=Number(rw[8]) === 1?'heroTxLF':'heroTxHF';
+				var cd=Number(rw[3])>0?rw[3]:'⚪';
+				var heroCd=Number(rw[4])>0?rw[4]:'⚪';
+				var hp=Number(rw[7])||0;
+				var teamIcon = Number(rw[8]) === 1 ? 'layui-icon-ok-circle' : 'layui-icon-close';
+				var teamColor = Number(rw[8]) === 1 ? '#42a5f5' : '#ff4444';
+				var hpColor = hp > 80 ? '#4caf50' : hp > 50 ? '#ff9800' : hp > 20 ? '#ff5722' : '#f44336';
+				
+				if(1!=Number(rw[8])){
+					heroListHtml+='<li class="'+listClass+'">'
+						+'	<div class="layui-menu-body-title" style="padding:10px 15px;display:flex;align-items:center;">'
+						+'		<img src="https://game.gtimg.cn/images/yxzj/img201606/heroimg/'+rw[0]+'/'+rw[0]+'.jpg" class="'+imgClass+'" style="margin-right:10px;"/>'
+						+'		<div style="flex:1;">'
+						+'			<div style="display:flex;align-items:center;margin-bottom:5px;">'
+						+'				<i class="layui-icon '+teamIcon+'" style="color:'+teamColor+';margin-right:5px;"></i>'
+						+'				<span style="font-size:12px;color:#999;">蓝方</span>'
+						+'				<div style="margin-left:auto;display:flex;align-items:center;">'
+						+'					<i class="layui-icon layui-icon-heart" style="color:'+hpColor+';margin-right:3px;font-size:10px;"></i>'
+						+'					<span style="font-size:11px;color:'+hpColor+';font-weight:bold;">'+hp+'%</span>'
+						+'				</div>'
+						+'			</div>'
+						+'			<div style="margin-bottom:3px;">'
+						+'				<div class="hp-bar" style="width:100%;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden;position:relative;">'
+						+'					<div style="width:'+hp+'%;height:100%;background:linear-gradient(90deg,'+hpColor+' 0%,'+(hp>50?hpColor:'#ff6b6b')+' 100%);transition:all 0.3s ease;'+(hp<20?'animation:hpPulse 0.8s infinite;':'')+'"></div>'
+						+'				</div>'
+						+'			</div>'
+						+'			<div style="display:flex;justify-content:space-between;font-size:11px;">'
+						+'				<span>大招：<span style="color:'+(cd==='⚪'?'#4caf50':'#ff9800')+'">'+cd+'</span></span>'
+						+'				<span>技能：<span style="color:'+(heroCd==='⚪'?'#4caf50':'#ff9800')+'">'+heroCd+'</span></span>'
+						+'			</div>'
+						+'		</div>'
+						+'  </div>'
+						+'</li>';
+				}else{
+					heroListHtml2+='<li class="'+listClass+'">'
+						+'	<div class="layui-menu-body-title" style="padding:10px 15px;display:flex;align-items:center;">'
+						+'		<img src="https://game.gtimg.cn/images/yxzj/img201606/heroimg/'+rw[0]+'/'+rw[0]+'.jpg" class="'+imgClass+'" style="margin-right:10px;"/>'
+						+'		<div style="flex:1;">'
+						+'			<div style="display:flex;align-items:center;margin-bottom:5px;">'
+						+'				<i class="layui-icon '+teamIcon+'" style="color:'+teamColor+';margin-right:5px;"></i>'
+						+'				<span style="font-size:12px;color:#999;">红方</span>'
+						+'				<div style="margin-left:auto;display:flex;align-items:center;">'
+						+'					<i class="layui-icon layui-icon-heart" style="color:'+hpColor+';margin-right:3px;font-size:10px;"></i>'
+						+'					<span style="font-size:11px;color:'+hpColor+';font-weight:bold;">'+hp+'%</span>'
+						+'				</div>'
+						+'			</div>'
+						+'			<div style="margin-bottom:3px;">'
+						+'				<div class="hp-bar" style="width:100%;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden;position:relative;">'
+						+'					<div style="width:'+hp+'%;height:100%;background:linear-gradient(90deg,'+hpColor+' 0%,'+(hp>50?hpColor:'#ff6b6b')+' 100%);transition:all 0.3s ease;'+(hp<20?'animation:hpPulse 0.8s infinite;':'')+'"></div>'
+						+'				</div>'
+						+'			</div>'
+						+'			<div style="display:flex;justify-content:space-between;font-size:11px;">'
+						+'				<span>大招：<span style="color:'+(cd==='⚪'?'#4caf50':'#ff9800')+'">'+cd+'</span></span>'
+						+'				<span>技能：<span style="color:'+(heroCd==='⚪'?'#4caf50':'#ff9800')+'">'+heroCd+'</span></span>'
+						+'			</div>'
+						+'		</div>'
+						+'  </div>'
+						+'</li>';
+				}
+			}
+		});
+		heroList.innerHTML = heroListHtml+heroListHtml2;
+		
+	}
+	
+	layui.use(['form'], function(){
+	  var form = layui.form
+	  ,layer = layui.layer
+	  ,$ = layui.jquery;
+	  
+	  
+	});
+
+</script>
+</html>

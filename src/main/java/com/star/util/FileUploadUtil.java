@@ -26,11 +26,64 @@ import java.util.UUID;
  */
 public class FileUploadUtil {
 
-    // 基础上传路径 - 使用默认值
-    private static String baseUploadPath = System.getProperty("user.dir") + File.separator + "uploads" + File.separator;
+    // 基础上传路径 - 使用默认值，支持跨平台
+    private static String baseUploadPath = getDefaultUploadPath();
     
     // 文件访问URL前缀
     private static String fileUrlPrefix = "/api/files";
+    
+    /**
+     * 获取默认上传路径，支持跨平台部署
+     */
+    private static String getDefaultUploadPath() {
+        String osName = System.getProperty("os.name").toLowerCase();
+        String userDir = System.getProperty("user.dir");
+        
+        // 检测部署环境
+        if (isRunningInDocker()) {
+            // Docker容器环境
+            return "/app/uploads/";
+        } else if (isRunningInTomcat()) {
+            // Tomcat部署环境
+            String tomcatHome = System.getProperty("catalina.home");
+            if (tomcatHome != null && !tomcatHome.isEmpty()) {
+                return tomcatHome + File.separator + "webapps" + File.separator + "uploads" + File.separator;
+            }
+        } else if (isRunningInJar()) {
+            // JAR包运行环境
+            return userDir + File.separator + "uploads" + File.separator;
+        }
+        
+        // 默认情况：项目根目录下的uploads文件夹
+        return userDir + File.separator + "uploads" + File.separator;
+    }
+    
+    /**
+     * 检测是否运行在Docker容器中
+     */
+    private static boolean isRunningInDocker() {
+        try {
+            File dockerFile = new File("/.dockerenv");
+            return dockerFile.exists();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    /**
+     * 检测是否运行在Tomcat中
+     */
+    private static boolean isRunningInTomcat() {
+        return System.getProperty("catalina.home") != null;
+    }
+    
+    /**
+     * 检测是否运行在JAR包中
+     */
+    private static boolean isRunningInJar() {
+        String classPath = System.getProperty("java.class.path");
+        return classPath.contains(".jar");
+    }
     
     static {
         // 静态初始化
@@ -43,37 +96,80 @@ public class FileUploadUtil {
     }
     
     /**
-     * 创建上传目录
+     * 创建上传目录，支持跨平台部署
      */
     private static void createUploadDirectory() {
         try {
-            Path path = Paths.get(baseUploadPath);
+            // 标准化路径分隔符
+            String normalizedPath = baseUploadPath.replace("\\", File.separator).replace("/", File.separator);
+            Path path = Paths.get(normalizedPath);
+            
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
-                System.out.println("创建上传目录: " + baseUploadPath);
+                System.out.println("创建上传目录: " + normalizedPath);
             }
             
             // 设置目录权限（Linux/Unix系统）
             if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
-                java.util.Set<java.nio.file.attribute.PosixFilePermission> permissions = 
-                    new java.util.HashSet<>();
-                permissions.add(java.nio.file.attribute.PosixFilePermission.OWNER_READ);
-                permissions.add(java.nio.file.attribute.PosixFilePermission.OWNER_WRITE);
-                permissions.add(java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE);
-                permissions.add(java.nio.file.attribute.PosixFilePermission.GROUP_READ);
-                permissions.add(java.nio.file.attribute.PosixFilePermission.GROUP_WRITE);
-                permissions.add(java.nio.file.attribute.PosixFilePermission.OTHERS_READ);
-                Files.setPosixFilePermissions(path, permissions);
+                try {
+                    java.util.Set<java.nio.file.attribute.PosixFilePermission> permissions = 
+                        new java.util.HashSet<>();
+                    permissions.add(java.nio.file.attribute.PosixFilePermission.OWNER_READ);
+                    permissions.add(java.nio.file.attribute.PosixFilePermission.OWNER_WRITE);
+                    permissions.add(java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE);
+                    permissions.add(java.nio.file.attribute.PosixFilePermission.GROUP_READ);
+                    permissions.add(java.nio.file.attribute.PosixFilePermission.GROUP_WRITE);
+                    permissions.add(java.nio.file.attribute.PosixFilePermission.OTHERS_READ);
+                    Files.setPosixFilePermissions(path, permissions);
+                    System.out.println("设置目录权限成功: " + normalizedPath);
+                } catch (Exception e) {
+                    System.err.println("设置目录权限失败: " + e.getMessage());
+                }
             }
+            
+            // 检查目录是否可写
+            if (!Files.isWritable(path)) {
+                System.err.println("警告: 上传目录不可写: " + normalizedPath);
+                // 尝试使用备选路径
+                useFallbackPath();
+            }
+            
         } catch (Exception e) {
             System.err.println("创建上传目录失败: " + e.getMessage());
-            // 如果创建失败，使用临时目录作为备选
-            baseUploadPath = System.getProperty("java.io.tmpdir") + File.separator + "uploads" + File.separator;
-            try {
-                Files.createDirectories(Paths.get(baseUploadPath));
-            } catch (Exception ex) {
-                System.err.println("使用临时目录也失败: " + ex.getMessage());
+            useFallbackPath();
+        }
+    }
+    
+    /**
+     * 使用备选路径
+     */
+    private static void useFallbackPath() {
+        try {
+            // 尝试多个备选路径
+            String[] fallbackPaths = {
+                System.getProperty("java.io.tmpdir") + File.separator + "uploads" + File.separator,
+                System.getProperty("user.home") + File.separator + "uploads" + File.separator,
+                "/tmp/uploads/",  // Linux/Unix
+                "C:\\temp\\uploads\\"  // Windows
+            };
+            
+            for (String fallbackPath : fallbackPaths) {
+                try {
+                    Path path = Paths.get(fallbackPath);
+                    Files.createDirectories(path);
+                    if (Files.isWritable(path)) {
+                        baseUploadPath = fallbackPath;
+                        System.out.println("使用备选上传目录: " + fallbackPath);
+                        return;
+                    }
+                } catch (Exception ex) {
+                    // 继续尝试下一个路径
+                }
             }
+            
+            System.err.println("所有备选路径都失败，文件上传功能可能不可用");
+        } catch (Exception e) {
+            System.err.println("使用备选路径失败: " + e.getMessage());
         }
     }
     
@@ -190,14 +286,21 @@ public class FileUploadUtil {
     }
 
     /**
-     * 根据日期创建存储目录
+     * 根据日期创建存储目录，支持跨平台
      * @param baseDir 基础目录
      * @return 存储目录路径
      */
     public static String createDateBasedDirectory(String baseDir) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
         String datePath = sdf.format(new Date());
-        String fullPath = baseDir + datePath;
+        
+        // 标准化路径分隔符
+        String normalizedBaseDir = baseDir.replace("\\", File.separator).replace("/", File.separator);
+        if (!normalizedBaseDir.endsWith(File.separator)) {
+            normalizedBaseDir += File.separator;
+        }
+        
+        String fullPath = normalizedBaseDir + datePath;
         
         try {
             Path directory = Paths.get(fullPath);
@@ -206,15 +309,19 @@ public class FileUploadUtil {
                 
                 // 设置目录权限（Linux/Unix系统）
                 if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
-                    java.util.Set<java.nio.file.attribute.PosixFilePermission> permissions = 
-                        new java.util.HashSet<>();
-                    permissions.add(java.nio.file.attribute.PosixFilePermission.OWNER_READ);
-                    permissions.add(java.nio.file.attribute.PosixFilePermission.OWNER_WRITE);
-                    permissions.add(java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE);
-                    permissions.add(java.nio.file.attribute.PosixFilePermission.GROUP_READ);
-                    permissions.add(java.nio.file.attribute.PosixFilePermission.GROUP_WRITE);
-                    permissions.add(java.nio.file.attribute.PosixFilePermission.OTHERS_READ);
-                    Files.setPosixFilePermissions(directory, permissions);
+                    try {
+                        java.util.Set<java.nio.file.attribute.PosixFilePermission> permissions = 
+                            new java.util.HashSet<>();
+                        permissions.add(java.nio.file.attribute.PosixFilePermission.OWNER_READ);
+                        permissions.add(java.nio.file.attribute.PosixFilePermission.OWNER_WRITE);
+                        permissions.add(java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE);
+                        permissions.add(java.nio.file.attribute.PosixFilePermission.GROUP_READ);
+                        permissions.add(java.nio.file.attribute.PosixFilePermission.GROUP_WRITE);
+                        permissions.add(java.nio.file.attribute.PosixFilePermission.OTHERS_READ);
+                        Files.setPosixFilePermissions(directory, permissions);
+                    } catch (Exception e) {
+                        System.err.println("设置日期目录权限失败: " + e.getMessage());
+                    }
                 }
             }
         } catch (Exception e) {

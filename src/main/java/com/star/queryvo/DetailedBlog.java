@@ -16,6 +16,7 @@ public class DetailedBlog {
     private String firstPicture;
     private String flag;
     private String title;
+    private String description;
     private String content;
     private Integer views;
     private Integer commentCount;
@@ -25,6 +26,8 @@ public class DetailedBlog {
     private boolean appreciation;
     private String nickname;
     private String avatar;
+    private Integer blogStatus;        // 博文状态：1-普通公开，2-机密，3-绝密
+    private String accessPassword;     // 访问密码(MD5加密)
 
     //分类名称
     private String typeName;
@@ -62,6 +65,14 @@ public class DetailedBlog {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getContent() {
@@ -136,6 +147,22 @@ public class DetailedBlog {
         this.avatar = avatar;
     }
 
+    public Integer getBlogStatus() {
+        return blogStatus;
+    }
+
+    public void setBlogStatus(Integer blogStatus) {
+        this.blogStatus = blogStatus;
+    }
+
+    public String getAccessPassword() {
+        return accessPassword;
+    }
+
+    public void setAccessPassword(String accessPassword) {
+        this.accessPassword = accessPassword;
+    }
+
     public String getTypeName() {
         return typeName;
     }
@@ -151,6 +178,7 @@ public class DetailedBlog {
                 ", firstPicture='" + firstPicture + '\'' +
                 ", flag='" + flag + '\'' +
                 ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
                 ", content='" + content + '\'' +
                 ", views=" + views +
                 ", commentCount=" + commentCount +
@@ -160,6 +188,8 @@ public class DetailedBlog {
                 ", appreciation=" + appreciation +
                 ", nickname='" + nickname + '\'' +
                 ", avatar='" + avatar + '\'' +
+                ", blogStatus=" + blogStatus +
+                ", accessPassword='" + accessPassword + '\'' +
                 ", typeName='" + typeName + '\'' +
                 '}';
     }

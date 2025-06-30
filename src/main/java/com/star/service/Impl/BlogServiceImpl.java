@@ -6,6 +6,7 @@ import com.star.entity.Blog;
 import com.star.queryvo.*;
 import com.star.service.BlogService;
 import com.star.util.MarkdownUtils;
+import com.star.util.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,6 +36,10 @@ public class BlogServiceImpl implements BlogService {
         blog.setUpdateTime(new Date());
         blog.setViews(0);
         blog.setCommentCount(0);
+        
+        // 处理博文状态和密码
+        processBlogSecurity(blog);
+        
         return blogDao.saveBlog(blog);
     }
 
@@ -60,6 +65,10 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public int updateBlog(ShowBlog showBlog) {
         showBlog.setUpdateTime(new Date());
+        
+        // 处理博文状态和密码
+        processShowBlogSecurity(showBlog);
+        
         return blogDao.updateBlog(showBlog);
     }
 
@@ -142,6 +151,48 @@ public class BlogServiceImpl implements BlogService {
     // @Cacheable(value = "NewCommentList",key = "'NewComment'")      // redis缓存
     public List<NewComment> getNewComment() {
         return blogDao.getNewComment();
+    }
+
+    /**
+     * 处理Blog实体的安全字段
+     * @param blog Blog实体
+     */
+    private void processBlogSecurity(Blog blog) {
+        // 设置默认博文状态
+        if (blog.getBlogStatus() == null) {
+            blog.setBlogStatus(1); // 默认为普通公开
+        }
+        
+        // 处理访问密码
+        String accessPassword = blog.getAccessPassword();
+        if (accessPassword != null && !accessPassword.trim().isEmpty()) {
+            // 密码不为空时进行MD5加密
+            blog.setAccessPassword(MD5Utils.code(accessPassword.trim()));
+        } else {
+            // 密码为空时清空
+            blog.setAccessPassword(null);
+        }
+    }
+    
+    /**
+     * 处理ShowBlog实体的安全字段
+     * @param showBlog ShowBlog实体
+     */
+    private void processShowBlogSecurity(ShowBlog showBlog) {
+        // 设置默认博文状态
+        if (showBlog.getBlogStatus() == null) {
+            showBlog.setBlogStatus(1); // 默认为普通公开
+        }
+        
+        // 处理访问密码
+        String accessPassword = showBlog.getAccessPassword();
+        if (accessPassword != null && !accessPassword.trim().isEmpty()) {
+            // 密码不为空时进行MD5加密
+            showBlog.setAccessPassword(MD5Utils.code(accessPassword.trim()));
+        } else {
+            // 密码为空时清空
+            showBlog.setAccessPassword(null);
+        }
     }
 
 }

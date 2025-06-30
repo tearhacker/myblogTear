@@ -17,6 +17,8 @@ public class Blog {
     private String title;
     private String content;
     private String firstPicture;
+    private Long firstPictureUploadId;  // 首图上传文件ID
+    private String firstPictureType;     // 首图类型：link-链接，upload-上传
     private String flag;
     private Integer views;
     private Integer commentCount;
@@ -28,6 +30,8 @@ public class Blog {
     private Date createTime;
     private Date updateTime;
     private String description;
+    private Integer blogStatus;        // 博文状态：1-普通公开，2-机密，3-绝密
+    private String accessPassword;     // 访问密码(MD5加密)
 
     private Type type;
     private User user;
@@ -69,6 +73,22 @@ public class Blog {
 
     public void setFirstPicture(String firstPicture) {
         this.firstPicture = firstPicture;
+    }
+
+    public Long getFirstPictureUploadId() {
+        return firstPictureUploadId;
+    }
+
+    public void setFirstPictureUploadId(Long firstPictureUploadId) {
+        this.firstPictureUploadId = firstPictureUploadId;
+    }
+
+    public String getFirstPictureType() {
+        return firstPictureType;
+    }
+
+    public void setFirstPictureType(String firstPictureType) {
+        this.firstPictureType = firstPictureType;
     }
 
     public String getFlag() {
@@ -159,6 +179,22 @@ public class Blog {
         this.description = description;
     }
 
+    public Integer getBlogStatus() {
+        return blogStatus;
+    }
+
+    public void setBlogStatus(Integer blogStatus) {
+        this.blogStatus = blogStatus;
+    }
+
+    public String getAccessPassword() {
+        return accessPassword;
+    }
+
+    public void setAccessPassword(String accessPassword) {
+        this.accessPassword = accessPassword;
+    }
+
     public Type getType() {
         return type;
     }
@@ -206,6 +242,8 @@ public class Blog {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", firstPicture='" + firstPicture + '\'' +
+                ", firstPictureUploadId=" + firstPictureUploadId +
+                ", firstPictureType='" + firstPictureType + '\'' +
                 ", flag='" + flag + '\'' +
                 ", views=" + views +
                 ", commentCount=" + commentCount +
@@ -217,6 +255,8 @@ public class Blog {
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 ", description='" + description + '\'' +
+                ", blogStatus=" + blogStatus +
+                ", accessPassword='" + accessPassword + '\'' +
                 ", type=" + type +
                 ", user=" + user +
                 ", typeId=" + typeId +

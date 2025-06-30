@@ -204,7 +204,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     /**
-     * 内部文件下载处理方法
+     * 内部文件下载处理方法（优化移动端兼容性）
      * @param fileUpload 文件实体
      * @param response HTTP响应
      * @param isDownload 是否为下载模式（false为预览模式）
@@ -225,19 +225,49 @@ public class FileUploadServiceImpl implements FileUploadService {
         try (FileInputStream fis = new FileInputStream(file);
              BufferedInputStream bis = new BufferedInputStream(fis)) {
 
-            // 设置响应头
+            // 清除所有响应头，避免缓存问题
+            response.reset();
+            
+            // 设置基础响应头
             response.setContentType(fileUpload.getFileType());
             response.setContentLengthLong(fileUpload.getFileSize());
-
-            // 设置文件名
-            String encodedFilename = URLEncoder.encode(fileUpload.getOriginalFilename(), StandardCharsets.UTF_8.toString());
+            
+            // 设置移动端兼容的响应头
+            response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+            response.setHeader("Pragma", "no-cache");
+            response.setHeader("Expires", "0");
+            response.setHeader("Accept-Ranges", "bytes");
+            
+            // 设置文件名（移动端兼容）
+            String originalFilename = fileUpload.getOriginalFilename();
+            String encodedFilename;
+            
+            try {
+                // 尝试UTF-8编码
+                encodedFilename = URLEncoder.encode(originalFilename, StandardCharsets.UTF_8.toString());
+            } catch (Exception e) {
+                // 如果UTF-8编码失败，使用ISO-8859-1
+                encodedFilename = URLEncoder.encode(originalFilename, "ISO-8859-1");
+            }
+            
             if (isDownload) {
-                response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFilename + "\"");
+                // 下载模式 - 强制下载
+                response.setHeader("Content-Disposition", 
+                    "attachment; filename=\"" + encodedFilename + "\"; filename*=UTF-8''" + encodedFilename);
+                
+                // 移动端特殊处理
+                response.setHeader("Content-Transfer-Encoding", "binary");
+                
                 // 只有下载时才增加下载次数
                 fileUploadDao.incrementDownloadCount(fileUpload.getId());
             } else {
-                response.setHeader("Content-Disposition", "inline; filename=\"" + encodedFilename + "\"");
+                // 预览模式 - 在线查看
+                response.setHeader("Content-Disposition", 
+                    "inline; filename=\"" + encodedFilename + "\"; filename*=UTF-8''" + encodedFilename);
             }
+            
+            // 根据文件类型设置额外的响应头
+            setFileTypeSpecificHeaders(response, fileUpload.getFileType(), originalFilename);
 
             // 输出文件流
             try (OutputStream os = response.getOutputStream()) {
@@ -249,11 +279,43 @@ public class FileUploadServiceImpl implements FileUploadService {
                 os.flush();
             }
 
+            logger.info("文件{}成功: {} ({} bytes)", isDownload ? "下载" : "预览", originalFilename, fileUpload.getFileSize());
             return true;
 
         } catch (Exception e) {
             logger.error("文件输出流处理失败: {}", e.getMessage(), e);
             return false;
+        }
+    }
+    
+    /**
+     * 根据文件类型设置特定的响应头
+     */
+    private void setFileTypeSpecificHeaders(HttpServletResponse response, String fileType, String filename) {
+        if (fileType == null) return;
+        
+        if (fileType.startsWith("image/")) {
+            // 图片文件
+            response.setHeader("Content-Type", fileType);
+        } else if (fileType.equals("application/pdf")) {
+            // PDF文件
+            response.setHeader("Content-Type", "application/pdf");
+        } else if (fileType.startsWith("text/")) {
+            // 文本文件
+            response.setHeader("Content-Type", fileType + "; charset=UTF-8");
+        } else if (fileType.startsWith("video/")) {
+            // 视频文件
+            response.setHeader("Content-Type", fileType);
+            response.setHeader("Accept-Ranges", "bytes");
+        } else if (fileType.startsWith("audio/")) {
+            // 音频文件
+            response.setHeader("Content-Type", fileType);
+        } else if (fileType.contains("zip") || fileType.contains("rar") || fileType.contains("7z")) {
+            // 压缩文件
+            response.setHeader("Content-Type", "application/octet-stream");
+        } else {
+            // 其他文件类型
+            response.setHeader("Content-Type", "application/octet-stream");
         }
     }
 
