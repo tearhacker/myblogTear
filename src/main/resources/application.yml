@@ -1,0 +1,64 @@
+# ========================================================
+#                Spring Boot 通用配置文件
+# 特点：
+# 1. 不分 dev/pro 环境，所有配置直接生效
+# 2. 敏感信息通过环境变量注入（如数据库密码）
+# 3. 提供合理的默认值，保证直接启动不报错
+# ========================================================
+
+# #################### 核心框架配置 ####################
+spring:
+  # Thymeleaf 模板引擎
+  thymeleaf:
+    mode: HTML
+
+  # 数据源配置（默认使用本地数据库，可通过环境变量覆盖）
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:myblog}?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+    username: ${DB_USER:root}       # 默认用户名，可用环境变量覆盖
+    password: ${DB_PASSWORD:123456} # 默认密码，生产环境务必通过环境变量修改！
+    hikari:
+      max-lifetime: 500000
+
+  # 邮件服务（默认关闭，需主动配置）
+  mail:
+    host: ${MAIL_HOST:smtp.163.com}
+    username: ${MAIL_USER:}         # 默认空，避免误发邮件
+    password: ${MAIL_PASSWORD:}
+    default-encoding: utf-8
+    protocol: smtp
+    port: 25
+    properties:
+      mail.smtp.starttls.enable: true
+
+  # Redis（默认连接本地，可环境变量覆盖）
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    database: 0
+    timeout: 1800000
+
+  resources:
+    static-locations: classpath:/static/
+
+# #################### MyBatis 配置 ####################
+mybatis:
+  type-aliases-package: com.star.entity
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+# #################### 日志配置 ####################
+logging:
+  level:
+    root: info      # 默认日志级别
+    com.star: debug # 项目代码详细日志
+  file:
+    name: log/blog.log  # 统一日志路径
+
+# #################### 自定义配置 ####################
+comment.avatar: /images/avatar.png
+message.avatar: /images/avatar.png
+server:
+  port: 80

@@ -1,0 +1,113 @@
+该项目主要使用SpringBoot+Mybatis+Thymeleaf实现的个人博客系统网站
+前端主要技术栈:JS框架(jQuery)  CSS框架:Semantic UI  Markdown编辑器  代码高亮prism 动画效果:animate.css 文章目录:目录生成Tocbot  音乐盒:zplayer  照片墙:lightbox插件
+
+后端核心框架:
+核心框架：SpringBoot 2.2.5
+项目构建：JDK、Maven 3
+持久层框架：Mybatis
+模板框架：Thymeleaf
+分页插件：PageHelper
+加密工具类：MD5加密
+
+数据库:升级mysql8
+
+
+1.普通用户
+查看文章信息：文章列表、推荐文章、文章标题、文章内容、发布时间、访问量以及评论等信息
+查看分类文章：分类列表、分类文章信息
+查看时间轴：按照文章时间发布顺序查看文章
+搜索文章：导航栏右边搜索框根据关键字搜索
+听音乐：上一曲、下一曲、音量控制、播放顺序控制、查看歌词等
+留言：留言并回复
+查看友链：查看并访问博主在友链页面添加的友链连接
+查看相册信息：相册列表、照片名称、照片拍摄地点、时间、照片描述
+2.管理员用户（栈主）
+拥有普通用户所有功能权限
+登录：在主页路径下加“/admin”，可进入登录页面，根据数据库的用户名和密码进行登录
+文章管理：查询文章列表、新增文章、编辑文章、删除文章、搜索文章
+分类管理：查询分类列表、新增分类、编辑分类、删除分类
+友链管理：查询友链列表、新增友链、编辑友链、删除友链
+相册管理：查询相册列表、新增照片、编辑照片、删除照片
+消息管理：登录后恢复评论留言会显示栈主的头像信息，并能显示删除消息按键，可以对消息进行删除
+四、数据库设计
+由于博主最开始是使用jpa作为持久层开发此博客的，数据表是由jpa框架自动生成的，在使用mybatis为持久层的时候就沿用了jpa生成的数据库，但是对评论表和留言表进行了改动，如果同样是先用jpa，再用mybatis开发的伙伴这里要注意一下，如果直接使用mybatis开发的则可以忽略
+
+
+
+数据表
+博客数据表：t_blog
+分类数据表：t_type
+用户数据表：t_user
+评论数据表：t_comment
+留言数据表：t_message
+友链数据表：t_friend
+相册数据表：t_picture
+
+
+// Hash操作
+@Bean
+public HashOperations<String,String,Object> hashOperations(RedisTemplate<String,Object> redisTemplate){
+    return redisTemplate.opsForHash();
+}
+
+// String操作
+@Bean
+public ValueOperations<String, Object> valueOperations(RedisTemplate<String, Object> redisTemplate) {
+    return redisTemplate.opsForValue();
+}
+
+// List操作
+@Bean
+public ListOperations<String, Object> listOperations(RedisTemplate<String, Object> redisTemplate) {
+    return redisTemplate.opsForList();
+}
+
+// Set操作
+@Bean
+public SetOperations<String, Object> setOperations(RedisTemplate<String, Object> redisTemplate) {
+    return redisTemplate.opsForSet();
+}
+
+// ZSet操作
+@Bean
+public ZSetOperations<String, Object> zSetOperations(RedisTemplate<String, Object> redisTemplate) {
+    return redisTemplate.opsForZSet();
+}
+
+功能说明
+序列化配置
+
+Key: StringRedisSerializer (字符串序列化)
+
+Value: Jackson2JsonRedisSerializer (JSON序列化)
+
+缓存管理
+
+默认缓存过期时间: 600秒
+
+禁止缓存null值
+
+支持的数据结构
+
+String
+
+Hash
+
+List
+
+Set
+
+ZSet
+
+使用场景
+
+数据库查询结果缓存
+
+分布式Session存储
+
+高频访问数据缓存
+
+分布式锁实现
+
+注意：使用时需要确保项目中已添加Redis相关依赖
+
