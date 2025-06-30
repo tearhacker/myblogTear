@@ -1,39 +1,15 @@
 # myblog-mybaits
 个人博客系统（SpringBoot+Mybatis）
 
-博客地址：https://onestar.newstar.net.cn/
+博客地址：暂不公开
 
-**使用该源码希望能够注明原博客以及源码出处，并禁止商用，谢谢！**
+**该源码源码出处为one-star，泪心仅作二次更改和个人使用，并二次美化优化开源！**
 
 ### 一、开发文档
 
-> 此开发文档是对应上一版本功能，最新版本还需要配置Redis和163邮件发送
+> 最新版本还需要配置Redis和163邮件发送。邮箱未适配，因为资金问题。
 
-1、[【SpringBoot搭建个人博客】- 前端页面展示（一）](https://onestar.newstar.net.cn/blog/37)
 
-2、[【SpringBoot搭建个人博客】- 技术需求（二）](https://onestar.newstar.net.cn/blog/38)
-
-3、[【SpringBoot搭建个人博客】- 框架搭建（三）](https://onestar.newstar.net.cn/blog/41)
-
-4、[【SpringBoot搭建个人博客】- 后台登录（四）](https://onestar.newstar.net.cn/blog/42)
-
-5、[【SpringBoot搭建个人博客】- 实体类构建（五）](https://onestar.newstar.net.cn/blog/43)
-
-6、[【SpringBoot搭建个人博客】- 分类管理（六）](https://onestar.newstar.net.cn/blog/44)
-
-7、[【SpringBoot搭建个人博客】- 博客管理（七）](https://onestar.newstar.net.cn/blog/46)
-
-8、[【SpringBoot搭建个人博客】- 友链管理（八）](https://onestar.newstar.net.cn/blog/47)
-
-9、[【SpringBoot搭建个人博客】- 相册管理（九）](https://onestar.newstar.net.cn/blog/48)
-
-10、[【SpringBoot搭建个人博客】- 博客首页显示（十）](https://onestar.newstar.net.cn/blog/49)
-
-11、[【SpringBoot搭建个人博客】- 博客详情页面显示（十一）](https://onestar.newstar.net.cn/blog/50)
-
-12、[【SpringBoot搭建个人博客】- 其他页面显示（十二）](https://onestar.newstar.net.cn/blog/51)
-
-13、[【SpringBoot搭建个人博客】- 线上部署（十三）](https://onestar.newstar.net.cn/blog/52)
 
 ### 二、技术栈
 #### 1.前端
@@ -316,8 +292,7 @@ CREATE TABLE `t_user`  (
 SET FOREIGN_KEY_CHECKS = 1;
 
 ```
-欢迎关注公众号：
+欢迎关注泪心：
 
-![oneStar](https://images.newstar.net.cn/img/oneStar.jpg)
 
-博客地址：https://onestar.newstar.net.cn/
+博客地址：暂不公开
