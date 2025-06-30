@@ -8,20 +8,19 @@
 ## 项目展示
 
 ### 1. 项目启动界面
-![项目软件启动展示](https://cdn.jsdelivr.net/gh/thoughtful123/tearyoByCompanyLife/photosuse/myblog/projectStart1.png)
+<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart1.png" width="600" alt="项目软件启动展示" style="max-width:100%;">
 
 ### 2. 博客首页
-![项目首页展示](https://cdn.jsdelivr.net/gh/thoughtful123/tearyoByCompanyLife/photosuse/myblog/projectStart2.png)
+<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart2.png" width="600" alt="项目首页展示" style="max-width:100%;">
 
 ### 3. 关于我页面
-![关于我页面展示](https://cdn.jsdelivr.net/gh/thoughtful123/tearyoByCompanyLife/photosuse/myblog/projectAboutMeTear.png)
+<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectAboutMeTear.png" width="600" alt="关于我页面展示" style="max-width:100%;">
 
 ### 4. 音乐播放页面
-![音乐页面展示](https://cdn.jsdelivr.net/gh/thoughtful123/tearyoByCompanyLife/photosuse/myblog/projectMusicLocalmp3.png)
+<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectMusicLocalmp3.png" width="600" alt="音乐页面展示" style="max-width:100%;">
 
 ### 5. 文章展示页面
-![文章展示页面](https://cdn.jsdelivr.net/gh/thoughtful123/tearyoByCompanyLife/photosuse/myblog/blog1png.png)
-
+<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/blog1png.png" width="600" alt="文章展示页面" style="max-width:100%;">
 
 ## 遇到的小问题
 ##温馨提醒
