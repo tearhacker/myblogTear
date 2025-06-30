@@ -5,22 +5,12 @@
 **该源码源码出处为one-star，泪心仅作二次更改和个人使用，并二次美化优化开源！**
 
 # 博客系统二次开发问题与解决方案（作者泪心）
-## 项目展示
-
-### 1. 项目启动界面
-<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart1.png"  alt="项目软件启动展示">
-
-### 2. 博客首页
-<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart2.png" alt="项目首页展示" >
-
-### 3. 关于我页面
-<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectAboutMeTear.png"  alt="关于我页面展示">
-
-### 4. 音乐播放页面
-<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectMusicLocalmp3.png"  alt="音乐页面展示">
-
-### 5. 文章展示页面
-<img src="https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/blog1png.png" alt="文章展示页面" >
+## 项目展示链接
+1. [项目启动界面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart1.png)
+2. [博客首页图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart2.png) 
+3. [关于我页面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectAboutMeTear.png)
+4. [音乐播放页面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectMusicLocalmp3.png)
+5. [文章展示页面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/blog1png.png)
 
 ## 遇到的小问题
 ##温馨提醒
