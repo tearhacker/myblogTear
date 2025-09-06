@@ -1,18 +1,56 @@
-
+#个人博客系统（SpringBoot+Mybatis）
+>>>>>>> 03ef562 (更新修正:部分问题-泪心)
+#个人博客系统（SpringBoot+Mybatis）
+>>>>>>> origin/master
 # myblog-mybaits
 个人博客系统（SpringBoot+Mybatis）
 =======
 #个人博客系统（SpringBoot+Mybatis）
 >>>>>>> 03ef562 (更新修正:部分问题-泪心)
+=======
+#个人博客系统（SpringBoot+Mybatis）
+>>>>>>> origin/master
 
 博客地址：暂不公开
 
 **该源码源码出处为one-star，泪心仅作二次更改和个人使用，并二次美化优化开源！**
 
-# 博客系统二次开发问题与解决方案（作者泪心）
+## 项目展示链接
+1. [项目启动界面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart1.png)
+2. [博客首页图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart2.png) 
+3. [关于我页面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectAboutMeTear.png)
+4. [音乐播放页面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectMusicLocalmp3.png)
+5. [文章展示页面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/blog1png.png)
 
 ## 遇到的小问题
+##温馨提醒
+音乐功能 友人帐功能 等其他功能 您必须先启动redis服务器哦 否则无法使用的!
+>>>>>>> origin/master
+# 博客系统二次开发问题与解决方案（作者泪心）
 
+## 项目展示链接
+1. [项目启动界面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart1.png)
+2. [博客首页图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart2.png) 
+3. [关于我页面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectAboutMeTear.png)
+4. [音乐播放页面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectMusicLocalmp3.png)
+5. [文章展示页面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/blog1png.png)
+
+## 温馨提醒
+音乐功能 友人帐功能 等其他功能 您必须先启动redis服务器哦 否则无法使用的!
+
+## 遇到的小问题
+=======
+## 项目展示链接
+1. [项目启动界面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart1.png)
+2. [博客首页图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectStart2.png) 
+3. [关于我页面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectAboutMeTear.png)
+4. [音乐播放页面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/projectMusicLocalmp3.png)
+5. [文章展示页面图片](https://gitee.com/thoughtful123/tearyoByCompanyLife/raw/master/photosuse/myblog/blog1png.png)
+
+## 遇到的小问题
+##温馨提醒
+音乐功能 友人帐功能 等其他功能 您必须先启动redis服务器哦 否则无法使用的!
+>>>>>>> origin/master
 ### 1. MD5加密不方便
 **问题**：只有登录加密，测试时要手动加密密码很麻烦
 
@@ -32,9 +70,13 @@
 ### 3. 路径问题
 **问题**：代码里全是`localhost:8080`，服务器部署上线后全失效
 
+>>>>>>> origin/master
+- 在yml配置：`static-locations: classpath:/static/`
 **解决**：
-- 在yml配置：`static-locations: classpath:/static/`  
+- 在yml配置：`static-locations: classpath:/static/`
 =======
+=======
+>>>>>>> origin/master
 - 在yml配置：`static-locations: classpath:/static/`
 - 把所有`http://localhost:8080/xxx`改成相对路径`/xxx`
 - 用这个自动获取基础路径：
