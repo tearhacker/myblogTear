@@ -1,5 +1,9 @@
+
 # myblog-mybaits
 个人博客系统（SpringBoot+Mybatis）
+=======
+#个人博客系统（SpringBoot+Mybatis）
+>>>>>>> 03ef562 (更新修正:部分问题-泪心)
 
 博客地址：暂不公开
 
@@ -30,6 +34,8 @@
 
 **解决**：
 - 在yml配置：`static-locations: classpath:/static/`  
+=======
+- 在yml配置：`static-locations: classpath:/static/`
 - 把所有`http://localhost:8080/xxx`改成相对路径`/xxx`
 - 用这个自动获取基础路径：
 ```javascript
