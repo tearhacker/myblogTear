@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件上传测试 - TEARの客栈</title>
+    <link rel="stylesheet" href="../static/lib/semantic/dist/semantic.min.css" th:href="@{/lib/semantic/dist/semantic.min.css}">
+    <link rel="stylesheet" href="../static/css/me.css" th:href="@{/css/me.css}">
+</head>
+<body>
+
+<!--导航-->
+<nav class="gird-header">
+    <div class="ui m-container-mini-m">
+        <div class="ui inverted secondary stackable menu">
+            <h2 class="ui olive header item" style="font-family: STSong">TEAR</h2>
+            <a href="#" th:href="@{/}" class="m-item item m-mobile-hide"><i class="home icon"></i>首页</a>
+            <a href="#" th:href="@{/admin/files}" class="active m-item item m-mobile-hide"><i class="upload icon"></i>文件管理</a>
+        </div>
+    </div>
+</nav>
+
+<!--中间内容-->
+<div class="m-margin- animated fadeIn">
+    <div class="ui m-opacity container">
+        <div class="ui segment m-opacity">
+            <h2 class="ui header">
+                <i class="upload icon"></i>
+                <div class="content">
+                    文件上传测试
+                </div>
+            </h2>
+            
+            <!-- 单文件上传 -->
+            <div class="ui segment">
+                <h3 class="ui header">单文件上传</h3>
+                <form class="ui form" id="singleUploadForm">
+                    <div class="field">
+                        <label>选择文件</label>
+                        <input type="file" id="singleFile" name="file" accept="*/*">
+                        <div class="ui small message">
+                            <i class="info circle icon"></i>
+                            支持所有文件类型，单个文件最大 800MB
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>文件描述（可选）</label>
+                        <textarea id="singleDescription" placeholder="请输入文件描述"></textarea>
+                    </div>
+                    <button type="submit" class="ui teal button">
+                        <i class="upload icon"></i>上传文件
+                    </button>
+                </form>
+            </div>
+
+            <!-- 多文件上传 -->
+            <div class="ui segment">
+                <h3 class="ui header">多文件上传</h3>
+                <form class="ui form" id="batchUploadForm">
+                    <div class="field">
+                        <label>选择文件</label>
+                        <input type="file" id="batchFiles" name="files" multiple accept="*/*">
+                        <div class="ui small message">
+                            <i class="info circle icon"></i>
+                            支持多文件上传，总大小不超过 1GB
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>文件描述（可选）</label>
+                        <textarea id="batchDescription" placeholder="请输入文件描述（将应用到所有文件）"></textarea>
+                    </div>
+                    <button type="submit" class="ui blue button">
+                        <i class="upload icon"></i>批量上传
+                    </button>
+                </form>
+            </div>
+
+            <!-- 上传进度 -->
+            <div class="ui segment" id="progressSection" style="display: none;">
+                <h3 class="ui header">上传进度</h3>
+                <div class="ui progress" id="uploadProgress">
+                    <div class="bar">
+                        <div class="progress"></div>
+                    </div>
+                    <div class="label">上传中...</div>
+                </div>
+            </div>
+
+            <!-- 上传结果 -->
+            <div class="ui segment" id="resultSection" style="display: none;">
+                <h3 class="ui header">上传结果</h3>
+                <div id="uploadResults"></div>
+            </div>
+
+            <!-- 简单上传测试 -->
+            <div class="ui segment">
+                <h3 class="ui header">简单上传测试</h3>
+                <form class="ui form" id="simpleUploadForm">
+                    <div class="field">
+                        <label>选择文件</label>
+                        <input type="file" id="simpleFile" name="file" accept="*/*">
+                    </div>
+                    <div class="field">
+                        <label>文件描述（可选）</label>
+                        <textarea id="simpleDescription" placeholder="请输入文件描述"></textarea>
+                    </div>
+                    <button type="submit" class="ui green button">
+                        <i class="upload icon"></i>简单上传测试
+                    </button>
+                </form>
+            </div>
+
+            <!-- 测试按钮 -->
+            <div class="ui segment">
+                <h3 class="ui header">功能测试</h3>
+                <button class="ui green button" onclick="testDatabase()">
+                    <i class="database icon"></i>测试数据库连接
+                </button>
+                <button class="ui orange button" onclick="getFileList()">
+                    <i class="list icon"></i>获取文件列表
+                </button>
+                <button class="ui purple button" onclick="getStatistics()">
+                    <i class="chart bar icon"></i>获取统计信息
+                </button>
+                <button class="ui teal button" onclick="testFileSystem()">
+                    <i class="hdd icon"></i>测试文件系统
+                </button>
+                <button class="ui purple button" onclick="checkCompatibility()">
+                    <i class="code icon"></i>Java兼容性检查
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="../static/lib/jquery-3.2.1/jquery-3.2.1.min.js" th:src="@{/lib/jquery-3.2.1/jquery-3.2.1.min.js}"></script>
+<script src="../static/lib/semantic/dist/semantic.min.js" th:src="@{/lib/semantic/dist/semantic.min.js}"></script>
+
+<script>
+$(document).ready(function() {
+    // 单文件上传
+    $('#singleUploadForm').on('submit', function(e) {
+        e.preventDefault();
+        uploadSingleFile();
+    });
+
+    // 多文件上传
+    $('#batchUploadForm').on('submit', function(e) {
+        e.preventDefault();
+        uploadBatchFiles();
+    });
+
+    // 简单上传测试
+    $('#simpleUploadForm').on('submit', function(e) {
+        e.preventDefault();
+        uploadSimpleFile();
+    });
+});
+
+// 单文件上传
+function uploadSingleFile() {
+    let fileInput = document.getElementById('singleFile');
+    let file = fileInput.files[0];
+    
+    if (!file) {
+        showMessage('请选择要上传的文件', 'warning');
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append('file', file);
+    
+    let description = $('#singleDescription').val();
+    if (description) {
+        formData.append('description', description);
+    }
+
+    showProgress();
+    
+    $.ajax({
+        url: '/admin/files/upload',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            hideProgress();
+            if (response.code === '0000') {
+                showMessage('文件上传成功', 'success');
+                showResult('单文件上传成功', response.data);
+                $('#singleUploadForm')[0].reset();
+            } else {
+                showMessage('文件上传失败: ' + response.msg, 'error');
+            }
+        },
+        error: function(xhr, status, error) {
+            hideProgress();
+            showMessage('文件上传失败: ' + error, 'error');
+        }
+    });
+}
+
+// 多文件上传
+function uploadBatchFiles() {
+    let fileInput = document.getElementById('batchFiles');
+    let files = fileInput.files;
+    
+    if (files.length === 0) {
+        showMessage('请选择要上传的文件', 'warning');
+        return;
+    }
+
+    let formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+    }
+    
+    let description = $('#batchDescription').val();
+    if (description) {
+        for (let i = 0; i < files.length; i++) {
+            formData.append('descriptions', description);
+        }
+    }
+
+    showProgress();
+    
+    $.ajax({
+        url: '/admin/files/upload/batch',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            hideProgress();
+            if (response.code === '0000') {
+                showMessage('批量文件上传成功', 'success');
+                showResult('批量文件上传成功，共上传 ' + response.data.length + ' 个文件', response.data);
+                $('#batchUploadForm')[0].reset();
+            } else {
+                showMessage('批量文件上传失败: ' + response.msg, 'error');
+            }
+        },
+        error: function(xhr, status, error) {
+            hideProgress();
+            showMessage('批量文件上传失败: ' + error, 'error');
+        }
+    });
+}
+
+// 测试数据库连接
+function testDatabase() {
+    $.ajax({
+        url: '/admin/files/test',
+        type: 'GET',
+        success: function(response) {
+            if (response.code === '0000') {
+                showMessage('数据库连接正常', 'success');
+                showResult('数据库测试结果', response.data);
+            } else {
+                showMessage('数据库连接失败: ' + response.msg, 'error');
+            }
+        },
+        error: function(xhr, status, error) {
+            showMessage('数据库连接失败: ' + error, 'error');
+        }
+    });
+}
+
+// 获取文件列表
+function getFileList() {
+    $.ajax({
+        url: '/admin/files/list',
+        type: 'GET',
+        data: { page: 1, size: 10 },
+        success: function(response) {
+            if (response.code === '0000') {
+                showMessage('获取文件列表成功', 'success');
+                showResult('文件列表', response.data);
+            } else {
+                showMessage('获取文件列表失败: ' + response.msg, 'error');
+            }
+        },
+        error: function(xhr, status, error) {
+            showMessage('获取文件列表失败: ' + error, 'error');
+        }
+    });
+}
+
+// 获取统计信息
+function getStatistics() {
+    $.ajax({
+        url: '/admin/files/statistics',
+        type: 'GET',
+        success: function(response) {
+            if (response.code === '0000') {
+                showMessage('获取统计信息成功', 'success');
+                showResult('文件统计信息', response.data);
+            } else {
+                showMessage('获取统计信息失败: ' + response.msg, 'error');
+            }
+        },
+        error: function(xhr, status, error) {
+            showMessage('获取统计信息失败: ' + error, 'error');
+        }
+    });
+}
+
+// 简单文件上传测试
+function uploadSimpleFile() {
+    let fileInput = document.getElementById('simpleFile');
+    let file = fileInput.files[0];
+    
+    if (!file) {
+        showMessage('请选择要上传的文件', 'warning');
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append('file', file);
+    
+    let description = $('#simpleDescription').val();
+    if (description) {
+        formData.append('description', description);
+    }
+
+    showProgress();
+    
+    $.ajax({
+        url: '/test/upload/simple',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            hideProgress();
+            if (response.code === '0000') {
+                showMessage('简单文件上传成功', 'success');
+                showResult('简单文件上传结果', response.data);
+                $('#simpleUploadForm')[0].reset();
+            } else {
+                showMessage('简单文件上传失败: ' + response.msg, 'error');
+            }
+        },
+        error: function(xhr, status, error) {
+            hideProgress();
+            showMessage('简单文件上传失败: ' + error, 'error');
+        }
+    });
+}
+
+// 测试文件系统
+function testFileSystem() {
+    $.ajax({
+        url: '/test/filesystem',
+        type: 'GET',
+        success: function(response) {
+            if (response.code === '0000') {
+                showMessage('文件系统测试成功', 'success');
+                showResult('文件系统测试结果', response.data);
+            } else {
+                showMessage('文件系统测试失败: ' + response.msg, 'error');
+            }
+        },
+        error: function(xhr, status, error) {
+            showMessage('文件系统测试失败: ' + error, 'error');
+        }
+    });
+}
+
+// Java兼容性检查
+function checkCompatibility() {
+    $.ajax({
+        url: '/test/compatibility',
+        type: 'GET',
+        success: function(response) {
+            if (response.code === '0000') {
+                showMessage('Java兼容性检查完成', 'success');
+                showResult('Java兼容性检查结果', response.data);
+            } else {
+                showMessage('Java兼容性检查失败: ' + response.msg, 'error');
+            }
+        },
+        error: function(xhr, status, error) {
+            showMessage('Java兼容性检查失败: ' + error, 'error');
+        }
+    });
+}
+
+// 显示进度条
+function showProgress() {
+    $('#progressSection').show();
+    $('#uploadProgress').progress('reset');
+}
+
+// 隐藏进度条
+function hideProgress() {
+    $('#progressSection').hide();
+}
+
+// 显示结果
+function showResult(title, data) {
+    $('#resultSection').show();
+    let resultHtml = '<h4>' + title + '</h4>';
+    
+    if (Array.isArray(data)) {
+        resultHtml += '<div class="ui list">';
+        data.forEach(function(item, index) {
+            resultHtml += '<div class="item">';
+            resultHtml += '<div class="content">';
+            resultHtml += '<div class="header">' + (index + 1) + '. ' + (item.originalFilename || item) + '</div>';
+            if (typeof item === 'object') {
+                resultHtml += '<div class="description">';
+                resultHtml += 'ID: ' + item.id + '<br>';
+                resultHtml += '大小: ' + (item.fileSize || 'N/A') + ' 字节<br>';
+                resultHtml += '类型: ' + (item.fileType || 'N/A') + '<br>';
+                resultHtml += '上传时间: ' + (item.uploadTime || 'N/A');
+                resultHtml += '</div>';
+            }
+            resultHtml += '</div>';
+            resultHtml += '</div>';
+        });
+        resultHtml += '</div>';
+    } else if (typeof data === 'object') {
+        resultHtml += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+    } else {
+        resultHtml += '<p>' + data + '</p>';
+    }
+    
+    $('#uploadResults').html(resultHtml);
+}
+
+// 显示消息
+function showMessage(message, type) {
+    let messageClass = 'ui message';
+    if (type === 'success') messageClass += ' success';
+    else if (type === 'error') messageClass += ' error';
+    else if (type === 'warning') messageClass += ' warning';
+    
+    let messageHtml = `
+        <div class="${messageClass}" style="position: fixed; top: 20px; right: 20px; z-index: 1000; min-width: 300px;">
+            <i class="close icon"></i>
+            <div class="content">${message}</div>
+        </div>
+    `;
+    
+    let $message = $(messageHtml);
+    $('body').append($message);
+    
+    // 自动关闭
+    setTimeout(function() {
+        $message.transition('fade');
+    }, 3000);
+    
+    // 点击关闭
+    $message.find('.close').click(function() {
+        $message.transition('fade');
+    });
+}
+</script>
+
+</body>
+</html>

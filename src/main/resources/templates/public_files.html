@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件资源库 - TEARの客栈</title>
+    <link rel="stylesheet" href="../static/lib/semantic/dist/semantic.min.css" th:href="@{/lib/semantic/dist/semantic.min.css}">
+    <link rel="stylesheet" href="../static/css/me.css" th:href="@{/css/me.css}">
+    <style>
+        .file-management-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        
+        .file-management-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+        
+        .file-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .file-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .file-header h2 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .file-tab-content {
+            padding: 20px;
+        }
+        
+        .file-tab-content h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .stats-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(5px);
+        }
+        
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .search-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .file-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .file-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .file-card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            position: relative;
+        }
+        
+        .file-card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+        }
+        
+        .file-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .file-type {
+            font-size: 0.9em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .file-content {
+            padding: 20px;
+        }
+        
+        .file-description {
+            color: #666;
+            font-size: 0.9em;
+            margin: 10px 0;
+            line-height: 1.4;
+        }
+        
+        .file-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .file-size {
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .file-downloads {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .file-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .action-btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-download {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+        }
+        
+        .btn-download:hover {
+            background: linear-gradient(135deg, #3d8bfe 0%, #00d4fe 100%);
+            transform: translateY(-2px);
+        }
+        
+        .btn-view {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+        
+        .btn-view:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+            transform: translateY(-2px);
+        }
+        
+        .file-upload-time {
+            color: #999;
+            font-size: 0.85em;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 4em;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 响应式调整 */
+        @media only screen and (max-width: 767px) {
+            .file-header h2 {
+                font-size: 1.8em;
+            }
+            
+            .file-card {
+                margin-bottom: 20px;
+            }
+            
+            .file-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!--导航-->
+<nav class="gird-header">
+    <div class="ui m-container-mini-m">
+        <div class="ui inverted secondary stackable menu">
+            <h2 class="ui olive header item" style="font-family: STSong">TEAR</h2>
+            <a href="#" th:href="@{/}" class="m-item item m-mobile-hide"><i class="home icon"></i>首页</a>
+            <a href="#" th:href="@{/categories}" class="m-item item m-mobile-hide"><i class="th list icon"></i>分类</a>
+            <a href="#" th:href="@{/tags}" class="m-item item m-mobile-hide"><i class="tags icon"></i>标签</a>
+            <a href="#" th:href="@{/archives}" class="m-item item m-mobile-hide"><i class="archive icon"></i>归档</a>
+            <a href="#" th:href="@{/resources}" class="m-item item m-mobile-hide"><i class="book icon"></i>资源库</a>
+            <a href="#" th:href="@{/public_files}" class="active m-item item m-mobile-hide"><i class="file icon"></i>文件管理</a>
+            <a href="#" th:href="@{/about}" class="m-item item m-mobile-hide"><i class="user icon"></i>关于我</a>
+        </div>
+    </div>
+</nav>
+
+<!--文件管理容器-->
+<div class="file-management-container">
+    <div class="ui container">
+        <div class="file-management-panel">
+            <!-- 文件管理头部 -->
+            <div class="file-header">
+                <h2><i class="file icon"></i> 公共文件资源</h2>
+            </div>
+            
+            <!-- 文件列表区域 -->
+            <div class="file-tab-content" id="fileListTab">
+                <!-- 统计信息 -->
+                <div class="stats-container">
+                    <div class="ui two column grid">
+                        <div class="column">
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalFiles">0</div>
+                                <div class="stat-label">文件总数</div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalSize">0 B</div>
+                                <div class="stat-label">总大小</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 搜索区域 -->
+                <div class="search-container">
+                    <div class="ui form">
+                        <div class="fields">
+                            <div class="six wide field">
+                                <div class="ui fluid input">
+                                    <input type="text" id="searchKeyword" placeholder="搜索文件名或描述...">
+                                </div>
+                            </div>
+                            <div class="three wide field">
+                                <select class="ui fluid dropdown" id="fileTypeFilter">
+                                    <option value="">所有类型</option>
+                                    <option value="image">图片</option>
+                                    <option value="document">文档</option>
+                                    <option value="audio">音频</option>
+                                    <option value="video">视频</option>
+                                    <option value="archive">压缩包</option>
+                                </select>
+                            </div>
+                            <div class="three wide field">
+                                <button class="ui fluid teal button" onclick="searchFiles()">
+                                    <i class="search icon"></i>搜索
+                                </button>
+                            </div>
+                            <div class="four wide field">
+                                <button class="ui fluid blue button" onclick="refreshFileList()">
+                                    <i class="refresh icon"></i>刷新
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文件列表区域 -->
+                <div style="padding: 20px; position: relative;">
+                    <div class="loading-overlay" id="fileListLoading" style="display: none;">
+                        <div class="loading-spinner"></div>
+                    </div>
+                    
+                    <div class="ui four stackable cards" id="fileCardContainer">
+                        <!-- 文件卡片将通过 JavaScript 动态生成 -->
+                    </div>
+                    
+                    <!-- 空状态 -->
+                    <div class="empty-state" id="emptyState" style="display: none;">
+                        <i class="file outline icon"></i>
+                        <h3>暂无文件</h3>
+                        <p>还没有可下载的公共文件</p>
+                    </div>
+                    
+                    <!-- 分页控件 -->
+                    <div class="ui pagination menu" id="filePagination" style="display: none; justify-content: center; margin-top: 30px;">
+                        <!-- 分页按钮将通过 JavaScript 动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 底部导航栏 -->
+<div class="gird-footer">
+    <div class="ui container">
+        <div class="ui secondary menu">
+            <div class="item">
+                <div class="ui text-center">
+                    <p>© 2023 TEARの客栈 | 星光博客</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../static/lib/jquery-3.2.1/jquery-3.2.1.min.js" th:src="@{/lib/jquery-3.2.1/jquery-3.2.1.min.js}"></script>
+<script src="../static/lib/semantic/dist/semantic.min.js" th:src="@{/lib/semantic/dist/semantic.min.js}"></script>
+
+<script>
+let currentPage = 1;
+let pageSize = 12;
+
+// 页面加载完成后初始化
+$(document).ready(function() {
+    // 确保默认显示文件列表标签页
+    $('.file-tab-content').hide();
+    $('#fileListTab').show();
+    
+    loadFileStatistics();
+    loadFileList();
+    
+    // 初始化下拉框
+    $('.ui.dropdown').dropdown();
+});
+
+// 加载文件统计信息
+function loadFileStatistics() {
+    $.ajax({
+        url: '/api/files/public/statistics',
+        type: 'GET',
+        success: function(response) {
+            if (response.code === '1000') {
+                $('#totalFiles').text(response.data || 0);
+                // 目前接口不提供总大小信息，显示为0 B
+                $('#totalSize').text('0 B');
+            }
+        },
+        error: function() {
+            console.log('获取文件统计信息失败');
+        }
+    });
+}
+
+// 加载文件列表
+function loadFileList(page = 1, type = '', keyword = '') {
+    $('#fileListLoading').show();
+    
+    let url = '/api/files/public/list';
+    let params = {
+        page: page,
+        size: pageSize,
+        type: type,
+        keyword: keyword
+    };
+    
+    if (type) params.type = type;
+    if (keyword) params.keyword = keyword;
+    
+    $.ajax({
+        url: url,
+        type: 'GET',
+        data: params,
+        success: function(response) {
+            $('#fileListLoading').hide();
+            if (response.code === '1000') {
+                renderFileList(response.data);
+                currentPage = page;
+            } else {
+                showMessage('获取文件列表失败: ' + response.msg, 'error');
+            }
+        },
+        error: function() {
+            $('#fileListLoading').hide();
+            showMessage('获取文件列表失败', 'error');
+        }
+    });
+}
+
+// 渲染文件列表
+function renderFileList(files) {
+    let container = $('#fileCardContainer');
+    let emptyState = $('#emptyState');
+    container.empty();
+    
+    if (!files || files.length === 0) {
+        emptyState.show();
+        return;
+    }
+    
+    emptyState.hide();
+    
+    files.forEach(function(file) {
+        let fileIcon = getFileIcon(file.fileType);
+        let fileSize = formatFileSize(file.fileSize);
+        let uploadTime = formatDateTime(file.uploadTime);
+        
+        let card = `
+            <div class="file-card">
+                <div class="file-card-header">
+                    <div class="file-name" title="${file.originalFilename}">
+                        <i class="${fileIcon} icon"></i>
+                        ${truncateText(file.originalFilename, 25)}
+                    </div>
+                    <div class="file-type">${getFileCategory(file.fileType)}</div>
+                </div>
+                <div class="file-content">
+                    <div class="file-description">
+                        ${file.description || '无描述'}
+                    </div>
+                    <div class="file-meta">
+                        <div class="file-size">${fileSize}</div>
+                        <div class="file-downloads">
+                            <i class="download icon"></i>${file.downloadCount} 次下载
+                        </div>
+                    </div>
+                    <div class="file-actions">
+                        <button class="ui button action-btn btn-download" onclick="downloadFile(${file.id})">
+                            <i class="download icon"></i>下载
+                        </button>
+                        <button class="ui button action-btn btn-view" onclick="showFileDetail(${file.id})">
+                            <i class="eye icon"></i>查看
+                        </button>
+                    </div>
+                    <div class="file-upload-time">
+                        <i class="calendar icon"></i>${uploadTime}
+                    </div>
+                </div>
+            </div>
+        `;
+        container.append(card);
+    });
+}
+
+// 获取文件图标
+function getFileIcon(mimeType) {
+    if (!mimeType) return 'file';
+    
+    if (mimeType.startsWith('image/')) return 'file image';
+    if (mimeType.startsWith('video/')) return 'file video';
+    if (mimeType.startsWith('audio/')) return 'file audio';
+    if (mimeType === 'application/pdf') return 'file pdf';
+    if (mimeType.includes('word')) return 'file word';
+    if (mimeType.includes('excel') || mimeType.includes('sheet')) return 'file excel';
+    if (mimeType.includes('powerpoint') || mimeType.includes('presentation')) return 'file powerpoint';
+    if (mimeType.includes('zip') || mimeType.includes('rar') || mimeType.includes('7z')) return 'file archive';
+    if (mimeType.startsWith('text/')) return 'file text';
+    
+    return 'file';
+}
+
+// 获取文件分类
+function getFileCategory(mimeType) {
+    if (!mimeType) return '其他';
+    
+    if (mimeType.startsWith('image/')) return '图片';
+    if (mimeType.startsWith('video/')) return '视频';
+    if (mimeType.startsWith('audio/')) return '音频';
+    if (mimeType === 'application/pdf' || mimeType.includes('word') || 
+        mimeType.includes('excel') || mimeType.includes('powerpoint') || 
+        mimeType.startsWith('text/')) return '文档';
+    if (mimeType.includes('zip') || mimeType.includes('rar') || mimeType.includes('7z')) return '压缩包';
+    
+    return '其他';
+}
+
+// 格式化文件大小
+function formatFileSize(bytes) {
+    if (!bytes) return '0 B';
+    
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    let size = bytes;
+    let unitIndex = 0;
+    
+    while (size >= 1024 && unitIndex < units.length - 1) {
+        size /= 1024;
+        unitIndex++;
+    }
+    
+    return size.toFixed(2) + ' ' + units[unitIndex];
+}
+
+// 格式化日期时间
+function formatDateTime(dateTime) {
+    if (!dateTime) return '';
+    
+    let date = new Date(dateTime);
+    let year = date.getFullYear();
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+    let hour = date.getHours().toString().padStart(2, '0');
+    let minute = date.getMinutes().toString().padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hour}:${minute}`;
+}
+
+// 截断文本
+function truncateText(text, maxLength) {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+}
+
+// 搜索文件
+function searchFiles() {
+    let keyword = $('#searchKeyword').val().trim();
+    let type = $('#fileTypeFilter').val();
+    
+    if (keyword === '' && type === '') {
+        loadFileList();
+    } else {
+        loadFileList(1, type, keyword);
+    }
+}
+
+// 刷新文件列表
+function refreshFileList() {
+    $('#searchKeyword').val('');
+    $('#fileTypeFilter').val('');
+    $('.ui.dropdown').dropdown('restore defaults');
+    loadFileList();
+}
+
+// 下载文件
+function downloadFile(fileId) {
+    window.open('/api/files/download/' + fileId, '_blank');
+}
+
+// 显示文件详情
+function showFileDetail(fileId) {
+    $.ajax({
+        url: '/api/files/public/info/' + fileId,
+        type: 'GET',
+        success: function(response) {
+            if (response.code === '1000') {
+                let file = response.data;
+                let detailHtml = `
+                    <div class="ui modal" id="fileDetailModal">
+                        <div class="header">
+                            <i class="file icon"></i>文件详情
+                        </div>
+                        <div class="content">
+                            <div class="ui form">
+                                <div class="two fields">
+                                    <div class="field">
+                                        <label>原始文件名</label>
+                                        <input type="text" value="${file.originalFilename}" readonly>
+                                    </div>
+                                    <div class="field">
+                                        <label>文件大小</label>
+                                        <input type="text" value="${formatFileSize(file.fileSize)}" readonly>
+                                    </div>
+                                </div>
+                                <div class="two fields">
+                                    <div class="field">
+                                        <label>文件类型</label>
+                                        <input type="text" value="${file.fileType}" readonly>
+                                    </div>
+                                    <div class="field">
+                                        <label>上传时间</label>
+                                        <input type="text" value="${formatDateTime(file.uploadTime)}" readonly>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label>文件描述</label>
+                                    <textarea readonly>${file.description || '无描述'}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <div class="ui black deny button">关闭</div>
+                            <div class="ui blue button" onclick="downloadFile(${fileId})">
+                                <i class="download icon"></i>下载
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // 移除已存在的模态框
+                $('#fileDetailModal').remove();
+                $('body').append(detailHtml);
+                $('#fileDetailModal').modal('show');
+            } else {
+                showMessage('获取文件详情失败: ' + response.msg, 'error');
+            }
+        },
+        error: function() {
+            showMessage('获取文件详情失败', 'error');
+        }
+    });
+}
+
+// 显示消息
+function showMessage(message, type = 'info') {
+    let messageClass = 'ui message';
+    if (type === 'success') messageClass += ' success';
+    else if (type === 'error') messageClass += ' error';
+    else if (type === 'warning') messageClass += ' warning';
+    
+    let messageHtml = `
+        <div class="${messageClass}" style="position: fixed; top: 20px; right: 20px; z-index: 1000; min-width: 300px;">
+            <i class="close icon"></i>
+            <div class="content">${message}</div>
+        </div>
+    `;
+    
+    let $message = $(messageHtml);
+    $('body').append($message);
+    
+    // 自动关闭
+    setTimeout(function() {
+        $message.transition('fade');
+    }, 3000);
+    
+    // 点击关闭
+    $message.find('.close').click(function() {
+        $message.transition('fade');
+    });
+}
+</script>
+
+</body>
+</html>

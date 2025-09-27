@@ -46,7 +46,7 @@ public class MD5Utils {
 
     public static void main(String[] args) {
        // System.out.println(code("hello"));
-        System.out.println("calculator md5 value:"+code("TEAR"));
+        System.out.println("calculator md5 value:"+code("tear"));
     }
 
 }

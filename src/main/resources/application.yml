@@ -39,8 +39,40 @@ spring:
     database: 0
     timeout: 1800000
 
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 800MB         # 单个文件最大大小
+      max-request-size: 1GB        # 单次请求最大大小
+      file-size-threshold: 50MB    # 临时文件阈值
+      location: /tmp               # 临时文件存储位置
+      enabled: true                # 启用文件上传
+
+# #################### 文件上传配置 ####################
+file:
+  upload:
+    path: uploads                  # 文件上传路径（相对路径或绝对路径）
+    url-prefix: /api/files        # 文件访问URL前缀
+    max-size: 800MB               # 最大文件大小
+    allowed-types:                # 允许的文件类型
+      - image/*
+      - application/pdf
+      - text/*
+      - application/msword
+      - application/vnd.openxmlformats-officedocument.*
+      - audio/*
+      - video/*
+      - application/zip
+      - application/x-rar-compressed
+      - application/x-7z-compressed
+
   resources:
     static-locations: classpath:/static/
+
+  # 异步请求配置
+  mvc:
+    async:
+      request-timeout: 600000      # 异步请求超时时间（10分钟）
 
 # #################### MyBatis 配置 ####################
 mybatis:
@@ -60,5 +92,11 @@ logging:
 # #################### 自定义配置 ####################
 comment.avatar: /images/avatar.png
 message.avatar: /images/avatar.png
+# #################### 服务器配置 ####################
 server:
   port: 80
+  # Tomcat配置
+  tomcat:
+    max-swallow-size: 1GB          # Tomcat最大吞吐量
+    connection-timeout: 300000     # 连接超时时间（5分钟）
+    max-http-form-post-size: 1GB   # 表单POST最大大小
