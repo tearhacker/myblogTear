@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拖拽上传测试</title>
+    <link rel="stylesheet" href="../static/lib/semantic/dist/semantic.min.css" th:href="@{/lib/semantic/dist/semantic.min.css}">
+    <style>
+        body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .drag-drop-zone {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            margin: 20px 0;
+        }
+        
+        .drag-drop-zone:hover {
+            border-color: #4facfe;
+            background: #f0f8ff;
+        }
+        
+        .drag-drop-zone.drag-over {
+            border-color: #4facfe;
+            background: #e3f2fd;
+            transform: scale(1.02);
+        }
+        
+        .file-list {
+            margin-top: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: #f8f9fa;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        
+        .file-item i {
+            margin-right: 10px;
+            color: #667eea;
+        }
+        
+        .file-name {
+            flex: 1;
+            font-size: 14px;
+            color: #495057;
+        }
+        
+        .file-size {
+            font-size: 12px;
+            color: #6c757d;
+            margin-left: 10px;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .upload-btn:hover {
+            background: linear-gradient(135deg, #3d8bfe 0%, #00d4fe 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>拖拽上传功能测试</h1>
+        
+        <div class="drag-drop-zone" id="dragDropZone">
+            <i class="cloud upload icon" style="font-size: 3em; color: #4facfe; margin-bottom: 15px;"></i>
+            <h3>拖拽文件到此处上传</h3>
+            <p>支持单个或多个文件同时上传</p>
+            <button class="ui button" onclick="document.getElementById('fileInput').click()">
+                <i class="folder open icon"></i>或点击选择文件
+            </button>
+            <input type="file" id="fileInput" multiple accept="*/*" style="display: none;">
+        </div>
+        
+        <div class="file-list" id="fileList" style="display: none;">
+            <!-- 文件列表将在这里显示 -->
+        </div>
+        
+        <button class="upload-btn" id="uploadBtn" onclick="uploadFiles()">
+            <i class="upload icon"></i>开始上传
+        </button>
+        
+        <div id="result" style="margin-top: 20px;"></div>
+    </div>
+
+    <script src="../static/lib/jquery-3.2.1/jquery-3.2.1.min.js" th:src="@{/lib/jquery-3.2.1/jquery-3.2.1.min.js}"></script>
+    <script>
+        let selectedFiles = [];
+        
+        // 初始化拖拽上传
+        function initDragUpload() {
+            let dragZone = document.getElementById('dragDropZone');
+            let fileInput = document.getElementById('fileInput');
+            
+            // 拖拽事件
+            dragZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dragZone.classList.add('drag-over');
+            });
+            
+            dragZone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                dragZone.classList.remove('drag-over');
+            });
+            
+            dragZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dragZone.classList.remove('drag-over');
+                
+                let files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    updateFileDisplay();
+                }
+            });
+            
+            // 点击选择文件
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    updateFileDisplay();
+                }
+            });
+        }
+        
+        // 更新文件显示
+        function updateFileDisplay() {
+            let fileInput = document.getElementById('fileInput');
+            let fileList = document.getElementById('fileList');
+            let uploadBtn = document.getElementById('uploadBtn');
+            
+            if (fileInput.files.length > 0) {
+                selectedFiles = Array.from(fileInput.files);
+                fileList.style.display = 'block';
+                uploadBtn.style.display = 'block';
+                fileList.innerHTML = '';
+                
+                selectedFiles.forEach(file => {
+                    let fileSize = formatFileSize(file.size);
+                    let fileIcon = getFileIcon(file.type);
+                    
+                    let fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `
+                        <i class="${fileIcon} icon"></i>
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-size">${fileSize}</div>
+                    `;
+                    fileList.appendChild(fileItem);
+                });
+            } else {
+                fileList.style.display = 'none';
+                uploadBtn.style.display = 'none';
+                selectedFiles = [];
+            }
+        }
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (!bytes) return '0 B';
+            
+            const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+            let size = bytes;
+            let unitIndex = 0;
+            
+            while (size >= 1024 && unitIndex < units.length - 1) {
+                size /= 1024;
+                unitIndex++;
+            }
+            
+            return size.toFixed(2) + ' ' + units[unitIndex];
+        }
+        
+        // 获取文件图标
+        function getFileIcon(mimeType) {
+            if (!mimeType) return 'file';
+            
+            if (mimeType.startsWith('image/')) return 'file image';
+            if (mimeType.startsWith('video/')) return 'file video';
+            if (mimeType.startsWith('audio/')) return 'file audio';
+            if (mimeType === 'application/pdf') return 'file pdf';
+            if (mimeType.includes('word')) return 'file word';
+            if (mimeType.includes('excel') || mimeType.includes('sheet')) return 'file excel';
+            if (mimeType.includes('powerpoint') || mimeType.includes('presentation')) return 'file powerpoint';
+            if (mimeType.includes('zip') || mimeType.includes('rar') || mimeType.includes('7z')) return 'file archive';
+            if (mimeType.startsWith('text/')) return 'file text';
+            
+            return 'file';
+        }
+        
+        // 上传文件
+        function uploadFiles() {
+            if (selectedFiles.length === 0) {
+                alert('请先选择文件');
+                return;
+            }
+            
+            let formData = new FormData();
+            selectedFiles.forEach(file => {
+                formData.append('files', file);
+            });
+            formData.append('description', '测试上传');
+            
+            $.ajax({
+                url: '/admin/files/upload/batch',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.code === '1000') {
+                        $('#result').html('<div style="color: green;">上传成功！</div>');
+                        // 清空文件列表
+                        document.getElementById('fileInput').value = '';
+                        updateFileDisplay();
+                    } else {
+                        $('#result').html('<div style="color: red;">上传失败: ' + response.msg + '</div>');
+                    }
+                },
+                error: function() {
+                    $('#result').html('<div style="color: red;">上传失败，请稍后重试</div>');
+                }
+            });
+        }
+        
+        // 页面加载完成后初始化
+        $(document).ready(function() {
+            initDragUpload();
+        });
+    </script>
+</body>
+</html>
