@@ -114,12 +114,6 @@
         <!--隐藏的博文内容-->
         <div id="blog-content" style="display: none;" th:utext="${blog.content}"></div>
         
-        <!--调试信息-->
-        <div style="display: none;" id="debug-info">
-          <p>Blog Status: <span th:text="${blog.blogStatus}">null</span></p>
-          <p>Content Length: <span th:text="${#strings.length(blog.content)}">0</span></p>
-          <p>Content Preview: <span th:text="${#strings.length(blog.content) > 100 ? #strings.substring(blog.content, 0, 100) : blog.content}">empty</span></p>
-        </div>
         
         <!--显示博文摘要-->
         <div id="blog-summary">
@@ -135,19 +129,6 @@
 
       <!--普通博文内容显示-->
       <div id="normal-content" style="display: none;">
-        <!--中间主要内容部分-->
-        
-        <!--调试信息-->
-        <div class="ui message info" style="margin-bottom: 20px;">
-          <i class="info circle icon"></i>
-          <div class="content">
-            <div class="header">调试信息</div>
-            <p>Blog Status: <span th:text="${blog.blogStatus}">null</span></p>
-            <p>Content Length: <span th:text="${#strings.length(blog.content)}">0</span></p>
-            <p>Content Preview: <span th:text="${#strings.length(blog.content) > 100 ? #strings.substring(blog.content, 0, 100) : blog.content}">empty</span></p>
-          </div>
-        </div>
-        
         <div id="content" class="typo  typo-selection js-toc-content m-padded-lr-responsive m-padded-tb-large" th:utext="${blog.content}">
 
         <h2 id="section1">一、关于 <i class="serif">Typo.css</i></h2>
@@ -1000,13 +981,8 @@ h5,h6{font-size:1em;}
         // 隐藏访问控制界面
         $('#access-control').hide();
         
-        // 显示调试信息
-        $('#debug-info').show();
-        
         // 显示博文内容
         const blogContent = $('#blog-content').html();
-        console.log('Blog content length:', blogContent ? blogContent.length : 0);
-        console.log('Blog content preview:', blogContent ? blogContent.substring(0, 100) : 'empty');
         
         if (blogContent && blogContent.trim().length > 0) {
             $('#normal-content').html('<div id="content" class="typo typo-selection js-toc-content m-padded-lr-responsive m-padded-tb-large">' + blogContent + '</div>');
@@ -1037,11 +1013,9 @@ h5,h6{font-size:1em;}
     // 页面加载时检查博客状态并显示内容
     $(document).ready(function() {
         const blogStatus = /*[[${blog.blogStatus}]]*/ null;
-        console.log('Page loaded, blog status:', blogStatus);
         
         // 如果是普通公开状态，直接显示内容
         if (blogStatus == null || blogStatus == 1) {
-            console.log('Showing normal content');
             $('#access-control').hide();
             $('#normal-content').show();
         }

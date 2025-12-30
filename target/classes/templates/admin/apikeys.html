@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API密钥管理</title>
+    <link href="../static/images/favicon.ico" th:href="@{/images/me.jpg}" rel="icon" type="image/x-ico">
+    <link rel="stylesheet" href="../../static/lib/semantic/dist/semantic.min.css" th:href="@{/lib/semantic/dist/semantic.min.css}">
+    <link rel="stylesheet" href="../../static/css/me.css" th:href="@{/css/me.css}">
+    <style>
+        .key-text { font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 5px 10px; border-radius: 4px; }
+        .status-tag { padding: 5px 12px; border-radius: 20px; font-size: 12px; }
+        .status-active { background: #21ba45; color: white; }
+        .status-disabled { background: #db2828; color: white; }
+        .copy-btn { cursor: pointer; color: #2185d0; }
+        .copy-btn:hover { color: #1678c2; }
+    </style>
+</head>
+<body>
+
+<!--导航栏-->
+<nav class="ui inverted gird-header">
+    <div class="ui container">
+        <div class="ui inverted secondary stackable menu">
+            <h2 class="ui olive header item" style="font-family: STSong">管理后台</h2>
+            <a href="#" th:href="@{/admin/blogs}" class="m-item item m-mobile-hide"><i class="home icon"></i>文章管理</a>
+            <a href="#" th:href="@{/admin/types}" class="m-item item m-mobile-hide"><i class="clone outline icon"></i>分类管理</a>
+            <a href="#" th:href="@{/admin/memorys}" class="m-item item m-mobile-hide"><i class="coffee icon"></i>流年记管理</a>
+            <a href="#" th:href="@{/admin/friendlinks}" class="m-item item m-mobile-hide"><i class="pencil alternate icon"></i>友链管理</a>
+            <a href="#" th:href="@{/admin/pictures}" class="m-item item m-mobile-hide"><i class="image icon"></i>相册管理</a>
+            <a href="#" th:href="@{/admin/resources}" class="m-item item m-mobile-hide"><i class="graduation cap icon"></i>资源管理</a>
+            <a href="#" th:href="@{/admin/files}" class="m-item item m-mobile-hide"><i class="file icon"></i>文件管理</a>
+            <a href="#" th:href="@{/admin/apikeys}" class="active m-item item m-mobile-hide"><i class="key icon"></i>API密钥</a>
+            <div class="right m-item m-mobile-hide menu">
+                <div class="ui dropdown item">
+                    <div class="text">
+                        <img class="ui avatar image" src="/static/images/me.jpg" th:src="@{/images/me.jpg}">
+                        <span th:text="${session.user != null ? session.user.nickname : 'tear'}">tear</span>
+                    </div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="#" th:href="@{/admin/logout}" class="item">注销</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="m-padded-tb-hugex">
+    <div class="ui container">
+        <div class="ui top attached segment">
+            <div class="ui middle aligned two column grid">
+                <div class="column">
+                    <h3 class="ui header"><i class="key icon"></i>API密钥管理</h3>
+                </div>
+                <div class="right aligned column">
+                    <button class="ui teal button" onclick="showAddModal()"><i class="plus icon"></i>新增密钥</button>
+                    <button class="ui blue button" onclick="loadList()"><i class="refresh icon"></i>刷新</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui attached segment">
+            <table class="ui celled striped table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>密钥</th>
+                    <th>联系方式</th>
+                    <th>版本</th>
+                    <th>状态</th>
+                    <th>总启动</th>
+                    <th>今日启动</th>
+                    <th>过期时间</th>
+                    <th>最后访问</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody id="keyTableBody">
+                <tr th:each="s : ${secrets}">
+                    <td th:text="${s.id}"></td>
+                    <td>
+                        <span class="key-text" th:text="${s.tearSecret}"></span>
+                        <i class="copy outline icon copy-btn" th:data-key="${s.tearSecret}" onclick="copyKey(this)"></i>
+                    </td>
+                    <td th:text="${s.contact}"></td>
+                    <td th:text="${s.version}"></td>
+                    <td>
+                        <span th:if="${s.status == 0}" class="status-tag status-active">启用</span>
+                        <span th:if="${s.status != 0}" class="status-tag status-disabled">禁用</span>
+                    </td>
+                    <td th:text="${s.accessCount}"></td>
+                    <td th:text="${s.todayCount != null ? s.todayCount : 0}"></td>
+                    <td th:text="${s.expireTime != null ? #dates.format(s.expireTime, 'yyyy-MM-dd HH:mm') : '永久'}"></td>
+                    <td th:text="${s.lastAccessTime != null ? #dates.format(s.lastAccessTime, 'yyyy-MM-dd HH:mm') : '-'}"></td>
+                    <td>
+                        <button th:if="${s.status == 0}" class="ui mini orange button" th:data-id="${s.id}" onclick="toggleStatus(this, 1)">禁用</button>
+                        <button th:if="${s.status != 0}" class="ui mini green button" th:data-id="${s.id}" onclick="toggleStatus(this, 0)">启用</button>
+                        <button class="ui mini red button" th:data-id="${s.id}" onclick="deleteKey(this)">删除</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 新增密钥弹窗 -->
+<div class="ui modal" id="addModal">
+    <div class="header"><i class="key icon"></i>新增API密钥</div>
+    <div class="content">
+        <form class="ui form" id="addForm">
+            <div class="field">
+                <label>联系方式 <span style="color:red">*</span></label>
+                <input type="text" name="contact" placeholder="QQ/邮箱/TG等">
+            </div>
+            <div class="field">
+                <label>版本号</label>
+                <input type="text" name="version" value="1.0.0" placeholder="1.0.0">
+            </div>
+            <div class="field">
+                <label>有效天数 (0为永久)</label>
+                <input type="number" name="days" value="0" min="0">
+            </div>
+            <div class="field">
+                <label>备注</label>
+                <textarea name="remark" rows="2" placeholder="可选"></textarea>
+            </div>
+        </form>
+    </div>
+    <div class="actions">
+        <button class="ui cancel button">取消</button>
+        <button class="ui teal button" onclick="submitAdd()">创建</button>
+    </div>
+</div>
+
+<!-- 密钥显示弹窗 -->
+<div class="ui modal" id="keyModal">
+    <div class="header"><i class="check circle icon green"></i>密钥创建成功</div>
+    <div class="content">
+        <p>请妥善保存以下密钥，关闭后将无法再次查看完整密钥：</p>
+        <div class="ui segment">
+            <code id="newKeyDisplay" style="font-size: 16px; word-break: break-all;"></code>
+        </div>
+        <button class="ui blue button" onclick="copyNewKey()"><i class="copy icon"></i>复制密钥</button>
+    </div>
+    <div class="actions">
+        <button class="ui green button" onclick="closeKeyModal()">确定</button>
+    </div>
+</div>
+
+<script src="../../static/lib/jquery-3.2.1/jquery-3.2.1.min.js" th:src="@{/lib/jquery-3.2.1/jquery-3.2.1.min.js}"></script>
+<script src="../../static/lib/semantic/dist/semantic.min.js" th:src="@{/lib/semantic/dist/semantic.min.js}"></script>
+<script>
+    // 等待jQuery加载完成
+    $(document).ready(function() {
+        $('.ui.dropdown').dropdown();
+        // 初始化modal
+        $('#addModal').modal({
+            closable: true
+        });
+        $('#keyModal').modal({
+            closable: false
+        });
+    });
+
+    function showAddModal() {
+        document.getElementById('addForm').reset();
+        $('#addModal').modal('show');
+    }
+
+    function submitAdd() {
+        var form = $('#addForm');
+        var contact = form.find('[name=contact]').val();
+        if (!contact || !contact.trim()) {
+            alert('请填写联系方式');
+            return;
+        }
+        
+        var submitBtn = $('#addModal .teal.button');
+        submitBtn.addClass('loading disabled');
+        
+        $.ajax({
+            url: '/admin/apikeys/add',
+            type: 'POST',
+            data: form.serialize(),
+            dataType: 'json',
+            success: function(res) {
+                submitBtn.removeClass('loading disabled');
+                if (res.code === 0) {
+                    $('#addModal').modal('hide');
+                    document.getElementById('newKeyDisplay').textContent = res.tearSecret;
+                    $('#keyModal').modal('show');
+                } else {
+                    alert('创建失败: ' + res.msg);
+                }
+            },
+            error: function(xhr, status, error) {
+                submitBtn.removeClass('loading disabled');
+                console.error('请求失败:', status, error);
+                alert('请求失败: ' + error);
+            }
+        });
+    }
+
+    function closeKeyModal() {
+        $('#keyModal').modal('hide');
+        location.reload();
+    }
+
+    function toggleStatus(btn, status) {
+        var id = btn.getAttribute('data-id');
+        if (!confirm(status === 1 ? '确定禁用该密钥？' : '确定启用该密钥？')) return;
+        $.post('/admin/apikeys/status', {id: id, status: status}, function(res) {
+            if (res.code === 0) {
+                location.reload();
+            } else {
+                alert(res.msg);
+            }
+        });
+    }
+
+    function deleteKey(btn) {
+        var id = btn.getAttribute('data-id');
+        if (!confirm('确定删除该密钥？此操作不可恢复！')) return;
+        $.post('/admin/apikeys/delete', {id: id}, function(res) {
+            if (res.code === 0) {
+                location.reload();
+            } else {
+                alert(res.msg);
+            }
+        });
+    }
+
+    function copyKey(el) {
+        var key = el.getAttribute('data-key');
+        navigator.clipboard.writeText(key).then(function() {
+            alert('已复制: ' + key);
+        });
+    }
+
+    function copyNewKey() {
+        var key = document.getElementById('newKeyDisplay').textContent;
+        navigator.clipboard.writeText(key).then(function() {
+            alert('已复制密钥');
+        });
+    }
+
+    function loadList() {
+        location.reload();
+    }
+</script>
+</body>
+</html>
