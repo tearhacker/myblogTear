@@ -33,4 +33,13 @@ public interface ApiSecretDao {
 
     // 删除密钥
     int deleteById(@Param("id") Long id);
+
+    // 统计：全网总启动次数
+    Long sumAccessCount();
+
+    // 统计：今日总启动次数
+    Long sumTodayCount();
+
+    // 统计：活跃密钥数量(状态正常且未过期)
+    Integer countActiveKeys();
 }

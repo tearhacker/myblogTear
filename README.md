@@ -10,13 +10,6 @@ git@github.com:tearhacker/myblogTear.git
 个人博客系统（SpringBoot+Mybatis）
 =======
 #个人博客系统（SpringBoot+Mybatis）
->>>>>>> 03ef562 (更新修正:部分问题-泪心)
-<<<<<<< HEAD
-=======
-=======
-#个人博客系统（SpringBoot+Mybatis）
->>>>>>> origin/master
->>>>>>> 48454f90d31cb8dc2786a0dc5250f4bd2bc60e38
 
 博客地址：暂不公开
 

@@ -112,6 +112,31 @@ public class ApiSecretController {
     }
 
     /**
+     * 全局统计接口
+     * GET /api/secret/stats
+     * 返回: 全网总启动次数、今日总启动次数、活跃密钥数量
+     */
+    @GetMapping("/stats")
+    public Map<String, Object> stats() {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            Map<String, Object> data = new HashMap<>();
+            data.put("totalAccess", apiSecretDao.sumAccessCount());      // 全网总启动次数
+            data.put("todayAccess", apiSecretDao.sumTodayCount());       // 今日总启动次数
+            data.put("activeKeys", apiSecretDao.countActiveKeys());      // 活跃密钥数量
+            data.put("ts", System.currentTimeMillis() / 1000);
+            
+            result.put("code", 0);
+            result.put("msg", "ok");
+            result.put("data", data);
+        } catch (Exception e) {
+            result.put("code", -1);
+            result.put("msg", "获取统计失败: " + e.getMessage());
+        }
+        return result;
+    }
+
+    /**
      * 隐蔽的新增密钥接口
      * POST /TearGame/new_create
      * 参数: contact(联系方式), version(版本号,可选), remark(备注,可选), days(有效天数,可选,0或不传为永久)
@@ -176,6 +201,25 @@ public class ApiSecretController {
         return result;
     }
 
+    private static final String TOKEN_SECRET = "TearGame2024Key";  // 基础密钥
+    private static final int TOKEN_LEN = 16;
+
+    /* 生成动态token - 用户密钥 + 时间戳 + 基础密钥 */
+    private String calcToken(long ts, String userKey) {
+        // 混合: 基础密钥 + 用户密钥
+        String mixed = TOKEN_SECRET + userKey;
+        int hash = (int) ts;
+        for (char c : mixed.toCharArray()) {
+            hash = hash * 31 + c;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < TOKEN_LEN; i++) {
+            sb.append((char) ('A' + (Math.abs((hash >> (i % 8)) + i)) % 26));
+            hash = hash * 17 + i;
+        }
+        return sb.toString();
+    }
+
     private Map<String, Object> buildData(ApiSecret secret) {
         Map<String, Object> data = new HashMap<>();
         data.put("version", secret.getVersion());
@@ -183,6 +227,12 @@ public class ApiSecretController {
         data.put("expireTime", secret.getExpireTime() != null ? secret.getExpireTime().getTime() / 1000 : 0);
         data.put("accessCount", secret.getAccessCount() != null ? secret.getAccessCount() : 0);
         data.put("todayCount", secret.getTodayCount() != null ? secret.getTodayCount() : 0);
+        
+        // 生成动态token: 时间戳 + 用户密钥
+        long ts = System.currentTimeMillis() / 1000;
+        String token = calcToken(ts, secret.getTearSecret());
+        data.put("ts", ts);
+        data.put("token", token);
         return data;
     }
 
