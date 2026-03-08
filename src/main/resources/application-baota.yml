@@ -1,0 +1,64 @@
+# 宝塔面板部署配置文件
+# 文件名：application-baota.yml
+# 使用方法：在启动时指定配置文件：--spring.profiles.active=baota
+
+# ========================================================
+#               宝塔面板部署专用配置
+# ========================================================
+
+# #################### 核心框架配置 ####################
+spring:
+  # 数据源配置（宝塔面板MySQL）
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/myblog?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:your_password_here}
+    hikari:
+      max-lifetime: 500000
+      connection-timeout: 30000
+      maximum-pool-size: 20
+
+  # 文件上传配置（宝塔面板优化）
+  servlet:
+    multipart:
+      max-file-size: 800MB
+      max-request-size: 1GB
+      file-size-threshold: 50MB
+      location: /tmp
+      enabled: true
+
+# #################### 文件上传配置 ####################
+file:
+  upload:
+    # 宝塔面板推荐路径：网站根目录下的uploads文件夹
+    path: ${FILE_UPLOAD_PATH:/www/wwwroot/yourdomain/uploads}
+    url-prefix: /api/files
+    max-size: 800MB
+
+# #################### 服务器配置 ####################
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  tomcat:
+    max-swallow-size: 1GB
+    connection-timeout: 300000
+    max-http-form-post-size: 1GB
+    # 宝塔面板Tomcat优化
+    max-threads: 200
+    min-spare-threads: 10
+
+# #################### 日志配置 ####################
+logging:
+  level:
+    root: info
+    com.star: debug
+  file:
+    name: /www/wwwlogs/myblog/blog.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# #################### 自定义配置 ####################
+comment.avatar: /images/avatar.png
+message.avatar: /images/avatar.png

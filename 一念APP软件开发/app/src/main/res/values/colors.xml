@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主色调 - 天空蓝 -->
+    <color name="sky_blue">#87CEEB</color>
+    <color name="sky_blue_light">#B0E0E6</color>
+    <color name="sky_blue_dark">#5F9EA0</color>
+    
+    <!-- 辅助色 - 草原绿 -->
+    <color name="grass_green">#7CB342</color>
+    <color name="grass_green_light">#9CCC65</color>
+    <color name="grass_green_dark">#558B2F</color>
+    
+    <!-- 暖白色系 -->
+    <color name="warm_white">#FFF8E7</color>
+    <color name="cream">#FFFDD0</color>
+    <color name="ivory">#FFFFF0</color>
+    
+    <!-- 主题色 -->
+    <color name="colorPrimary">#7CB342</color>
+    <color name="colorPrimaryDark">#558B2F</color>
+    <color name="colorAccent">#87CEEB</color>
+    
+    <color name="primary">#7CB342</color>
+    <color name="primary_light">#9CCC65</color>
+    <color name="primary_dark">#558B2F</color>
+    
+    <color name="secondary">#87CEEB</color>
+    <color name="secondary_light">#B0E0E6</color>
+    <color name="secondary_dark">#5F9EA0</color>
+    
+    <!-- 背景色 -->
+    <color name="background">#F0F8FF</color>
+    <color name="background_gradient_start">#87CEEB</color>
+    <color name="background_gradient_end">#9CCC65</color>
+    
+    <!-- 玻璃拟态 -->
+    <color name="glass_white">#E6FFFFFF</color>
+    <color name="glass_border">#33FFFFFF</color>
+    <color name="glass_shadow">#1A000000</color>
+    
+    <!-- 卡片 -->
+    <color name="card_bg">#F5FFFA</color>
+    <color name="card_bg_transparent">#E0FFFFFF</color>
+    
+    <!-- 文字颜色 -->
+    <color name="text_primary">#2E5339</color>
+    <color name="text_secondary">#5A7D6A</color>
+    <color name="text_hint">#8FBC8F</color>
+    <color name="text_light">#B8D4B8</color>
+    
+    <!-- 分割线 -->
+    <color name="divider">#E8F5E9</color>
+    <color name="border">#C8E6C9</color>
+    
+    <!-- 基础色 -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+    
+    <!-- 签到相关 -->
+    <color name="island_bg">#4A7C59</color>
+    <color name="island_gradient_start">#7CB342</color>
+    <color name="island_gradient_end">#87CEEB</color>
+    
+    <!-- 评论气泡 -->
+    <color name="comment_bubble">#E8F5E9</color>
+    
+    <!-- 视频覆盖层 -->
+    <color name="video_overlay">#80000000</color>
+    
+    <!-- 点赞心形 -->
+    <color name="heart_red">#E91E63</color>
+    <color name="heart_pink">#F8BBD9</color>
+    
+    <!-- 恋爱签到主题 -->
+    <color name="love_primary">#FF6B9D</color>
+    <color name="love_primary_light">#FFB6C1</color>
+    <color name="love_primary_dark">#C44569</color>
+    <color name="love_gradient_start">#FF6B9D</color>
+    <color name="love_gradient_end">#FFB6C1</color>
+    <color name="love_heart">#FF4081</color>
+    <color name="love_heart_light">#F8BBD9</color>
+    <color name="love_text">#8B2252</color>
+    <color name="love_text_light">#C71585</color>
+    <color name="love_bg">#FFF0F5</color>
+    
+    <!-- 星轨告白主题 -->
+    <color name="star_trail_bg">#0A192F</color>
+    <color name="star_trail_bg_light">#112240</color>
+    <color name="star_trail_star">#E6F1FF</color>
+    <color name="star_trail_star_glow">#64FFDA</color>
+    <color name="star_trail_pink">#FF6B9D</color>
+    <color name="star_trail_purple">#B388EB</color>
+    <color name="star_trail_gold">#FFD700</color>
+    <color name="star_trail_text">#E6F1FF</color>
+    <color name="star_trail_text_secondary">#8892B0</color>
+    <color name="star_trail_accent">#64FFDA</color>
+    <color name="star_trail_dim">#233554</color>
+</resources>

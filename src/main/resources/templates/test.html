@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统测试页面</title>
+    <link rel="stylesheet" href="../static/lib/semantic/dist/semantic.min.css" th:href="@{/lib/semantic/dist/semantic.min.css}">
+    <link rel="stylesheet" href="../static/css/me.css" th:href="@{/css/me.css}">
+</head>
+<body>
+
+<div class="ui container" style="margin-top: 50px;">
+    <div class="ui segment">
+        <h1 class="ui header">
+            <i class="checkmark icon"></i>
+            系统状态检查
+        </h1>
+        
+        <div class="ui message">
+            <div class="header">系统修复完成</div>
+            <p>已修复以下问题：</p>
+            <ul class="list">
+                <li>✓ 添加了缺失的FooterController</li>
+                <li>✓ 修复了/footer/newblog接口404错误</li>
+                <li>✓ 修复了FileUploadUtil的Spring注解问题</li>
+                <li>✓ 确保系统可以正常启动</li>
+            </ul>
+        </div>
+        
+        <div class="ui buttons">
+            <a href="/" class="ui green button">
+                <i class="home icon"></i>返回首页
+            </a>
+            <a href="/admin" class="ui blue button">
+                <i class="cog icon"></i>管理后台
+            </a>
+            <a href="/test/upload" class="ui orange button">
+                <i class="upload icon"></i>文件上传测试
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="../static/lib/jquery-3.2.1/jquery-3.2.1.min.js" th:src="@{/lib/jquery-3.2.1/jquery-3.2.1.min.js}"></script>
+<script src="../static/lib/semantic/dist/semantic.min.js" th:src="@{/lib/semantic/dist/semantic.min.js}"></script>
+
+</body>
+</html>

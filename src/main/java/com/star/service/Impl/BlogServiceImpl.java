@@ -1,0 +1,217 @@
+package com.star.service.Impl;
+
+import com.star.NotFoundException;
+import com.star.dao.BlogDao;
+import com.star.entity.Blog;
+import com.star.queryvo.*;
+import com.star.service.BlogService;
+import com.star.util.MarkdownUtils;
+import com.star.util.MD5Utils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @Description: 博客列表业务层接口实现类
+ * @Date: Created in 23:47 2020/6/2
+ * @Author: 泪心
+ * @QQ群: 435539500
+ * @URL: https://github.com/tearhacker/
+ */
+@Service
+public class BlogServiceImpl implements BlogService {
+
+    @Autowired
+    private BlogDao blogDao;
+
+
+    //保存新增博客
+    @Override
+    public int saveBlog(Blog blog) {
+        blog.setCreateTime(new Date());
+        blog.setUpdateTime(new Date());
+        blog.setViews(0);
+        blog.setCommentCount(0);
+        
+        // 处理博文状态和密码
+        processBlogSecurity(blog);
+        
+        return blogDao.saveBlog(blog);
+    }
+
+    //查询文章管理列表
+    @Override
+    public List<BlogQuery> getAllBlog() {
+        return blogDao.getAllBlogQuery();
+    }
+
+    //删除博客
+    @Override
+    public void deleteBlog(Long id) {
+        blogDao.deleteBlog(id);
+    }
+
+    //查询编辑修改的文章
+    @Override
+    public ShowBlog getBlogById(Long id) {
+        return blogDao.getBlogById(id);
+    }
+
+    //编辑修改文章
+    @Override
+    public int updateBlog(ShowBlog showBlog) {
+        showBlog.setUpdateTime(new Date());
+        
+        // 处理博文状态和密码
+        processShowBlogSecurity(showBlog);
+        
+        return blogDao.updateBlog(showBlog);
+    }
+
+    //搜索博客管理列表
+    @Override
+    public List<BlogQuery> getBlogBySearch(SearchBlog searchBlog) {
+        return blogDao.searchByTitleAndType(searchBlog);
+    }
+
+
+    //查询首页最新博客列表信息
+    @Override
+    // @Cacheable(value = "blogList",key = "'blog'")       // redis缓存
+    public List<FirstPageBlog> getAllFirstPageBlog() {
+        return blogDao.getFirstPageBlog();
+    }
+
+    //查询首页最新推荐信息
+    @Override
+    // @Cacheable(value = "commentblogList",key = "'commentblog'")       // redis缓存
+    public List<RecommendBlog> getRecommendedBlog() {
+        List<RecommendBlog> allRecommendBlog = blogDao.getAllRecommendBlog();
+        return allRecommendBlog;
+    }
+
+    //搜索博客列表
+    @Override
+    public List<FirstPageBlog> getSearchBlog(String query) {
+        return blogDao.getSearchBlog(query);
+    }
+
+    //统计博客总数
+    @Override
+    public Integer getBlogTotal() {
+        return blogDao.getBlogTotal();
+    }
+
+    //统计访问总数
+    @Override
+    public Integer getBlogViewTotal() {
+        return blogDao.getBlogViewTotal();
+    }
+
+    //统计评论总数
+    @Override
+    public Integer getBlogCommentTotal() {
+        return blogDao.getBlogCommentTotal();
+    }
+
+    //统计留言总数
+    @Override
+    public Integer getBlogMessageTotal() {
+        return blogDao.getBlogMessageTotal();
+    }
+
+    //查询博客详情
+    @Override
+    public DetailedBlog getDetailedBlog(Long id) {
+        DetailedBlog detailedBlog = blogDao.getDetailedBlog(id);
+        if (detailedBlog == null) {
+            throw new NotFoundException("该博客不存在");
+        }
+        String content = detailedBlog.getContent();
+        detailedBlog.setContent(MarkdownUtils.markdownToHtmlExtensions(content));
+        //文章访问数量自增
+        blogDao.updateViews(id);
+        //文章评论数量更新
+        blogDao.getCommentCountById(id);
+        return detailedBlog;
+    }
+
+    //分类页面查询
+    @Override
+    public List<FirstPageBlog> getByTypeId(Long typeId) {
+        return blogDao.getByTypeId(typeId);
+    }
+
+    //查询最新评论
+    @Override
+    // @Cacheable(value = "NewCommentList",key = "'NewComment'")      // redis缓存
+    public List<NewComment> getNewComment() {
+        return blogDao.getNewComment();
+    }
+
+    /**
+     * 处理Blog实体的安全字段
+     * @param blog Blog实体
+     */
+    private void processBlogSecurity(Blog blog) {
+        // 设置默认博文状态
+        if (blog.getBlogStatus() == null) {
+            blog.setBlogStatus(1); // 默认为普通公开
+        }
+        
+        // 处理访问密码
+        String accessPassword = blog.getAccessPassword();
+        if (accessPassword != null && !accessPassword.trim().isEmpty()) {
+            // 密码不为空时进行MD5加密
+            blog.setAccessPassword(MD5Utils.code(accessPassword.trim()));
+        } else {
+            // 密码为空时清空
+            blog.setAccessPassword(null);
+        }
+    }
+    
+    /**
+     * 处理ShowBlog实体的安全字段
+     * @param showBlog ShowBlog实体
+     */
+    private void processShowBlogSecurity(ShowBlog showBlog) {
+        // 设置默认博文状态
+        if (showBlog.getBlogStatus() == null) {
+            showBlog.setBlogStatus(1); // 默认为普通公开
+        }
+        
+        // 处理访问密码
+        String accessPassword = showBlog.getAccessPassword();
+        if (accessPassword != null && !accessPassword.trim().isEmpty()) {
+            accessPassword = accessPassword.trim();
+            // 判断密码是否已经是MD5加密过的（32位十六进制字符）
+            // 如果已经是MD5格式，说明用户没有修改密码，不需要再次加密
+            if (!isMD5Format(accessPassword)) {
+                // 密码不是MD5格式，需要进行加密
+                showBlog.setAccessPassword(MD5Utils.code(accessPassword));
+            }
+            // 如果已经是MD5格式，保持原值不变
+        } else {
+            // 密码为空时清空
+            showBlog.setAccessPassword(null);
+        }
+    }
+    
+    /**
+     * 判断字符串是否为MD5格式（32位十六进制字符）
+     * @param str 要判断的字符串
+     * @return 是否为MD5格式
+     */
+    private boolean isMD5Format(String str) {
+        if (str == null || str.length() != 32) {
+            return false;
+        }
+        // MD5加密后的字符串只包含0-9和a-f（小写）或A-F（大写）
+        return str.matches("^[a-fA-F0-9]{32}$");
+    }
+
+}

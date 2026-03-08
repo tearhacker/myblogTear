@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:colorPrimary">@color/grass_green</item>
+        <item name="android:colorPrimaryDark">@color/grass_green_dark</item>
+        <item name="android:colorAccent">@color/sky_blue</item>
+        <item name="android:windowBackground">@drawable/bg_gradient_nature</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>

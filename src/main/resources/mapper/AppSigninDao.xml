@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.dao.AppSigninDao">
+
+    <resultMap id="AppSigninResultMap" type="com.star.entity.AppSignin">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="qq_number" property="qqNumber"/>
+        <result column="signin_date" property="signinDate"/>
+        <result column="signin_time" property="signinTime"/>
+        <result column="continuous_days" property="continuousDays"/>
+        <result column="total_days" property="totalDays"/>
+        <result column="signin_message" property="signinMessage"/>
+        <result column="mood" property="mood"/>
+        <result column="ai_generated" property="aiGenerated"/>
+    </resultMap>
+
+    <select id="findByUserIdAndDate" resultMap="AppSigninResultMap">
+        SELECT * FROM app_signin WHERE user_id = #{userId} AND signin_date = #{signinDate}
+    </select>
+
+    <select id="findLatestByUserId" resultMap="AppSigninResultMap">
+        SELECT * FROM app_signin WHERE user_id = #{userId} ORDER BY signin_date DESC LIMIT 1
+    </select>
+
+    <select id="findByUserId" resultMap="AppSigninResultMap">
+        SELECT * FROM app_signin WHERE user_id = #{userId} ORDER BY signin_date DESC
+    </select>
+
+    <select id="findByQqNumber" resultMap="AppSigninResultMap">
+        SELECT * FROM app_signin WHERE qq_number = #{qqNumber} ORDER BY signin_date DESC
+    </select>
+
+    <insert id="insert" parameterType="com.star.entity.AppSignin" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO app_signin (user_id, qq_number, signin_date, signin_time, continuous_days, total_days, signin_message, mood, ai_generated)
+        VALUES (#{userId}, #{qqNumber}, #{signinDate}, #{signinTime}, #{continuousDays}, #{totalDays}, #{signinMessage}, #{mood}, #{aiGenerated})
+    </insert>
+
+    <update id="update" parameterType="com.star.entity.AppSignin">
+        UPDATE app_signin
+        SET continuous_days = #{continuousDays},
+            total_days = #{totalDays},
+            signin_message = #{signinMessage},
+            mood = #{mood},
+            ai_generated = #{aiGenerated}
+        WHERE id = #{id}
+    </update>
+
+    <select id="countByUserId" resultType="int">
+        SELECT COUNT(*) FROM app_signin WHERE user_id = #{userId}
+    </select>
+
+    <select id="countContinuousDays" resultType="int">
+        SELECT continuous_days FROM app_signin WHERE user_id = #{userId} ORDER BY signin_date DESC LIMIT 1
+    </select>
+
+</mapper>

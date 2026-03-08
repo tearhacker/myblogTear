@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>博客管理登录</title>
+  <link href="../static/images/favicon.ico" th:href="@{/images/me.jpg}" rel="icon" type="image/x-ico">
+  <link rel="stylesheet" href="../../static/lib/semantic/dist/semantic.min.css" th:href="@{/lib/semantic/dist/semantic.min.css}">
+  <link rel="stylesheet" href="../../static/css/me.css" th:href="@{/css/me.css}">
+  <style>
+    .remember-me-field {
+      text-align: left;
+      margin: 15px 0;
+    }
+    
+    .remember-me-field .ui.checkbox {
+      font-size: 14px;
+    }
+    
+    .remember-me-field .ui.checkbox label {
+      color: #666;
+      cursor: pointer;
+    }
+    
+    .remember-me-field .ui.checkbox input:checked ~ label:before {
+      background-color: #00b5ad;
+      border-color: #00b5ad;
+    }
+  </style>
+</head>
+<body>
+
+<br>
+<br>
+<br>
+ <div class="m-container-small m-padded-tb-massive" style="max-width: 30em !important;">
+   <div class="ur container">
+     <div class="ui middle aligned center aligned grid">
+       <div class="column">
+         <h2 class="ui teal image header">
+           <div class="content">
+             管理后台登录
+           </div>
+         </h2>
+         <form class="ui large form" method="post" action="#" th:action="@{/admin/login}">
+           <div class="ui  segment">
+             <div class="field">
+               <div class="ui left icon input">
+                 <i class="user icon"></i>
+                 <input type="text" name="username" placeholder="用户名">
+               </div>
+             </div>
+             <div class="field">
+               <div class="ui left icon input">
+                 <i class="lock icon"></i>
+                 <input type="password" name="password" placeholder="密码">
+               </div>
+             </div>
+             <div class="field remember-me-field">
+               <div class="ui checkbox">
+                 <input type="checkbox" name="rememberMe" id="rememberMe">
+                 <label for="rememberMe">记住密码</label>
+               </div>
+             </div>
+             <button class="ui fluid large teal submit button">登   录</button>
+           </div>
+
+           <div class="ui error mini message"></div>
+           <div class="ui mini negative message" th:unless="${#strings.isEmpty(message)}" th:text="${message}">用户名和密码错误</div>
+
+         </form>
+
+       </div>
+     </div>
+   </div>
+ </div>
+
+
+<script src="../../static/lib/jquery-3.2.1/jquery-3.2.1.min.js" th:src="@{/lib/jquery-3.2.1/jquery-3.2.1.min.js}"></script>
+<script src="../../static/lib/semantic/dist/semantic.min.js" th:src="@{/lib/semantic/dist/semantic.min.js}"></script>
+
+
+<script>
+  // 页面加载时检查是否有保存的登录信息
+  $(document).ready(function() {
+    // 检查Cookie中是否有保存的用户名和密码
+    const savedUsername = getCookie('remembered_username');
+    const savedPassword = getCookie('remembered_password');
+    
+    if (savedUsername && savedPassword) {
+      // 自动填充用户名和密码
+      $('input[name="username"]').val(savedUsername);
+      $('input[name="password"]').val(savedPassword);
+      $('#rememberMe').prop('checked', true);
+      
+      // 自动提交登录表单
+      setTimeout(function() {
+        $('.ui.form').submit();
+      }, 500);
+    }
+  });
+
+  // 表单验证和提交处理
+  $('.ui.form').form({
+    fields : {
+      username : {
+        identifier: 'username',
+        rules: [{
+          type : 'empty',
+          prompt: '请输入用户名'
+        }]
+      },
+      password : {
+        identifier: 'password',
+        rules: [{
+          type : 'empty',
+          prompt: '请输入密码'
+        }]
+      }
+    },
+    onSuccess: function(event, fields) {
+      // 如果勾选了记住密码，保存用户名和密码到Cookie
+      if ($('#rememberMe').is(':checked')) {
+        setCookie('remembered_username', fields.username, 30); // 保存30天
+        setCookie('remembered_password', fields.password, 30);
+      } else {
+        // 如果没有勾选，清除保存的Cookie
+        deleteCookie('remembered_username');
+        deleteCookie('remembered_password');
+      }
+    }
+  });
+
+  // Cookie操作函数
+  function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+  }
+
+  function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
+
+  function deleteCookie(name) {
+    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+</script>
+
+</body>
+</html>

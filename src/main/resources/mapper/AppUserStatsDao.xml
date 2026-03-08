@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.dao.AppUserStatsDao">
+
+    <resultMap id="AppUserStatsResultMap" type="com.star.entity.AppUserStats">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="qq_number" property="qqNumber"/>
+        <result column="total_signin_days" property="totalSigninDays"/>
+        <result column="continuous_signin_days" property="continuousSigninDays"/>
+        <result column="max_continuous_days" property="maxContinuousDays"/>
+        <result column="last_signin_date" property="lastSigninDate"/>
+        <result column="love_signin_days" property="loveSigninDays"/>
+        <result column="love_continuous_days" property="loveContinuousDays"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="findByUserId" resultMap="AppUserStatsResultMap">
+        SELECT * FROM app_user_stats WHERE user_id = #{userId}
+    </select>
+
+    <select id="findByQqNumber" resultMap="AppUserStatsResultMap">
+        SELECT * FROM app_user_stats WHERE qq_number = #{qqNumber}
+    </select>
+
+    <insert id="insert" parameterType="com.star.entity.AppUserStats" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO app_user_stats (user_id, qq_number, total_signin_days, continuous_signin_days, max_continuous_days, last_signin_date, love_signin_days, love_continuous_days)
+        VALUES (#{userId}, #{qqNumber}, #{totalSigninDays}, #{continuousSigninDays}, #{maxContinuousDays}, #{lastSigninDate}, #{loveSigninDays}, #{loveContinuousDays})
+    </insert>
+
+    <update id="update" parameterType="com.star.entity.AppUserStats">
+        UPDATE app_user_stats
+        SET total_signin_days = #{totalSigninDays},
+            continuous_signin_days = #{continuousSigninDays},
+            max_continuous_days = #{maxContinuousDays},
+            last_signin_date = #{lastSigninDate},
+            love_signin_days = #{loveSigninDays},
+            love_continuous_days = #{loveContinuousDays},
+            update_time = NOW()
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="incrementSigninDays">
+        UPDATE app_user_stats
+        SET total_signin_days = total_signin_days + 1,
+            continuous_signin_days = continuous_signin_days + 1,
+            max_continuous_days = CASE WHEN continuous_signin_days + 1 > max_continuous_days THEN continuous_signin_days + 1 ELSE max_continuous_days END,
+            last_signin_date = CURDATE(),
+            update_time = NOW()
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="incrementLoveSigninDays">
+        UPDATE app_user_stats
+        SET love_signin_days = love_signin_days + 1,
+            love_continuous_days = love_continuous_days + 1,
+            update_time = NOW()
+        WHERE user_id = #{userId}
+    </update>
+
+</mapper>

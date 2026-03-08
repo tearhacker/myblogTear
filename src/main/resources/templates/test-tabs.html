@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标签页测试</title>
+    <link rel="stylesheet" href="../static/lib/semantic/dist/semantic.min.css" th:href="@{/lib/semantic/dist/semantic.min.css}">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        
+        .file-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .file-tab {
+            background: #f0f0f0 !important;
+            color: #333 !important;
+            border: 1px solid #ddd !important;
+            transition: all 0.3s ease;
+        }
+        
+        .file-tab:hover {
+            background: #e0e0e0 !important;
+        }
+        
+        .file-tab.active {
+            background: #007bff !important;
+            color: white !important;
+            border: 1px solid #007bff !important;
+        }
+        
+        .file-tab-content {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            min-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h2>标签页切换测试</h2>
+        
+        <div class="file-tabs">
+            <button class="ui button file-tab active" onclick="switchFileTab('list')">
+                <i class="list icon"></i>文件列表
+            </button>
+            <button class="ui button file-tab" onclick="switchFileTab('upload')">
+                <i class="upload icon"></i>文件上传
+            </button>
+            <button class="ui button file-tab" onclick="switchFileTab('statistics')">
+                <i class="chart bar icon"></i>统计信息
+            </button>
+        </div>
+        
+        <div class="file-tab-content" id="fileListTab">
+            <h3>文件列表标签页</h3>
+            <p>这是文件列表的内容区域。</p>
+        </div>
+        
+        <div class="file-tab-content" id="fileUploadTab" style="display: none;">
+            <h3>文件上传标签页</h3>
+            <p>这是文件上传的内容区域。</p>
+        </div>
+        
+        <div class="file-tab-content" id="fileStatisticsTab" style="display: none;">
+            <h3>统计信息标签页</h3>
+            <p>这是统计信息的内容区域。</p>
+        </div>
+    </div>
+
+    <script src="../static/lib/jquery-3.2.1/jquery-3.2.1.min.js" th:src="@{/lib/jquery-3.2.1/jquery-3.2.1.min.js}"></script>
+    <script>
+        // 切换文件管理标签页
+        function switchFileTab(tab) {
+            console.log('切换标签页:', tab);
+            
+            // 隐藏所有标签页内容
+            $('.file-tab-content').hide();
+            $('.file-tab').removeClass('active');
+            
+            // 显示选中的标签页
+            let tabId = 'file' + tab.charAt(0).toUpperCase() + tab.slice(1) + 'Tab';
+            console.log('目标ID:', tabId);
+            $('#' + tabId).show();
+            $('.file-tab[onclick*="' + tab + '"]').addClass('active');
+        }
+        
+        $(document).ready(function() {
+            console.log('页面加载完成');
+            // 确保默认显示文件列表标签页
+            $('.file-tab-content').hide();
+            $('#fileListTab').show();
+            $('.file-tab').removeClass('active');
+            $('.file-tab[onclick*="list"]').addClass('active');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_star_trail">
+
+    <tear.conception.ui.view.StarTrailView
+        android:id="@+id/star_trail_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/tv_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:text="@string/star_trail_hint_tap"
+            android:textSize="14sp"
+            android:textColor="@color/star_trail_text_secondary"
+            android:alpha="0"
+            android:drawablePadding="8dp"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/memory_bubble_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:id="@+id/memory_bubble"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_memory_card_love"
+            android:padding="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_memory_header"
+                android:padding="16dp"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✨"
+                    android:textSize="24sp"/>
+
+                <TextView
+                    android:id="@+id/tv_memory_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1"
+                    android:gravity="center"/>
+
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxHeight="280dp"
+                android:fillViewport="true"
+                android:scrollbars="vertical"
+                android:overScrollMode="never">
+
+                <TextView
+                    android:id="@+id/tv_memory_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:textSize="15sp"
+                    android:textColor="#5D4037"
+                    android:lineSpacingExtra="8dp"
+                    android:letterSpacing="0.03"
+                    android:gravity="center"/>
+
+            </ScrollView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="#33FF6B9D"/>
+
+            <TextView
+                android:id="@+id/btn_next_memory"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="@string/star_trail_btn_next"
+                android:textSize="15sp"
+                android:textColor="@color/star_trail_pink"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:background="@drawable/bg_btn_memory_next"
+                android:clickable="true"
+                android:focusable="true"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/buttons_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="60dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/btn_accept"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="@string/star_trail_btn_accept"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:background="@drawable/bg_btn_star_accept"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/btn_wait"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="@string/star_trail_btn_wait"
+            android:textSize="16sp"
+            android:textColor="@color/star_trail_text"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:background="@drawable/bg_btn_star_wait"
+            android:clickable="true"
+            android:focusable="true"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/result_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#E60A192F"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="40dp">
+
+            <TextView
+                android:id="@+id/tv_result_heart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="❤"
+                android:textSize="80sp"
+                android:textColor="@color/star_trail_pink"
+                android:shadowColor="#80FF6B9D"
+                android:shadowDx="0"
+                android:shadowDy="4"
+                android:shadowRadius="16"/>
+
+            <TextView
+                android:id="@+id/tv_result_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:textSize="20sp"
+                android:textColor="@color/star_trail_text"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:letterSpacing="0.1"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_intro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:text="@string/star_trail_intro"
+        android:textSize="17sp"
+        android:textColor="@color/star_trail_text"
+        android:gravity="center"
+        android:lineSpacingExtra="10dp"
+        android:letterSpacing="0.05"
+        android:alpha="0"/>
+
+</FrameLayout>

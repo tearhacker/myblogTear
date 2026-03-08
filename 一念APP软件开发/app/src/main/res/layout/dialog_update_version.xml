@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="#80000000">
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:background="@drawable/bg_dynamic_island_dialog"
+        android:padding="0dp"
+        android:clipToPadding="false"
+        android:elevation="12dp">
+
+        <!-- 灵动岛顶部 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingTop="20dp"
+            android:paddingBottom="10dp">
+
+            <!-- 灵动岛胶囊 -->
+            <View
+                android:layout_width="80dp"
+                android:layout_height="6dp"
+                android:background="@drawable/bg_island_capsule"
+                android:alpha="0.3"/>
+
+            <!-- 太阳图标 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="☀️"
+                android:textSize="42sp"/>
+
+        </LinearLayout>
+
+        <!-- 版本标题 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingTop="5dp"
+            android:paddingBottom="15dp">
+
+            <TextView
+                android:id="@+id/tv_update_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="发现新版本"
+                android:textColor="#1565C0"
+                android:textSize="22sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_version_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="v1.0.1"
+                android:textColor="#42A5F5"
+                android:textSize="15sp"/>
+
+        </LinearLayout>
+
+        <!-- 更新内容 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:padding="16dp"
+            android:background="@drawable/bg_update_content">
+
+            <TextView
+                android:id="@+id/tv_update_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="更新内容"
+                android:textColor="#37474F"
+                android:textSize="14sp"
+                android:lineSpacingExtra="6dp"/>
+
+        </LinearLayout>
+
+        <!-- 草地装饰 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
+            android:background="@drawable/grass_divider"/>
+
+        <!-- 按钮区域 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="20dp">
+
+            <Button
+                android:id="@+id/btn_later"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="12dp"
+                android:text="稍后再说"
+                android:textColor="#546E7A"
+                android:textSize="15sp"
+                android:background="@drawable/btn_update_negative"
+                android:stateListAnimator="@null"
+                android:elevation="2dp"/>
+
+            <Button
+                android:id="@+id/btn_update"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:text="立即更新"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:background="@drawable/btn_update_positive"
+                android:stateListAnimator="@null"
+                android:elevation="4dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

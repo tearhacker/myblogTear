@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移动端文件下载测试</title>
+    <link rel="stylesheet" href="/lib/semantic/dist/semantic.min.css">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .device-info {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .download-btn {
+            margin: 10px 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="ui header">
+            <i class="mobile alternate icon"></i>
+            <div class="content">
+                移动端文件下载测试
+                <div class="sub header">测试不同设备上的文件下载功能</div>
+            </div>
+        </h1>
+
+        <!-- 设备信息 -->
+        <div class="test-section">
+            <h3>设备信息</h3>
+            <div class="device-info">
+                <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+                <p><strong>设备类型:</strong> <span id="deviceType"></span></p>
+                <p><strong>屏幕尺寸:</strong> <span id="screenSize"></span></p>
+                <p><strong>当前时间:</strong> <span id="currentTime"></span></p>
+            </div>
+        </div>
+
+        <!-- 下载测试 -->
+        <div class="test-section">
+            <h3>下载测试</h3>
+            <p>点击下面的按钮测试不同类型的文件下载：</p>
+            
+            <div class="ui buttons">
+                <button class="ui button download-btn" onclick="testDownload(1)">
+                    <i class="file image icon"></i>测试图片下载
+                </button>
+                <button class="ui button download-btn" onclick="testDownload(2)">
+                    <i class="file pdf icon"></i>测试PDF下载
+                </button>
+                <button class="ui button download-btn" onclick="testDownload(3)">
+                    <i class="file archive icon"></i>测试压缩包下载
+                </button>
+            </div>
+            
+            <div class="ui buttons">
+                <button class="ui button download-btn" onclick="testMobileDownload(1)">
+                    <i class="mobile icon"></i>移动端图片下载
+                </button>
+                <button class="ui button download-btn" onclick="testMobileDownload(2)">
+                    <i class="mobile icon"></i>移动端PDF下载
+                </button>
+                <button class="ui button download-btn" onclick="testMobileDownload(3)">
+                    <i class="mobile icon"></i>移动端压缩包下载
+                </button>
+            </div>
+        </div>
+
+        <!-- 测试结果 -->
+        <div class="test-section">
+            <h3>测试结果</h3>
+            <div id="testResults" class="ui message">
+                <div class="header">等待测试...</div>
+                <p>请点击上面的按钮进行下载测试，结果将显示在这里。</p>
+            </div>
+        </div>
+
+        <!-- 文件列表 -->
+        <div class="test-section">
+            <h3>可用文件列表</h3>
+            <button class="ui button" onclick="loadFileList()">
+                <i class="refresh icon"></i>刷新文件列表
+            </button>
+            <div id="fileList" class="ui cards" style="margin-top: 20px;">
+                <!-- 文件列表将在这里显示 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/lib/jquery-3.2.1/jquery-3.2.1.min.js"></script>
+    <script src="/lib/semantic/dist/semantic.min.js"></script>
+    
+    <script>
+        // 页面加载时显示设备信息
+        $(document).ready(function() {
+            updateDeviceInfo();
+            loadFileList();
+        });
+
+        // 更新设备信息
+        function updateDeviceInfo() {
+            const userAgent = navigator.userAgent;
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+            const deviceType = isMobile ? '移动设备' : '桌面设备';
+            const screenSize = `${screen.width} x ${screen.height}`;
+            const currentTime = new Date().toLocaleString();
+
+            $('#userAgent').text(userAgent);
+            $('#deviceType').text(deviceType);
+            $('#screenSize').text(screenSize);
+            $('#currentTime').text(currentTime);
+        }
+
+        // 测试普通下载
+        function testDownload(fileType) {
+            const fileId = getTestFileId(fileType);
+            const fileName = getTestFileName(fileType);
+            
+            logTest(`开始测试普通下载: ${fileName}`);
+            
+            try {
+                window.open('/api/files/download/' + fileId, '_blank');
+                logTest(`普通下载请求已发送: ${fileName}`, 'success');
+            } catch (error) {
+                logTest(`普通下载失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 测试移动端下载
+        function testMobileDownload(fileType) {
+            const fileId = getTestFileId(fileType);
+            const fileName = getTestFileName(fileType);
+            
+            logTest(`开始测试移动端下载: ${fileName}`);
+            
+            try {
+                const downloadUrl = '/api/mobile/download/' + fileId;
+                
+                // 创建隐藏的a标签进行下载
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = '';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                logTest(`移动端下载请求已发送: ${fileName}`, 'success');
+            } catch (error) {
+                logTest(`移动端下载失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 获取测试文件ID（这里使用示例ID，实际使用时需要替换为真实ID）
+        function getTestFileId(fileType) {
+            const testFiles = {
+                1: 1, // 图片文件ID
+                2: 2, // PDF文件ID
+                3: 3  // 压缩包文件ID
+            };
+            return testFiles[fileType] || 1;
+        }
+
+        // 获取测试文件名
+        function getTestFileName(fileType) {
+            const fileNames = {
+                1: 'test-image.jpg',
+                2: 'test-document.pdf',
+                3: 'test-archive.zip'
+            };
+            return fileNames[fileType] || 'test-file';
+        }
+
+        // 记录测试结果
+        function logTest(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logMessage = `[${timestamp}] ${message}`;
+            
+            let resultHtml = $('#testResults').html();
+            resultHtml += `<p class="${type}">${logMessage}</p>`;
+            $('#testResults').html(resultHtml);
+            
+            // 滚动到底部
+            $('#testResults').scrollTop($('#testResults')[0].scrollHeight);
+        }
+
+        // 加载文件列表
+        function loadFileList() {
+            $.ajax({
+                url: '/api/files/public/list',
+                type: 'GET',
+                success: function(response) {
+                    if (response.code === '1000') {
+                        displayFileList(response.data);
+                    } else {
+                        logTest('获取文件列表失败: ' + response.msg, 'error');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    logTest('获取文件列表失败: ' + error, 'error');
+                }
+            });
+        }
+
+        // 显示文件列表
+        function displayFileList(files) {
+            const container = $('#fileList');
+            container.empty();
+            
+            if (files.length === 0) {
+                container.html('<div class="ui message">暂无文件</div>');
+                return;
+            }
+            
+            files.forEach(file => {
+                const card = $(`
+                    <div class="card">
+                        <div class="content">
+                            <div class="header">
+                                <i class="${getFileIcon(file.fileType)} icon"></i>
+                                ${file.originalFilename}
+                            </div>
+                            <div class="meta">
+                                ${file.description || '无描述'}
+                            </div>
+                            <div class="description">
+                                大小: ${formatFileSize(file.fileSize)}<br>
+                                下载次数: ${file.downloadCount}<br>
+                                上传时间: ${formatDateTime(file.uploadTime)}
+                            </div>
+                        </div>
+                        <div class="extra content">
+                            <div class="ui two buttons">
+                                <button class="ui button" onclick="testDownloadById(${file.id})">
+                                    <i class="download icon"></i>普通下载
+                                </button>
+                                <button class="ui button" onclick="testMobileDownloadById(${file.id})">
+                                    <i class="mobile icon"></i>移动端下载
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                container.append(card);
+            });
+        }
+
+        // 根据ID测试下载
+        function testDownloadById(fileId) {
+            logTest(`测试普通下载，文件ID: ${fileId}`);
+            window.open('/api/files/download/' + fileId, '_blank');
+        }
+
+        // 根据ID测试移动端下载
+        function testMobileDownloadById(fileId) {
+            logTest(`测试移动端下载，文件ID: ${fileId}`);
+            
+            const downloadUrl = '/api/mobile/download/' + fileId;
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = '';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // 获取文件图标
+        function getFileIcon(mimeType) {
+            if (!mimeType) return 'file';
+            
+            if (mimeType.startsWith('image/')) return 'file image';
+            if (mimeType.startsWith('video/')) return 'file video';
+            if (mimeType.startsWith('audio/')) return 'file audio';
+            if (mimeType === 'application/pdf') return 'file pdf';
+            if (mimeType.includes('zip') || mimeType.includes('rar')) return 'file archive';
+            if (mimeType.startsWith('text/')) return 'file text';
+            
+            return 'file';
+        }
+
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // 格式化日期时间
+        function formatDateTime(dateTime) {
+            if (!dateTime) return '';
+            
+            const date = new Date(dateTime);
+            return date.toLocaleString();
+        }
+    </script>
+</body>
+</html>

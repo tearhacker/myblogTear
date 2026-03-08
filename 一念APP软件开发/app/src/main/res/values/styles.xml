@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:colorPrimary">@color/grass_green</item>
+        <item name="android:colorPrimaryDark">@color/grass_green_dark</item>
+        <item name="android:colorAccent">@color/sky_blue</item>
+        <item name="android:windowBackground">@drawable/bg_gradient_nature</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="SplashTheme" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@drawable/background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="LoveTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:colorPrimary">@color/love_primary</item>
+        <item name="android:colorPrimaryDark">@color/love_primary_dark</item>
+        <item name="android:colorAccent">@color/love_heart</item>
+        <item name="android:windowBackground">@color/love_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/love_primary_dark</item>
+    </style>
+
+    <style name="StarTrailTheme" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:colorPrimary">@color/star_trail_pink</item>
+        <item name="android:colorPrimaryDark">@color/star_trail_bg</item>
+        <item name="android:colorAccent">@color/star_trail_accent</item>
+        <item name="android:windowBackground">@color/star_trail_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/star_trail_bg</item>
+    </style>
+
+    <style name="TextTitle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextSubtitle">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <style name="TextBody">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:lineSpacingExtra">4dp</item>
+    </style>
+
+    <style name="TextCaption">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/text_hint</item>
+    </style>
+
+    <style name="CardStyle">
+        <item name="android:background">@drawable/bg_glass_card</item>
+        <item name="android:padding">18dp</item>
+    </style>
+
+    <style name="ButtonPrimary">
+        <item name="android:background">@drawable/bg_button_primary</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:paddingStart">28dp</item>
+        <item name="android:paddingEnd">28dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="ButtonOutline">
+        <item name="android:background">@drawable/bg_button_outline</item>
+        <item name="android:textColor">@color/grass_green</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:paddingStart">28dp</item>
+        <item name="android:paddingEnd">28dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="CommentBubble">
+        <item name="android:background">@drawable/bg_comment_bubble</item>
+        <item name="android:padding">14dp</item>
+    </style>
+</resources>

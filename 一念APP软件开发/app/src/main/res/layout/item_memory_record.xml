@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_memory_card_love"
+    android:layout_marginBottom="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_memory_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2024年1月1日"
+            android:textSize="14sp"
+            android:textColor="@color/star_trail_pink"
+            android:textStyle="bold"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/tv_memory_days"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="第1天念你"
+            android:textSize="12sp"
+            android:textColor="@color/star_trail_text_secondary"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="#20FF6B9D"/>
+
+    <TextView
+        android:id="@+id/tv_memory_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:textSize="15sp"
+        android:textColor="#5D4037"
+        android:lineSpacingExtra="6dp"
+        android:maxLines="5"
+        android:ellipsize="end"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="12dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_memory_heart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="❤"
+            android:textSize="16sp"
+            android:textColor="@color/star_trail_pink"/>
+
+        <TextView
+            android:id="@+id/tv_memory_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text=""
+            android:textSize="13sp"
+            android:textColor="@color/star_trail_text_secondary"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.dao.AppLoveSigninDao">
+
+    <resultMap id="AppLoveSigninResultMap" type="com.star.entity.AppLoveSignin">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="qq_number" property="qqNumber"/>
+        <result column="target_name" property="targetName"/>
+        <result column="signin_date" property="signinDate"/>
+        <result column="signin_time" property="signinTime"/>
+        <result column="continuous_days" property="continuousDays"/>
+        <result column="total_days" property="totalDays"/>
+        <result column="love_message" property="loveMessage"/>
+        <result column="love_level" property="loveLevel"/>
+        <result column="ai_generated" property="aiGenerated"/>
+    </resultMap>
+
+    <select id="findByUserIdAndDate" resultMap="AppLoveSigninResultMap">
+        SELECT * FROM app_love_signin WHERE user_id = #{userId} AND signin_date = #{signinDate}
+    </select>
+
+    <select id="findLatestByUserId" resultMap="AppLoveSigninResultMap">
+        SELECT * FROM app_love_signin WHERE user_id = #{userId} ORDER BY signin_date DESC LIMIT 1
+    </select>
+
+    <select id="findByUserId" resultMap="AppLoveSigninResultMap">
+        SELECT * FROM app_love_signin WHERE user_id = #{userId} ORDER BY signin_date DESC
+    </select>
+
+    <insert id="insert" parameterType="com.star.entity.AppLoveSignin" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO app_love_signin (user_id, qq_number, target_name, signin_date, signin_time, continuous_days, total_days, love_message, love_level, ai_generated)
+        VALUES (#{userId}, #{qqNumber}, #{targetName}, #{signinDate}, #{signinTime}, #{continuousDays}, #{totalDays}, #{loveMessage}, #{loveLevel}, #{aiGenerated})
+    </insert>
+
+    <update id="update" parameterType="com.star.entity.AppLoveSignin">
+        UPDATE app_love_signin
+        SET continuous_days = #{continuousDays},
+            love_message = #{loveMessage},
+            love_level = #{loveLevel},
+            ai_generated = #{aiGenerated}
+        WHERE id = #{id}
+    </update>
+
+    <select id="countByUserId" resultType="int">
+        SELECT COUNT(*) FROM app_love_signin WHERE user_id = #{userId}
+    </select>
+
+</mapper>

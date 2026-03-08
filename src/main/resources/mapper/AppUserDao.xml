@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.dao.AppUserDao">
+
+    <resultMap id="AppUserResultMap" type="com.star.entity.AppUser">
+        <id column="id" property="id"/>
+        <result column="qq_number" property="qqNumber"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar" property="avatar"/>
+        <result column="signature" property="signature"/>
+        <result column="gender" property="gender"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <select id="findByQqNumber" resultMap="AppUserResultMap">
+        SELECT * FROM app_user WHERE qq_number = #{qqNumber}
+    </select>
+
+    <select id="findById" resultMap="AppUserResultMap">
+        SELECT * FROM app_user WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.star.entity.AppUser" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO app_user (qq_number, nickname, avatar, signature, gender, create_time, status)
+        VALUES (#{qqNumber}, #{nickname}, #{avatar}, #{signature}, #{gender}, NOW(), 1)
+    </insert>
+
+    <update id="update" parameterType="com.star.entity.AppUser">
+        UPDATE app_user
+        SET nickname = #{nickname},
+            avatar = #{avatar},
+            signature = #{signature},
+            gender = #{gender},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateLastLoginTime">
+        UPDATE app_user SET last_login_time = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="updateNickname">
+        UPDATE app_user SET nickname = #{nickname}, update_time = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="updateAvatar">
+        UPDATE app_user SET avatar = #{avatar}, update_time = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="updateSignature">
+        UPDATE app_user SET signature = #{signature}, update_time = NOW() WHERE id = #{id}
+    </update>
+
+</mapper>

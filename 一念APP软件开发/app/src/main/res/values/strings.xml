@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">一念</string>
+    
+    <string name="nav_home">一念归心</string>
+    <string name="nav_education">二明前尘</string>
+    <string name="nav_video">三明浮生</string>
+    <string name="nav_user">梦返签到</string>
+    
+    <string name="signin_title">签到</string>
+    <string name="signin_continuous">连续 %d 天</string>
+    <string name="signin_today_message">今日寄语：恬淡无念，心归自然</string>
+    <string name="signin_success">签到成功</string>
+    <string name="signin_already">今日已签到</string>
+    
+    <string name="home_title">一念神魔</string>
+    <string name="education_title">二论今生</string>
+    <string name="video_title">三明浮生</string>
+    <string name="user_title">梦返签到</string>
+    
+    <string name="start_discussion">发起讨论</string>
+    <string name="comment_hint">说点什么...</string>
+    <string name="send">发送</string>
+    
+    <string name="like">点赞</string>
+    <string name="comment">评论</string>
+    <string name="share">分享</string>
+    
+    <string name="user_avatar">用户头像</string>
+    <string name="video_cover">视频封面</string>
+    <string name="play_video">播放视频</string>
+    
+    <string name="loading">加载中...</string>
+    <string name="load_failed">加载失败</string>
+    <string name="retry">重试</string>
+    <string name="no_data">暂无数据</string>
+    
+    <string name="settings">设置</string>
+    <string name="about">关于</string>
+    <string name="logout">退出登录</string>
+    <string name="login">登录</string>
+    <string name="register">注册</string>
+    
+    <string name="nickname">昵称</string>
+    <string name="signature">个性签名</string>
+    <string name="my_posts">我的文章</string>
+    <string name="my_comments">我的评论</string>
+    <string name="my_favorites">我的收藏</string>
+    
+    <string name="time_just_now">刚刚</string>
+    <string name="time_minutes_ago">%d分钟前</string>
+    <string name="time_hours_ago">%d小时前</string>
+    <string name="time_days_ago">%d天前</string>
+    
+    <string name="signin_now">立即签到</string>
+    <string name="checkin_days">已连续签到 %d 天</string>
+    <string name="dream_island">梦返签到</string>
+    
+    <!-- 星轨告白 -->
+    <string name="star_trail_title">星轨告白</string>
+    <string name="star_trail_intro">这些年，我把每一次想起你的瞬间，都化作了夜空中的一颗星。\n现在，轮到你来点亮它们了。</string>
+    <string name="star_trail_memory_1_title">第一颗星 · 小学 · 山上学堂</string>
+    <string name="star_trail_memory_1">2008年，山上那间漏风的旧教室。\n老师在走廊里夸：\'一班那个叫欧阳颖的女生，真勤快。\'\n我靠在二班的门框上，看见你抱着扫帚，低着头，从教室门口进进出出。\n阳光斜斜地打在你发梢，我没敢上前，只把那个背影，偷偷刻进了记忆碎片里。</string>
+    <string name="star_trail_memory_2_title">第二颗星 · 初中 · 毕业证书</string>
+    <string name="star_trail_memory_2">2016年夏天，毕业照上的你，我都颤抖着想着遇见你的一刻。\n你住在三颗漆旁边的一家，我鬼使神差地主动请缨，要去给你送毕业证书。\n走到你家，看见几个大人围坐在一起，我紧张得连毕业证书长什么样都没看清，只匆匆说了一句\'你的毕业证\'，把它交给了大人，转身就快步逃开了。\n那时候的我，连多看你一眼的勇气都没有。</string>
+    <string name="star_trail_memory_3_title">第三颗星 · 现在 · 星轨告白</string>
+    <string name="star_trail_memory_3">从小学的山上学堂，到初中的毕业证书，\n我的星轨，追了你整整十年。\n今天，我不想再做一颗孤独的星，\n我想和你，一起点亮我们的星空。</string>
+    <string name="star_trail_btn_next">下一段回忆</string>
+    <string name="star_trail_btn_last_star">最后的星</string>
+    <string name="star_trail_btn_ready">我准备好了</string>
+    <string name="star_trail_btn_accept">点亮我们的星空</string>
+    <string name="star_trail_btn_wait">再等等</string>
+    <string name="star_trail_accept_message">我们的故事，从今天开始。</string>
+    <string name="star_trail_wait_message">没关系，我的星空永远为你守候。</string>
+    <string name="star_trail_hint_tap">点击星星，听听我的心事</string>
+</resources>

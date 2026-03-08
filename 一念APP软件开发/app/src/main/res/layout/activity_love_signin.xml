@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/love_bg">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/love_bg_romantic"/>
+
+    <tear.conception.ui.view.StarParticleView
+        android:id="@+id/star_particle_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <tear.conception.ui.view.HeartParticleView
+        android:id="@+id/heart_particle_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingTop="40dp"
+            android:paddingBottom="40dp">
+
+            <TextView
+                android:id="@+id/tv_target_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="致 欧阳颖"
+                android:textSize="32sp"
+                android:textColor="@color/love_primary"
+                android:textStyle="bold"
+                android:letterSpacing="0.1"
+                android:shadowColor="#40FF6B9D"
+                android:shadowDx="0"
+                android:shadowDy="4"
+                android:shadowRadius="8"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="一念情深，念念不忘"
+                android:textSize="16sp"
+                android:textColor="@color/love_text_light"
+                android:layout_marginTop="8dp"
+                android:letterSpacing="0.2"/>
+
+            <EditText
+                android:id="@+id/et_target_name"
+                android:layout_width="240dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="24dp"
+                android:hint="喜欢TA:欧阳颖"
+                android:textColorHint="@color/love_text_light"
+                android:textColor="@color/love_primary"
+                android:textSize="15sp"
+                android:textAlignment="center"
+                android:background="@drawable/bg_edittext_love"
+                android:gravity="center"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:visibility="gone"/>
+
+            <FrameLayout
+                android:id="@+id/btn_love_signin_container"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/love_signin_btn_glass"
+                android:clickable="true"
+                android:focusable="true"
+                android:elevation="8dp">
+
+                <tear.conception.ui.view.RippleView
+                    android:id="@+id/ripple_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_heart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="❤"
+                        android:textSize="56sp"
+                        android:textColor="@color/love_heart"
+                        android:shadowColor="#80FF4081"
+                        android:shadowDx="0"
+                        android:shadowDy="2"
+                        android:shadowRadius="6"/>
+
+                    <TextView
+                        android:id="@+id/tv_love_signin_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="念你"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp"
+                        android:shadowColor="#40000000"
+                        android:shadowDx="0"
+                        android:shadowDy="1"
+                        android:shadowRadius="2"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical|bottom"
+                        android:layout_marginTop="4dp">
+
+                        <TextView
+                            android:id="@+id/tv_love_days"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="48sp"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            android:shadowColor="#40000000"
+                            android:shadowDx="0"
+                            android:shadowDy="2"
+                            android:shadowRadius="3"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="天"
+                            android:textSize="16sp"
+                            android:textColor="@color/white"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginBottom="8dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tv_love_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="13sp"
+                android:textColor="@color/love_text_light"
+                android:layout_marginTop="20dp"/>
+
+            <TextView
+                android:id="@+id/tv_love_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="15sp"
+                android:textColor="@color/love_text"
+                android:layout_marginTop="16dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:gravity="center"
+                android:lineSpacingExtra="6dp"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="40dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_glass_card"
+                    android:padding="16dp"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:id="@+id/tv_total_days"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="28sp"
+                        android:textColor="@color/love_primary"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="累计念你"
+                        android:textSize="12sp"
+                        android:textColor="@color/love_text_light"
+                        android:layout_marginTop="4dp"/>
+
+                    <View
+                        android:layout_width="60dp"
+                        android:layout_height="4dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@color/love_primary_light"
+                        android:alpha="0.5"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_glass_card"
+                    android:padding="16dp"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        android:id="@+id/tv_continuous_days"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="28sp"
+                        android:textColor="@color/love_primary"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="连续念你"
+                        android:textSize="12sp"
+                        android:textColor="@color/love_text_light"
+                        android:layout_marginTop="4dp"/>
+
+                    <View
+                        android:layout_width="60dp"
+                        android:layout_height="4dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@color/love_heart"
+                        android:alpha="0.5"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="从初中到现在，一直都在..."
+                android:textSize="13sp"
+                android:textColor="@color/love_text_light"
+                android:layout_marginTop="50dp"
+                android:alpha="0.8"
+                android:letterSpacing="0.1"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/ll_developer_info"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|start"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/bg_glass_card"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:elevation="4dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="💝"
+            android:textSize="22sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_emotion_tree_hole"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_glass_card"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:elevation="4dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="💭"
+            android:textSize="22sp"/>
+
+    </LinearLayout>
+
+</FrameLayout>

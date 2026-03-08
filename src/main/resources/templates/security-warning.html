@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全警告 - TEARの客栈</title>
+    <link rel="icon" th:href="@{/images/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/lib/semantic-ui/semantic.min.css}">
+    <link rel="stylesheet" th:href="@{/css/me.css}">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        .warning-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+            margin: 20px;
+        }
+        .warning-icon {
+            font-size: 80px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .warning-title {
+            font-size: 32px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .warning-message {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .security-details {
+            background: #f8f9fa;
+            border-left: 4px solid #e74c3c;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .security-details h4 {
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+        .security-details ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .security-details li {
+            margin-bottom: 8px;
+            color: #666;
+        }
+        .action-buttons {
+            margin-top: 30px;
+        }
+        .ui.button {
+            margin: 0 10px;
+        }
+        .countdown {
+            font-size: 24px;
+            color: #e74c3c;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .footer-info {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="warning-container">
+        <div class="warning-icon">⚠️</div>
+        <h1 class="warning-title">安全警告</h1>
+        
+        <div class="warning-message">
+            检测到多次密码错误尝试，系统已启动安全保护机制。
+        </div>
+        
+        <div class="security-details">
+            <h4>安全事件详情：</h4>
+            <ul>
+                <li>检测时间：<span id="detection-time"></span></li>
+                <li>错误尝试次数：3次</li>
+                <li>触发原因：连续输入错误密码</li>
+                <li>保护措施：临时限制访问</li>
+            </ul>
+        </div>
+        
+        <div class="countdown" id="countdown">
+            页面将在 <span id="timer">10</span> 秒后自动跳转到首页
+        </div>
+        
+        <div class="action-buttons">
+            <button class="ui red button" onclick="goToHome()">
+                <i class="home icon"></i> 立即返回首页
+            </button>
+            <button class="ui grey button" onclick="contactAdmin()">
+                <i class="mail icon"></i> 联系管理员
+            </button>
+        </div>
+        
+        <div class="footer-info">
+            <p>如果您认为这是一个错误，请联系网站管理员：2254013571@qq.com</p>
+            <p>TEARの客栈 - 安全保护系统</p>
+        </div>
+    </div>
+
+    <script th:src="@{/lib/jquery/jquery.min.js}"></script>
+    <script th:src="@{/lib/semantic-ui/semantic.min.js}"></script>
+    <script>
+        // 设置检测时间
+        document.getElementById('detection-time').textContent = new Date().toLocaleString('zh-CN');
+        
+        // 倒计时功能
+        let timeLeft = 10;
+        const timer = document.getElementById('timer');
+        const countdownElement = document.getElementById('countdown');
+        
+        const countdown = setInterval(function() {
+            timeLeft--;
+            timer.textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                goToHome();
+            }
+        }, 1000);
+        
+        function goToHome() {
+            window.location.href = '/';
+        }
+        
+        function contactAdmin() {
+            window.open('mailto:523341786@qq.com?subject=安全警告页面访问&body=您好，我在访问博客时遇到了安全警告页面，请协助处理。', '_blank');
+        }
+        
+        // 防止用户通过浏览器后退按钮绕过安全机制
+        window.addEventListener('beforeunload', function(e) {
+            e.preventDefault();
+            e.returnValue = '您正在尝试离开安全警告页面，确定要继续吗？';
+        });
+        
+        // 禁用右键菜单和F12等开发者工具（可选）
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            // 禁用F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U等
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+                (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
