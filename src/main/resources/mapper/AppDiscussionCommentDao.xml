@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.dao.AppDiscussionCommentDao">
+
+    <resultMap id="AppDiscussionCommentResultMap" type="com.star.entity.AppDiscussionComment">
+        <id column="id" property="id"/>
+        <result column="discussion_id" property="discussionId"/>
+        <result column="user_id" property="userId"/>
+        <result column="qq_number" property="qqNumber"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar" property="avatar"/>
+        <result column="content" property="content"/>
+        <result column="parent_comment_id" property="parentCommentId"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="findById" resultMap="AppDiscussionCommentResultMap">
+        SELECT * FROM app_discussion_comment WHERE id = #{id}
+    </select>
+
+    <select id="findByDiscussionId" resultMap="AppDiscussionCommentResultMap">
+        SELECT * FROM app_discussion_comment WHERE discussion_id = #{discussionId} AND parent_comment_id IS NULL ORDER BY create_time ASC
+    </select>
+
+    <select id="findByUserId" resultMap="AppDiscussionCommentResultMap">
+        SELECT * FROM app_discussion_comment WHERE user_id = #{userId} ORDER BY create_time DESC
+    </select>
+
+    <select id="findReplies" resultMap="AppDiscussionCommentResultMap">
+        SELECT * FROM app_discussion_comment WHERE parent_comment_id = #{parentCommentId} ORDER BY create_time ASC
+    </select>
+
+    <insert id="insert" parameterType="com.star.entity.AppDiscussionComment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO app_discussion_comment (discussion_id, user_id, qq_number, nickname, avatar, content, parent_comment_id, like_count)
+        VALUES (#{discussionId}, #{userId}, #{qqNumber}, #{nickname}, #{avatar}, #{content}, #{parentCommentId}, #{likeCount})
+    </insert>
+
+    <update id="update" parameterType="com.star.entity.AppDiscussionComment">
+        UPDATE app_discussion_comment
+        SET content = #{content}
+        WHERE id = #{id}
+    </update>
+
+    <update id="incrementLikeCount">
+        UPDATE app_discussion_comment SET like_count = like_count + 1 WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM app_discussion_comment WHERE id = #{id}
+    </delete>
+
+    <select id="countByDiscussionId" resultType="int">
+        SELECT COUNT(*) FROM app_discussion_comment WHERE discussion_id = #{discussionId}
+    </select>
+
+</mapper>

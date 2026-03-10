@@ -15,7 +15,7 @@ spring:
   # 数据源配置（默认使用本地数据库，可通过环境变量覆盖）
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:myblog}?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:myblog}?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: ${DB_USER:root}       # 默认用户名，可用环境变量覆盖
     password: ${DB_PASSWORD:123456} # 默认密码，生产环境务必通过环境变量修改！
     hikari:

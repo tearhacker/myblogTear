@@ -300,6 +300,82 @@ public class BlogApiService {
         postRequestWithTimeout(url, params, 60000, 120000, callback);
     }
 
+    public static void createDiscussion(long userId, String qqNumber, String nickname, String avatar, String title, String content, ApiCallback callback) {
+        String url = BASE_URL + "/app/discussion/create";
+        Map<String, String> params = new java.util.HashMap<>();
+        params.put("userId", String.valueOf(userId));
+        params.put("qqNumber", qqNumber);
+        params.put("nickname", nickname);
+        if (avatar != null && !avatar.isEmpty()) {
+            params.put("avatar", avatar);
+        }
+        params.put("title", title);
+        params.put("content", content);
+        postRequest(url, params, callback);
+    }
+
+    public static void getDiscussionList(int page, int pageSize, ApiCallback callback) {
+        String url = BASE_URL + "/app/discussion/list?page=" + page + "&pageSize=" + pageSize;
+        getRequest(url, callback);
+    }
+
+    public static void searchDiscussions(String keyword, int page, int pageSize, ApiCallback callback) {
+        try {
+            String encodedKeyword = URLEncoder.encode(keyword, "UTF-8");
+            String url = BASE_URL + "/app/discussion/search?keyword=" + encodedKeyword + "&page=" + page + "&pageSize=" + pageSize;
+            getRequest(url, callback);
+        } catch (Exception e) {
+            callback.onError("编码搜索词失败: " + e.getMessage());
+        }
+    }
+
+    public static void getDiscussionDetail(long id, ApiCallback callback) {
+        String url = BASE_URL + "/app/discussion/detail/" + id;
+        getRequest(url, callback);
+    }
+
+    public static void getMyDiscussions(long userId, ApiCallback callback) {
+        String url = BASE_URL + "/app/discussion/my/" + userId;
+        getRequest(url, callback);
+    }
+
+    public static void likeDiscussion(long id, ApiCallback callback) {
+        String url = BASE_URL + "/app/discussion/like/" + id;
+        postRequest(url, new java.util.HashMap<String, String>(), callback);
+    }
+
+    public static void createComment(long discussionId, long userId, String qqNumber, String nickname, String avatar, String content, Long parentCommentId, ApiCallback callback) {
+        String url = BASE_URL + "/app/discussion/comment/create";
+        Map<String, String> params = new java.util.HashMap<>();
+        params.put("discussionId", String.valueOf(discussionId));
+        params.put("userId", String.valueOf(userId));
+        params.put("qqNumber", qqNumber);
+        params.put("nickname", nickname);
+        if (avatar != null && !avatar.isEmpty()) {
+            params.put("avatar", avatar);
+        }
+        params.put("content", content);
+        if (parentCommentId != null && parentCommentId > 0) {
+            params.put("parentCommentId", String.valueOf(parentCommentId));
+        }
+        postRequest(url, params, callback);
+    }
+
+    public static void getComments(long discussionId, ApiCallback callback) {
+        String url = BASE_URL + "/app/discussion/comment/" + discussionId;
+        getRequest(url, callback);
+    }
+
+    public static void getReplies(long parentCommentId, ApiCallback callback) {
+        String url = BASE_URL + "/app/discussion/comment/replies/" + parentCommentId;
+        getRequest(url, callback);
+    }
+
+    public static void likeComment(long id, ApiCallback callback) {
+        String url = BASE_URL + "/app/discussion/comment/like/" + id;
+        postRequest(url, new java.util.HashMap<String, String>(), callback);
+    }
+
     private static void getRequestWithTimeout(final String urlString, final int connectTimeout, final int readTimeout, final ApiCallback callback) {
         executor.execute(new Runnable() {
             @Override

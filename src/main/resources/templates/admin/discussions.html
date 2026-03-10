@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>话题管理</title>
+  <link href="../static/images/favicon.ico" th:href="@{/images/me.jpg}" rel="icon" type="image/x-ico">
+  <link rel="stylesheet" href="../../static/lib/semantic/dist/semantic.min.css" th:href="@{/lib/semantic/dist/semantic.min.css}">
+  <link rel="stylesheet" href="../../static/css/me.css" th:href="@{/css/me.css}">
+</head>
+<body>
+
+  <!--导航栏-->
+  <nav class="ui inverted gird-header" >
+    <div class="ui container">
+      <div class="ui inverted secondary stackable menu">
+        <h2 class="ui olive header item" style="font-family: STSong">管理后台</h2>
+        <a href="#" th:href="@{/admin/blogs}" class="m-item item m-mobile-hide"><i class="home icon"></i>文章管理</a>
+        <a href="#" th:href="@{/admin/types}" class=" m-item item m-mobile-hide"><i class="clone outline icon"></i>分类管理</a>
+        <a href="#" th:href="@{/admin/friendlinks}" class=" m-item item m-mobile-hide"><i class="pencil alternate icon"></i>友链管理</a>
+        <a href="#" th:href="@{/admin/resources}" class="m-item item m-mobile-hide"><i class="graduation cap icon"></i>资源管理</a>
+        <a href="#" th:href="@{/admin/files}" class="m-item item m-mobile-hide"><i class="file icon"></i>文件管理</a>
+        <a href="#" th:href="@{/admin/discussions}" class="active m-item item m-mobile-hide"><i class="comments icon"></i>话题管理</a>
+        <a href="#" th:href="@{/admin/apikeys}" class="m-item item m-mobile-hide"><i class="key icon"></i>API密钥</a>
+        <div class="right m-item m-mobile-hide menu">
+          <div class="ui dropdown  item">
+            <div class="text">
+              <img class="ui avatar image" src="/static/images/me.jpg" th:src="@{/images/me.jpg}">
+              <span>oneStar</span>
+            </div>
+            <i class="dropdown icon"></i>
+            <div class="menu">
+              <a href="#" th:href="@{/admin/logout}" class="item">注销</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a href="#" class="ui menu toggle black icon button m-right-top m-mobile-show">
+      <i class="sidebar icon"></i>
+    </a>
+  </nav>
+  <div class="m-padded-tb-hugex">
+  <div class="ui attached pointing menu">
+    <div class="ui container">
+      <div class="right menu">
+        <a href="#" th:href="@{/admin/discussions(status=9)}" th:classappend="${status==9} ? 'teal active' : ''" class="item">全部</a>
+        <a href="#" th:href="@{/admin/discussions(status=0)}" th:classappend="${status==0} ? 'teal active' : ''" class="item">待审核</a>
+        <a href="#" th:href="@{/admin/discussions(status=1)}" th:classappend="${status==1} ? 'teal active' : ''" class="item">已通过</a>
+        <a href="#" th:href="@{/admin/discussions(status=2)}" th:classappend="${status==2} ? 'teal active' : ''" class="item">已拒绝</a>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <br>
+  <br>
+  <br>
+
+  <div class="ui container" th:if="${message}">
+    <div class="ui message" th:classappend="${#strings.containsIgnoreCase(message, '成功') ? 'success' : 'error'}">
+      <i class="close icon"></i>
+      <div class="header">提示</div>
+      <p th:text="${message}">操作结果</p>
+    </div>
+  </div>
+
+  <!--中间内容-->
+  <div  class="">
+    <div class="ui container">
+      <div id="table-container">
+        <table class="ui compact celled table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>用户</th>
+              <th>标题</th>
+              <th>内容</th>
+              <th>浏览</th>
+              <th>评论</th>
+              <th>点赞</th>
+              <th>状态</th>
+              <th>创建时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="discussion : ${pageInfo.list}">
+              <td th:text="${discussion.id}">1</td>
+              <td>
+                <span th:text="${discussion.nickname}">用户昵称</span>
+                <div style="font-size: 12px; color: #999;" th:text="${discussion.qqNumber}">QQ号</div>
+              </td>
+              <td th:text="${discussion.title}">话题标题</td>
+              <td th:text="${#strings.abbreviate(discussion.content, 50)}">话题内容</td>
+              <td th:text="${discussion.viewCount}">0</td>
+              <td th:text="${discussion.commentCount}">0</td>
+              <td th:text="${discussion.likeCount}">0</td>
+              <td>
+                <span th:if="${discussion.status == 0}" class="ui yellow label">待审核</span>
+                <span th:if="${discussion.status == 1}" class="ui green label">已通过</span>
+                <span th:if="${discussion.status == 2}" class="ui red label">已拒绝</span>
+              </td>
+              <td th:text="${#dates.format(discussion.createTime, 'yyyy-MM-dd HH:mm')}">2024-01-01</td>
+              <td>
+                <a href="#" th:href="@{/admin/discussions/{id}(id=${discussion.id})}" class="ui mini teal button">查看</a>
+                <form th:action="@{/admin/discussions/delete/{id}(id=${discussion.id})}" method="post" style="display: inline;" onsubmit="return confirm('确定要删除这个话题吗？')">
+                  <input type="hidden" name="status" th:value="${status}"/>
+                  <button type="submit" class="ui mini red button">删除</button>
+                </form>
+                <form th:if="${discussion.status == 0}" th:action="@{/admin/discussions/audit/{id}(id=${discussion.id})}" method="post" style="display: inline;">
+                  <input type="hidden" name="status" value="1"/>
+                  <button type="submit" class="ui mini green button" onclick="return confirm('确定要通过审核吗？')">通过</button>
+                </form>
+                <form th:if="${discussion.status == 0}" th:action="@{/admin/discussions/audit/{id}(id=${discussion.id})}" method="post" style="display: inline;">
+                  <input type="hidden" name="status" value="2"/>
+                  <button type="submit" class="ui mini red button" onclick="return confirm('确定要拒绝审核吗？')">拒绝</button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th colspan="10">
+                <div class="ui mini pagination menu" th:if="${pageInfo.pages > 1}">
+                  <a th:if="${pageInfo.hasPreviousPage}" th:href="@{/admin/discussions(pageNum=${pageInfo.prePage}, status=${status})}" class="item">上一页</a>
+                  <div class="item">
+                    <span th:text="${pageInfo.pageNum}">1</span> / <span th:text="${pageInfo.pages}">10</span>
+                  </div>
+                  <a th:if="${pageInfo.hasNextPage}" th:href="@{/admin/discussions(pageNum=${pageInfo.nextPage}, status=${status})}" class="item">下一页</a>
+                </div>
+              </th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <br>
+  <br>
+
+  <!--底部-->
+  <footer class="ui inverted vertical segment m-padded-tb-massive">
+    <div class="ui center aligned container">
+      <div class="ui inverted divided grid stackable">
+        <div class="three wide column">
+          <h4 class="ui inverted header m-text-thin m-text-spaced ">关于我</h4>
+          <div class="ui inverted link list">
+            <a href="#" class="item m-text-thin">QQ号：523341786</a>
+            <a href="#" class="item m-text-thin">微信：tearhacker</a>
+          </div>
+        </div>
+        <div class="three wide column">
+          <h4 class="ui inverted header m-text-thin m-text-spaced ">联系我</h4>
+          <div class="ui inverted link list">
+            <a href="#" class="item m-text-thin">Email：tearhacker@foxmail.com</a>
+            <a href="#" class="item m-text-thin">GitHub：https://github.com/tearhacker</a>
+          </div>
+        </div>
+        <div class="seven wide column">
+          <h4 class="ui inverted header m-text-thin m-text-spaced ">Blog</h4>
+          <p class="m-text-thin m-text-spaced m-opacity-mini">这是我的个人博客，记录学习和生活的点滴。</p>
+        </div>
+      </div>
+      <div class="ui inverted section divider"></div>
+      <p class="m-text-thin m-text-spaced m-opacity-tiny">Copyright © 2024 Designed by oneStar</p>
+    </div>
+  </footer>
+
+  <script src="../../static/lib/jquery/jquery-3.6.0.min.js" th:src="@{/lib/jquery/jquery-3.6.0.min.js}"></script>
+  <script src="../../static/lib/semantic/dist/semantic.min.js" th:src="@{/lib/semantic/dist/semantic.min.js}"></script>
+  <script>
+    $('.message .close').on('click', function() {
+      $(this).closest('.message').transition('fade');
+    });
+  </script>
+
+</body>
+</html>

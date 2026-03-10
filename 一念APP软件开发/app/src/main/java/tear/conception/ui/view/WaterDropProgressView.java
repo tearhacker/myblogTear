@@ -121,12 +121,11 @@ public class WaterDropProgressView extends View {
 
         glassBtnPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         glassBtnPaint.setStyle(Paint.Style.FILL);
-        glassBtnPaint.setColor(0x30FFFFFF);
 
         glassBtnStrokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         glassBtnStrokePaint.setStyle(Paint.Style.STROKE);
-        glassBtnStrokePaint.setStrokeWidth(2f);
-        glassBtnStrokePaint.setColor(0x90FFFFFF);
+        glassBtnStrokePaint.setStrokeWidth(1.5f);
+        glassBtnStrokePaint.setColor(0x60FFFFFF);
 
         bottomTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         bottomTextPaint.setColor(0x66000000);
@@ -372,16 +371,33 @@ public class WaterDropProgressView extends View {
     private void drawSigninButton(Canvas canvas, float size, float cx, float cy) {
         float btnRadius = size * 0.16f;
         
-        int alpha = (int) (btnAlpha * (isPressed ? 160 : 255));
+        int alpha = (int) (btnAlpha * (isPressed ? 180 : 255));
+        
+        LinearGradient btnGradient = new LinearGradient(
+            cx - btnRadius, cy - btnRadius,
+            cx + btnRadius, cy + btnRadius,
+            0x15FFFFFF,
+            0x08FFFFFF,
+            Shader.TileMode.CLAMP
+        );
+        glassBtnPaint.setShader(btnGradient);
         glassBtnPaint.setAlpha(alpha);
         glassBtnStrokePaint.setAlpha(alpha);
         
         canvas.drawCircle(cx, cy, btnRadius, glassBtnPaint);
         canvas.drawCircle(cx, cy, btnRadius, glassBtnStrokePaint);
         
+        Paint innerGlowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        innerGlowPaint.setStyle(Paint.Style.FILL);
+        int innerAlpha = (int) (alpha * 0.3f * (0.5f + glowAlpha * 0.5f));
+        innerGlowPaint.setColor(Color.argb(innerAlpha, 255, 255, 255));
+        canvas.drawCircle(cx, cy, btnRadius * 0.85f, innerGlowPaint);
+        
         textPaint.setTextSize(size * 0.09f);
         textPaint.setAlpha(alpha);
+        textPaint.setShadowLayer(4, 0, 2, 0x40000000);
         canvas.drawText("签到", cx, cy - size * 0.02f, textPaint);
+        textPaint.setShadowLayer(0, 0, 0, 0);
         
         subTextPaint.setTextSize(size * 0.045f);
         subTextPaint.setAlpha(alpha);

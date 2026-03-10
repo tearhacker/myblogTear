@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.dao.AppDiscussionDao">
+
+    <resultMap id="AppDiscussionResultMap" type="com.star.entity.AppDiscussion">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="qq_number" property="qqNumber"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar" property="avatar"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="status" property="status"/>
+        <result column="view_count" property="viewCount"/>
+        <result column="comment_count" property="commentCount"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="audit_time" property="auditTime"/>
+        <result column="audit_user_id" property="auditUserId"/>
+        <result column="audit_remark" property="auditRemark"/>
+    </resultMap>
+
+    <select id="findById" resultMap="AppDiscussionResultMap">
+        SELECT * FROM app_discussion WHERE id = #{id}
+    </select>
+
+    <select id="findByUserId" resultMap="AppDiscussionResultMap">
+        SELECT * FROM app_discussion WHERE user_id = #{userId} ORDER BY create_time DESC
+    </select>
+
+    <select id="findByStatus" resultMap="AppDiscussionResultMap">
+        SELECT * FROM app_discussion WHERE status = #{status} ORDER BY create_time DESC
+    </select>
+
+    <select id="findApprovedDiscussions" resultMap="AppDiscussionResultMap">
+        SELECT * FROM app_discussion WHERE status = 1 ORDER BY create_time DESC LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="findPendingDiscussions" resultMap="AppDiscussionResultMap">
+        SELECT * FROM app_discussion WHERE status = 0 ORDER BY create_time DESC LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="findRejectedDiscussions" resultMap="AppDiscussionResultMap">
+        SELECT * FROM app_discussion WHERE status = 2 ORDER BY create_time DESC LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="findAllDiscussions" resultMap="AppDiscussionResultMap">
+        SELECT * FROM app_discussion ORDER BY create_time DESC LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="searchByKeyword" resultMap="AppDiscussionResultMap">
+        SELECT * FROM app_discussion 
+        WHERE status = 1 AND (title LIKE CONCAT('%', #{keyword}, '%') OR content LIKE CONCAT('%', #{keyword}, '%'))
+        ORDER BY create_time DESC 
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <insert id="insert" parameterType="com.star.entity.AppDiscussion" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO app_discussion (user_id, qq_number, nickname, avatar, title, content, status, view_count, comment_count, like_count)
+        VALUES (#{userId}, #{qqNumber}, #{nickname}, #{avatar}, #{title}, #{content}, #{status}, #{viewCount}, #{commentCount}, #{likeCount})
+    </insert>
+
+    <update id="update" parameterType="com.star.entity.AppDiscussion">
+        UPDATE app_discussion
+        SET title = #{title},
+            content = #{content},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE app_discussion
+        SET status = #{status},
+            audit_time = NOW(),
+            audit_user_id = #{auditUserId},
+            audit_remark = #{auditRemark}
+        WHERE id = #{id}
+    </update>
+
+    <update id="incrementViewCount">
+        UPDATE app_discussion SET view_count = view_count + 1 WHERE id = #{id}
+    </update>
+
+    <update id="incrementLikeCount">
+        UPDATE app_discussion SET like_count = like_count + 1 WHERE id = #{id}
+    </update>
+
+    <update id="incrementCommentCount">
+        UPDATE app_discussion SET comment_count = comment_count + 1 WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM app_discussion WHERE id = #{id}
+    </delete>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM app_discussion WHERE status = #{status}
+    </select>
+
+    <select id="countByUserId" resultType="int">
+        SELECT COUNT(*) FROM app_discussion WHERE user_id = #{userId}
+    </select>
+
+</mapper>

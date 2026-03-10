@@ -93,6 +93,12 @@
             android:theme="@style/LoveTheme"/>
 
         <activity
+            android:name=".DiscussionActivity"
+            android:label="发起讨论"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
+
+        <activity
             android:name=".FullscreenImageActivity"
             android:label="查看图片"
             android:exported="false"

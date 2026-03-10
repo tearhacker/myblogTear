@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>话题详情</title>
+  <link href="../static/images/favicon.ico" th:href="@{/images/me.jpg}" rel="icon" type="image/x-ico">
+  <link rel="stylesheet" href="../../static/lib/semantic/dist/semantic.min.css" th:href="@{/lib/semantic/dist/semantic.min.css}">
+  <link rel="stylesheet" href="../../static/css/me.css" th:href="@{/css/me.css}">
+</head>
+<body>
+
+  <!--导航栏-->
+  <nav class="ui inverted gird-header" >
+    <div class="ui container">
+      <div class="ui inverted secondary stackable menu">
+        <h2 class="ui olive header item" style="font-family: STSong">管理后台</h2>
+        <a href="#" th:href="@{/admin/blogs}" class="m-item item m-mobile-hide"><i class="home icon"></i>文章管理</a>
+        <a href="#" th:href="@{/admin/types}" class=" m-item item m-mobile-hide"><i class="clone outline icon"></i>分类管理</a>
+        <a href="#" th:href="@{/admin/friendlinks}" class=" m-item item m-mobile-hide"><i class="pencil alternate icon"></i>友链管理</a>
+        <a href="#" th:href="@{/admin/resources}" class="m-item item m-mobile-hide"><i class="graduation cap icon"></i>资源管理</a>
+        <a href="#" th:href="@{/admin/files}" class="m-item item m-mobile-hide"><i class="file icon"></i>文件管理</a>
+        <a href="#" th:href="@{/admin/discussions}" class="active m-item item m-mobile-hide"><i class="comments icon"></i>话题管理</a>
+        <a href="#" th:href="@{/admin/apikeys}" class="m-item item m-mobile-hide"><i class="key icon"></i>API密钥</a>
+        <div class="right m-item m-mobile-hide menu">
+          <div class="ui dropdown  item">
+            <div class="text">
+              <img class="ui avatar image" src="/static/images/me.jpg" th:src="@{/images/me.jpg}">
+              <span>oneStar</span>
+            </div>
+            <i class="dropdown icon"></i>
+            <div class="menu">
+              <a href="#" th:href="@{/admin/logout}" class="item">注销</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a href="#" class="ui menu toggle black icon button m-right-top m-mobile-show">
+      <i class="sidebar icon"></i>
+    </a>
+  </nav>
+
+  <br>
+  <br>
+  <br>
+
+  <!--中间内容-->
+  <div class="m-container-small m-padded-tb-big">
+    <div class="ui container">
+      <div class="ui top attached segment">
+        <div class="ui header">
+          <h2 th:text="${discussion.title}">话题标题</h2>
+          <div class="ui sub header">
+            <span th:text="${discussion.nickname}">用户昵称</span>
+            <span style="margin-left: 10px; color: #999;" th:text="${discussion.qqNumber}">QQ号</span>
+            <span style="margin-left: 10px;" th:text="${#dates.format(discussion.createTime, 'yyyy-MM-dd HH:mm')}">2024-01-01</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ui attached segment">
+        <div class="typo typo-selection" th:utext="${discussion.content}">
+          话题内容
+        </div>
+      </div>
+
+      <div class="ui attached segment">
+        <div class="ui four statistics">
+          <div class="statistic">
+            <div class="value" th:text="${discussion.viewCount}">0</div>
+            <div class="label">浏览</div>
+          </div>
+          <div class="statistic">
+            <div class="value" th:text="${discussion.commentCount}">0</div>
+            <div class="label">评论</div>
+          </div>
+          <div class="statistic">
+            <div class="value" th:text="${discussion.likeCount}">0</div>
+            <div class="label">点赞</div>
+          </div>
+          <div class="statistic">
+            <div class="value">
+              <span th:if="${discussion.status == 0}" class="ui yellow label">待审核</span>
+              <span th:if="${discussion.status == 1}" class="ui green label">已通过</span>
+              <span th:if="${discussion.status == 2}" class="ui red label">已拒绝</span>
+            </div>
+            <div class="label">状态</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ui attached segment" th:if="${discussion.status == 0}">
+        <h3 class="ui header">审核操作</h3>
+        <form class="ui form" th:action="@{/admin/discussions/audit/{id}(id=${discussion.id})}" method="post">
+          <div class="field">
+            <label>审核结果</label>
+            <div class="ui radio checkbox">
+              <input type="radio" name="status" value="1" checked>
+              <label>通过</label>
+            </div>
+            <div class="ui radio checkbox">
+              <input type="radio" name="status" value="2">
+              <label>拒绝</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>审核备注</label>
+            <textarea name="auditRemark" rows="3" placeholder="请输入审核备注（选填）"></textarea>
+          </div>
+          <button class="ui teal button" type="submit">提交审核</button>
+          <a href="#" th:href="@{/admin/discussions}" class="ui button">返回列表</a>
+        </form>
+      </div>
+
+      <div class="ui attached segment" th:if="${discussion.status != 0}">
+        <div class="ui message">
+          <div class="header">审核信息</div>
+          <p th:if="${discussion.auditRemark}" th:text="'审核备注：' + ${discussion.auditRemark}"></p>
+          <p th:if="${discussion.auditTime}" th:text="'审核时间：' + ${#dates.format(discussion.auditTime, 'yyyy-MM-dd HH:mm')}"></p>
+        </div>
+        <div class="ui buttons">
+          <a href="#" th:href="@{/admin/discussions}" class="ui button">返回列表</a>
+          <form th:action="@{/admin/discussions/delete/{id}(id=${discussion.id})}" method="post" style="display: inline;">
+            <button type="submit" class="ui red button" onclick="return confirm('确定要删除这个话题吗？')">删除话题</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="ui bottom attached segment">
+        <h3 class="ui header">
+          <i class="comments icon"></i>
+          评论列表
+          <span class="ui circular label" th:text="${comments != null ? comments.size() : 0}">0</span>
+        </h3>
+        
+        <div th:if="${comments == null or comments.isEmpty()}" class="ui placeholder segment">
+          <div class="ui icon header">
+            <i class="comments outline icon"></i>
+            暂无评论
+          </div>
+        </div>
+
+        <div th:if="${comments != null and not comments.isEmpty()}" class="ui comments">
+          <div th:each="comment : ${comments}" th:if="${comment.parentCommentId == null}" class="comment">
+            <a class="avatar">
+              <img th:src="${comment.avatar != null and not #strings.isEmpty(comment.avatar)} ? ${comment.avatar} : '/images/me.jpg'" th:alt="${comment.nickname}">
+            </a>
+            <div class="content">
+              <a class="author">
+                <span th:text="${comment.nickname}">用户昵称</span>
+                <span th:if="${comment.qqNumber != null and not #strings.isEmpty(comment.qqNumber)}" class="ui mini label" style="margin-left: 10px;" th:text="'QQ: ' + ${comment.qqNumber}"></span>
+              </a>
+              <div class="metadata">
+                <span class="date" th:text="${#dates.format(comment.createTime, 'yyyy-MM-dd HH:mm:ss')}">2024-01-01 12:00:00</span>
+              </div>
+              <div class="text" th:utext="${comment.content}">
+                评论内容
+              </div>
+              <div class="actions">
+                <span class="ui small basic label">
+                  <i class="thumbs up outline icon"></i>
+                  <span th:text="${comment.likeCount != null ? comment.likeCount : 0}">0</span>
+                </span>
+                <form th:action="@{/admin/discussions/comment/delete/{id}(id=${comment.id}, discussionId=${discussion.id})}" method="post" style="display: inline;" onsubmit="return confirm('确定要删除这条评论吗？')">
+                  <button type="submit" class="ui small red basic label button" style="border: none; background: none; padding: 5px 10px; cursor: pointer;">
+                    <i class="trash icon"></i>删除
+                  </button>
+                </form>
+              </div>
+
+              <div th:if="${#lists.size(comments.?[parentCommentId == ${comment.id}]) > 0}" class="comments">
+                <div th:each="reply : ${comments.?[parentCommentId == ${comment.id}]}" class="comment">
+                  <a class="avatar">
+                    <img th:src="${reply.avatar != null and not #strings.isEmpty(reply.avatar)} ? ${reply.avatar} : '/images/me.jpg'" th:alt="${reply.nickname}">
+                  </a>
+                  <div class="content">
+                    <a class="author">
+                      <span th:text="${reply.nickname}">回复者昵称</span>
+                      <span th:if="${reply.qqNumber != null and not #strings.isEmpty(reply.qqNumber)}" class="ui mini label" style="margin-left: 10px;" th:text="'QQ: ' + ${reply.qqNumber}"></span>
+                    </a>
+                    <div class="metadata">
+                      <span class="date" th:text="${#dates.format(reply.createTime, 'yyyy-MM-dd HH:mm:ss')}">2024-01-01 12:00:00</span>
+                    </div>
+                    <div class="text">
+                      <a th:href="'#comment-' + ${comment.id}" class="ui small blue label" th:text="'@' + ${comment.nickname}">@用户</a>
+                      <span th:utext="${reply.content}">回复内容</span>
+                    </div>
+                    <div class="actions">
+                      <span class="ui small basic label">
+                        <i class="thumbs up outline icon"></i>
+                        <span th:text="${reply.likeCount != null ? reply.likeCount : 0}">0</span>
+                      </span>
+                      <form th:action="@{/admin/discussions/comment/delete/{id}(id=${reply.id}, discussionId=${discussion.id})}" method="post" style="display: inline;" onsubmit="return confirm('确定要删除这条回复吗？')">
+                        <button type="submit" class="ui small red basic label button" style="border: none; background: none; padding: 5px 10px; cursor: pointer;">
+                          <i class="trash icon"></i>删除
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+  <br>
+
+  <!--底部-->
+  <footer class="ui inverted vertical segment m-padded-tb-massive">
+    <div class="ui center aligned container">
+      <div class="ui inverted divided grid stackable">
+        <div class="three wide column">
+          <h4 class="ui inverted header m-text-thin m-text-spaced ">关于我</h4>
+          <div class="ui inverted link list">
+            <a href="#" class="item m-text-thin">QQ号：523341786</a>
+            <a href="#" class="item m-text-thin">微信：tearhacker</a>
+          </div>
+        </div>
+        <div class="three wide column">
+          <h4 class="ui inverted header m-text-thin m-text-spaced ">联系我</h4>
+          <div class="ui inverted link list">
+            <a href="#" class="item m-text-thin">Email：tearhacker@foxmail.com</a>
+            <a href="#" class="item m-text-thin">GitHub：https://github.com/tearhacker</a>
+          </div>
+        </div>
+        <div class="seven wide column">
+          <h4 class="ui inverted header m-text-thin m-text-spaced ">Blog</h4>
+          <p class="m-text-thin m-text-spaced m-opacity-mini">这是我的个人博客，记录学习和生活的点滴。</p>
+        </div>
+      </div>
+      <div class="ui inverted section divider"></div>
+      <p class="m-text-thin m-text-spaced m-opacity-tiny">Copyright © 2024 Designed by oneStar</p>
+    </div>
+  </footer>
+
+  <script src="../../static/lib/jquery/jquery-3.6.0.min.js" th:src="@{/lib/jquery/jquery-3.6.0.min.js}"></script>
+  <script src="../../static/lib/semantic/dist/semantic.min.js" th:src="@{/lib/semantic/dist/semantic.min.js}"></script>
+
+</body>
+</html>
