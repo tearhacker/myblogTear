@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_support_dialog"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="关于一念"
+        android:textSize="20sp"
+        android:textColor="#1A1A1A"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tv_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="版本：1.0"
+        android:textSize="12sp"
+        android:textColor="#666666"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="12dp"
+        android:maxHeight="350dp"
+        android:scrollbars="vertical"
+        android:fadingEdge="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#20000000"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="更新内容"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_update_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="正在获取更新信息..."
+                android:textSize="12sp"
+                android:textColor="#555555"
+                android:lineSpacingExtra="3dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:background="#20000000"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="安全声明"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="1. 本软件为免费开源项目，仅供学习交流使用，不作任何商业用途。\n2. 本软件不收集身份证、手机号、真实姓名等敏感隐私信息。\n3. 服务器仅存储：签到记录、登录账号信息。AI对话通过豆包官方API处理。"
+                android:textSize="12sp"
+                android:textColor="#555555"
+                android:lineSpacingExtra="3dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:background="#20000000"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="免责声明"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="本软件按「现状」提供，不提供任何形式的明示或暗示担保。使用者需自行承担使用风险，开发者不对任何直接或间接损失承担责任。"
+                android:textSize="12sp"
+                android:textColor="#555555"
+                android:lineSpacingExtra="3dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:background="#20000000"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="联系作者"
+                android:textSize="12sp"
+                android:textColor="#666666"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="QQ群: 1091832612"
+                android:textSize="14sp"
+                android:textColor="#222222"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="tearhacker@outlook.com"
+                android:textSize="14sp"
+                android:textColor="#222222"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_gitee"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="开源仓库：Gitee"
+                android:textSize="12sp"
+                android:textColor="#3B7DD8"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/btn_close"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_button_primary"
+        android:text="关闭"
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"/>
+
+</LinearLayout>

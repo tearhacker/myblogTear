@@ -1,15 +1,25 @@
 package tear.conception.ui;
 
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
@@ -18,31 +28,30 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.json.JSONObject;
 
 import tear.conception.AiChatActivity;
 import tear.conception.LoginActivity;
 import tear.conception.R;
 import tear.conception.module.BlogApiService;
-import tear.conception.ui.view.CircleProgressView;
-import tear.conception.ui.view.RippleView;
+import tear.conception.ui.view.WaterDropProgressView;
 import tear.conception.ui.view.StarParticleView;
 import tear.conception.util.DateUtil;
 import tear.conception.util.SharedPreferencesUtil;
 
 public class UserCenterFragment extends Fragment {
     
-    private CircleProgressView circleProgress;
+    private WaterDropProgressView circleProgress;
     private TextView tvCheckinDays;
-    private FrameLayout btnSigninContainer;
-    private TextView tvSigninText;
     private TextView tvSigninStatus;
     private TextView tvMilestone;
-    private RippleView rippleView;
     private StarParticleView starParticleView;
-    private LinearLayout llMyPosts;
-    private LinearLayout llMyComments;
-    private LinearLayout llMyFavorites;
+    private LinearLayout llSupportDeveloper;
     private LinearLayout llAiAssistant;
     private LinearLayout llSettings;
     private LinearLayout llAbout;
@@ -57,7 +66,6 @@ public class UserCenterFragment extends Fragment {
     private static final String KEY_LAST_SIGNIN_TIME = "last_signin_time";
     private static final String KEY_SIGNIN_DAYS = "signin_days";
     
-    private ObjectAnimator breathAnimator;
     private boolean isSignedInToday = false;
     private int currentDays = 0;
     private long userId = 0;
@@ -91,7 +99,6 @@ public class UserCenterFragment extends Fragment {
         } else {
             showGuestView();
         }
-        startBreathAnimation();
     }
 
     private void showUserInfo() {
@@ -106,6 +113,10 @@ public class UserCenterFragment extends Fragment {
         if (tvQqNumber != null) {
             tvQqNumber.setText("QQ: " + qqNumber);
         }
+        if (ivAvatar != null && qqNumber != null && !qqNumber.isEmpty()) {
+            String avatarUrl = "https://q1.qlogo.cn/g?b=qq&nk=" + qqNumber + "&s=100";
+            new AvatarLoadTask(ivAvatar).execute(avatarUrl);
+        }
     }
 
     private void hideUserInfo() {
@@ -116,10 +127,9 @@ public class UserCenterFragment extends Fragment {
 
     private void showGuestView() {
         hideUserInfo();
-        tvCheckinDays.setText("0");
+        tvCheckinDays.setVisibility(View.GONE);
         circleProgress.setDays(0, 30);
-        btnSigninContainer.setEnabled(true);
-        tvSigninText.setText("登录");
+        circleProgress.setSignedIn(false);
         tvSigninStatus.setVisibility(View.VISIBLE);
         tvSigninStatus.setText("点击登录以同步数据");
         tvMilestone.setVisibility(View.GONE);
@@ -128,15 +138,10 @@ public class UserCenterFragment extends Fragment {
     private void initViews(View view) {
         circleProgress = view.findViewById(R.id.circle_progress);
         tvCheckinDays = view.findViewById(R.id.tv_checkin_days);
-        btnSigninContainer = view.findViewById(R.id.btn_signin_container);
-        tvSigninText = view.findViewById(R.id.tv_signin_text);
         tvSigninStatus = view.findViewById(R.id.tv_signin_status);
         tvMilestone = view.findViewById(R.id.tv_milestone);
-        rippleView = view.findViewById(R.id.ripple_view);
         starParticleView = view.findViewById(R.id.star_particle_view);
-        llMyPosts = view.findViewById(R.id.ll_my_posts);
-        llMyComments = view.findViewById(R.id.ll_my_comments);
-        llMyFavorites = view.findViewById(R.id.ll_my_favorites);
+        llSupportDeveloper = view.findViewById(R.id.ll_support_developer);
         llAiAssistant = view.findViewById(R.id.ll_ai_assistant);
         llSettings = view.findViewById(R.id.ll_settings);
         llAbout = view.findViewById(R.id.ll_about);
@@ -148,31 +153,17 @@ public class UserCenterFragment extends Fragment {
     }
 
     private void setupClickListeners() {
-        btnSigninContainer.setOnClickListener(new View.OnClickListener() {
+        circleProgress.setOnSigninClickListener(new WaterDropProgressView.OnSigninClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSigninClick() {
                 onSigninClicked();
             }
         });
 
-        llMyPosts.setOnClickListener(new View.OnClickListener() {
+        llSupportDeveloper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onMyPostsClicked();
-            }
-        });
-
-        llMyComments.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onMyCommentsClicked();
-            }
-        });
-
-        llMyFavorites.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onMyFavoritesClicked();
+                onSupportDeveloperClicked();
             }
         });
 
@@ -219,7 +210,8 @@ public class UserCenterFragment extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                tvCheckinDays.setText(String.valueOf(currentDays));
+                                tvCheckinDays.setVisibility(View.VISIBLE);
+                                tvCheckinDays.setText("已连续签到 " + currentDays + " 天");
                                 circleProgress.setDays(currentDays, 30);
                                 checkTodaySignin();
                             }
@@ -255,12 +247,10 @@ public class UserCenterFragment extends Fragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    btnSigninContainer.setEnabled(false);
-                                    tvSigninText.setText("已签到");
+                                    circleProgress.setSignedIn(true);
                                     tvSigninStatus.setVisibility(View.VISIBLE);
                                     String message = data.optString("signinMessage", "今日已签到");
                                     tvSigninStatus.setText(message);
-                                    stopBreathAnimation();
                                 }
                             });
                         }
@@ -280,20 +270,18 @@ public class UserCenterFragment extends Fragment {
         currentDays = prefsUtil.getInt(KEY_SIGNIN_DAYS, 0);
         long lastSigninTime = prefsUtil.getLong(KEY_LAST_SIGNIN_TIME, 0);
         
-        tvCheckinDays.setText(String.valueOf(currentDays));
+        tvCheckinDays.setVisibility(View.VISIBLE);
+        tvCheckinDays.setText("已连续签到 " + currentDays + " 天");
         circleProgress.setDays(currentDays, 30);
         
         isSignedInToday = DateUtil.isToday(lastSigninTime);
         
         if (isSignedInToday) {
-            btnSigninContainer.setEnabled(false);
-            tvSigninText.setText("已签到");
+            circleProgress.setSignedIn(true);
             tvSigninStatus.setVisibility(View.VISIBLE);
             tvSigninStatus.setText("明日再来吧~");
-            stopBreathAnimation();
         } else {
-            btnSigninContainer.setEnabled(true);
-            tvSigninText.setText("签到");
+            circleProgress.setSignedIn(false);
             tvSigninStatus.setVisibility(View.GONE);
         }
         
@@ -322,23 +310,6 @@ public class UserCenterFragment extends Fragment {
             tvMilestone.setText(milestoneText);
         } else {
             tvMilestone.setVisibility(View.GONE);
-        }
-    }
-
-    private void startBreathAnimation() {
-        if (isSignedInToday) return;
-        
-        breathAnimator = ObjectAnimator.ofFloat(btnSigninContainer, "alpha", 1f, 0.7f, 1f);
-        breathAnimator.setDuration(1500);
-        breathAnimator.setRepeatCount(ValueAnimator.INFINITE);
-        breathAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-        breathAnimator.start();
-    }
-
-    private void stopBreathAnimation() {
-        if (breathAnimator != null) {
-            breathAnimator.cancel();
-            btnSigninContainer.setAlpha(1f);
         }
     }
 
@@ -373,15 +344,11 @@ public class UserCenterFragment extends Fragment {
     }
 
     private void updateSigninButton() {
-        btnSigninContainer.setEnabled(true);
-        tvSigninText.setText("签到");
+        circleProgress.setSignedIn(false);
         tvSigninStatus.setVisibility(View.GONE);
-        startBreathAnimation();
     }
 
     private void doServerSignin() {
-        btnSigninContainer.setEnabled(false);
-        
         BlogApiService.doSignin(userId, qqNumber, new BlogApiService.ApiCallback() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -404,7 +371,6 @@ public class UserCenterFragment extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                btnSigninContainer.setEnabled(true);
                                 Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -413,7 +379,6 @@ public class UserCenterFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            btnSigninContainer.setEnabled(true);
                             Toast.makeText(getActivity(), "签到失败", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -450,39 +415,17 @@ public class UserCenterFragment extends Fragment {
         prefsUtil.putLong(KEY_LAST_SIGNIN_TIME, System.currentTimeMillis());
         prefsUtil.putInt(KEY_SIGNIN_DAYS, signinDays);
         
-        stopBreathAnimation();
         playSigninAnimation(signinDays, "签到成功！", false);
     }
 
     private void playSigninAnimation(final int newDays, final String message, final boolean isMilestone) {
-        btnSigninContainer.setEnabled(false);
-        
-        rippleView.startRipple();
         starParticleView.startAnimation(20);
         
         animateDaysCounter(currentDays, newDays);
         
         circleProgress.animateProgress((float) newDays / 30);
-        
-        btnSigninContainer.animate()
-            .scaleX(0.8f)
-            .scaleY(0.8f)
-            .setDuration(150)
-            .setInterpolator(new AccelerateDecelerateInterpolator())
-            .withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    btnSigninContainer.animate()
-                        .scaleX(1f)
-                        .scaleY(1f)
-                        .setDuration(300)
-                        .setInterpolator(new OvershootInterpolator())
-                        .start();
-                }
-            })
-            .start();
-        
-        tvSigninText.setText("已签到");
+        circleProgress.playSigninAnimation();
+        circleProgress.setSignedIn(true);
         
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -501,6 +444,7 @@ public class UserCenterFragment extends Fragment {
     }
 
     private void animateDaysCounter(int from, int to) {
+        tvCheckinDays.setVisibility(View.VISIBLE);
         ValueAnimator animator = ValueAnimator.ofInt(from, to);
         animator.setDuration(1000);
         animator.setInterpolator(new OvershootInterpolator());
@@ -508,7 +452,7 @@ public class UserCenterFragment extends Fragment {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int value = (int) animation.getAnimatedValue();
-                tvCheckinDays.setText(String.valueOf(value));
+                tvCheckinDays.setText("已连续签到 " + value + " 天");
             }
         });
         animator.start();
@@ -528,16 +472,90 @@ public class UserCenterFragment extends Fragment {
         starParticleView.startAnimation(40);
     }
 
-    private void onMyPostsClicked() {
-        Toast.makeText(getActivity(), "我的文章", Toast.LENGTH_SHORT).show();
+    private void onSupportDeveloperClicked() {
+        showSupportDialog();
     }
-
-    private void onMyCommentsClicked() {
-        Toast.makeText(getActivity(), "我的评论", Toast.LENGTH_SHORT).show();
+    
+    private void showSupportDialog() {
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_support_developer);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.setCanceledOnTouchOutside(true);
+        
+        ImageView ivWechatPay = dialog.findViewById(R.id.iv_wechat_pay);
+        ImageView ivAlipay = dialog.findViewById(R.id.iv_alipay);
+        TextView btnClose = dialog.findViewById(R.id.btn_close);
+        
+        ivWechatPay.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                saveImageToGallery((ImageView) v, "wechat_pay_qrcode");
+                return true;
+            }
+        });
+        
+        ivAlipay.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                saveImageToGallery((ImageView) v, "alipay_qrcode");
+                return true;
+            }
+        });
+        
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        
+        dialog.show();
     }
-
-    private void onMyFavoritesClicked() {
-        Toast.makeText(getActivity(), "我的收藏", Toast.LENGTH_SHORT).show();
+    
+    private void saveImageToGallery(ImageView imageView, String fileName) {
+        try {
+            Drawable drawable = imageView.getDrawable();
+            if (drawable == null) {
+                Toast.makeText(getActivity(), "图片加载失败", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+            if (bitmap == null) {
+                Toast.makeText(getActivity(), "图片获取失败", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, fileName + "_" + System.currentTimeMillis() + ".png");
+            contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+            
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/一念APP");
+            }
+            
+            android.net.Uri uri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+            if (uri == null) {
+                Toast.makeText(getActivity(), "保存失败", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            OutputStream outputStream = getActivity().getContentResolver().openOutputStream(uri);
+            if (outputStream == null) {
+                Toast.makeText(getActivity(), "保存失败", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            outputStream.close();
+            
+            Toast.makeText(getActivity(), "已保存到相册", Toast.LENGTH_SHORT).show();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getActivity(), "保存失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void onAiAssistantClicked() {
@@ -550,7 +568,99 @@ public class UserCenterFragment extends Fragment {
     }
 
     private void onAboutClicked() {
-        Toast.makeText(getActivity(), "关于一念", Toast.LENGTH_SHORT).show();
+        showAboutDialog();
+    }
+
+    private void showAboutDialog() {
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_about_app);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.setCanceledOnTouchOutside(true);
+        
+        final TextView tvVersion = dialog.findViewById(R.id.tv_version);
+        final TextView tvUpdateContent = dialog.findViewById(R.id.tv_update_content);
+        TextView btnClose = dialog.findViewById(R.id.btn_close);
+        TextView tvGitee = dialog.findViewById(R.id.tv_gitee);
+        
+        try {
+            String versionName = getActivity().getPackageManager()
+                .getPackageInfo(getActivity().getPackageName(), 0).versionName;
+            tvVersion.setText("版本：" + versionName);
+        } catch (Exception e) {
+            tvVersion.setText("版本：1.0");
+        }
+        
+        BlogApiService.getLatestVersion(new BlogApiService.ApiCallback() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                try {
+                    int code = response.getInt("code");
+                    if (code == 200) {
+                        JSONObject data = response.optJSONObject("data");
+                        if (data != null) {
+                            final String updateContent = data.optString("updateContent", "暂无更新内容");
+                            final String versionName = data.optString("versionName", "");
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (!versionName.isEmpty()) {
+                                        tvVersion.setText("版本：" + versionName);
+                                    }
+                                    tvUpdateContent.setText(updateContent);
+                                }
+                            });
+                        }
+                    } else {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvUpdateContent.setText("暂无更新内容");
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tvUpdateContent.setText("暂无更新内容");
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvUpdateContent.setText("暂无更新内容");
+                    }
+                });
+            }
+        });
+        
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        
+        tvGitee.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, 
+                        android.net.Uri.parse("https://gitee.com/thoughtful123/one-thought-software"));
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), "无法打开链接", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        
+        dialog.show();
     }
 
     private void onLogoutClicked() {
@@ -594,8 +704,58 @@ public class UserCenterFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        stopBreathAnimation();
         starParticleView.stopAnimation();
-        rippleView.stopRipple();
+    }
+
+    private static class AvatarLoadTask extends AsyncTask<String, Void, Bitmap> {
+        private final java.lang.ref.WeakReference<ImageView> imageViewRef;
+
+        AvatarLoadTask(ImageView imageView) {
+            this.imageViewRef = new java.lang.ref.WeakReference<>(imageView);
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            try {
+                URL imageUrl = new URL(params[0]);
+                HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setReadTimeout(5000);
+                conn.setDoInput(true);
+                conn.connect();
+                InputStream input = conn.getInputStream();
+                Bitmap bitmap = BitmapFactory.decodeStream(input);
+                input.close();
+                if (bitmap != null) {
+                    bitmap = getCircularBitmap(bitmap);
+                }
+                return bitmap;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            ImageView imageView = imageViewRef.get();
+            if (imageView != null && bitmap != null) {
+                imageView.setImageBitmap(bitmap);
+            }
+        }
+
+        private Bitmap getCircularBitmap(Bitmap bitmap) {
+            int size = Math.min(bitmap.getWidth(), bitmap.getHeight());
+            Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+            android.graphics.Canvas canvas = new android.graphics.Canvas(output);
+            android.graphics.Paint paint = new android.graphics.Paint();
+            android.graphics.Rect rect = new android.graphics.Rect(0, 0, size, size);
+            paint.setAntiAlias(true);
+            canvas.drawARGB(0, 0, 0, 0);
+            canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint);
+            paint.setXfermode(new android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(bitmap, rect, rect, paint);
+            return output;
+        }
     }
 }

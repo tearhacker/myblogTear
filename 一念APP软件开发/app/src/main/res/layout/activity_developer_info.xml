@@ -254,7 +254,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="对欧阳颖的话"
+                        android:text="对她的话"
                         android:textSize="17sp"
                         android:textColor="@color/love_primary"
                         android:textStyle="bold"

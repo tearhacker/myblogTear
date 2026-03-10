@@ -174,7 +174,7 @@ public class DeveloperInfoActivity extends Activity {
 
     private void startBgm() {
         try {
-            bgmPlayer = MediaPlayer.create(this, R.raw.tryremindyou);
+            bgmPlayer = MediaPlayer.create(this, R.raw.trymissyou);
             if (bgmPlayer != null) {
                 bgmPlayer.setLooping(true);
                 bgmPlayer.setVolume(0.6f, 0.6f);
@@ -341,7 +341,9 @@ public class DeveloperInfoActivity extends Activity {
     }
 
     private void loadIdentityContent() {
-        String content = "就职于广东省深圳市石岩街道毋界文化传媒有限责任公司，岗位为IT部门技术开发专员，负责公司主要网站系统业务的代码开发、项目维护等等。";
+       // String content = "就职于广东省深圳市石岩街道毋界文化传媒有限责任公司，岗位为IT部门技术开发专员，负责公司主要网站系统业务的代码开发、项目维护等等。";
+        String content = "曾任自由职业IT安全领域泰斗开发总工程师,两年后任深圳某IT公司全栈开发技术员。集某神秘平台网文小说作者于一体,合海内外社交媒体主播UP主于一体。热衷于写代码,技术应用于现实,创作应用于生活。";
+        
         tvIdentityContent.setText(content);
     }
 
@@ -392,7 +394,7 @@ public class DeveloperInfoActivity extends Activity {
     }
 
     private void showToHerMessage() {
-        tvToHerContent.setText("欧阳颖，\n\n初中那年的阳光，\n照进了我的心里。\n\n这些年，\n我一直在用我的方式，\n追寻那份模糊的记忆。\n\n不知道是否晚了，\n不知道此音能否抵达，\n\n但我知道——\n不悔年轻，不弃少年。");
+        tvToHerContent.setText("XXX，\n\n初中那年的阳光，\n照进了我的心里。\n\n这些年，\n我一直在用我的方式，\n追寻那份模糊的记忆。\n\n不知道是否晚了，\n不知道此音能否抵达，\n\n但我知道——\n不悔年轻，不弃少年。");
         
         tvToHerContent.animate()
                 .alpha(0f)

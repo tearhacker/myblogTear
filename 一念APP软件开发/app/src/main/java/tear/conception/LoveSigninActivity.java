@@ -3,10 +3,12 @@ package tear.conception;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.EditText;
@@ -406,8 +408,6 @@ public class LoveSigninActivity extends Activity {
     }
 
     private void doServerLoveSignin() {
-        btnLoveSigninContainer.setEnabled(false);
-        
         String inputTargetName = "欧阳颖";
         if (etTargetName != null) {
             String input = etTargetName.getText().toString().trim();
@@ -416,13 +416,60 @@ public class LoveSigninActivity extends Activity {
             }
         }
         
-        if (!inputTargetName.equals(targetName)) {
-            targetName = inputTargetName;
+        boolean hasConfirmedTargetName = prefsUtil.getBoolean("love_target_name_confirmed_" + userId, false);
+        
+        if (!hasConfirmedTargetName && !inputTargetName.equals("欧阳颖")) {
+            showLoveDeclarationDialog(inputTargetName);
+            return;
+        }
+        
+        performLoveSignin(inputTargetName);
+    }
+    
+    private void showLoveDeclarationDialog(final String targetNameInput) {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_love_declaration);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.setCanceledOnTouchOutside(false);
+        
+        TextView tvTargetNameDisplay = dialog.findViewById(R.id.tv_target_name_display);
+        TextView btnCancel = dialog.findViewById(R.id.btn_cancel);
+        TextView btnConfirm = dialog.findViewById(R.id.btn_confirm);
+        
+        tvTargetNameDisplay.setText("致 " + targetNameInput);
+        
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                if (etTargetName != null) {
+                    etTargetName.setText("");
+                }
+            }
+        });
+        
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                performLoveSignin(targetNameInput);
+            }
+        });
+        
+        dialog.show();
+    }
+    
+    private void performLoveSignin(final String finalTargetName) {
+        btnLoveSigninContainer.setEnabled(false);
+        
+        prefsUtil.putBoolean("love_target_name_confirmed_" + userId, true);
+        
+        if (!finalTargetName.equals(targetName)) {
+            targetName = finalTargetName;
             prefsUtil.putString("love_target_name", targetName);
             updateTargetTitle();
         }
-        
-        final String finalTargetName = inputTargetName;
         
         BlogApiService.doLoveSignin(userId, qqNumber, finalTargetName, new BlogApiService.ApiCallback() {
             @Override
