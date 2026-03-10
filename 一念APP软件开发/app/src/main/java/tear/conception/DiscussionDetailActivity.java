@@ -140,8 +140,8 @@ public class DiscussionDetailActivity extends Activity {
                             if (code == 200) {
                                 JSONObject data = response.optJSONObject("data");
                                 if (data != null) {
-                                    JSONObject discussionJson = data.optJSONObject("discussion");
-                                    JSONArray commentsArray = data.optJSONArray("comments");
+                                    final JSONObject discussionJson = data.optJSONObject("discussion");
+                                    final JSONArray commentsArray = data.optJSONArray("comments");
 
                                     if (discussionJson != null) {
                                         discussion = Discussion.fromJson(discussionJson);
@@ -208,13 +208,13 @@ public class DiscussionDetailActivity extends Activity {
         commentsContainer.removeAllViews();
 
         LayoutInflater inflater = LayoutInflater.from(this);
-        for (DiscussionComment comment : comments) {
+        for (final DiscussionComment comment : comments) {
             View commentView = createCommentView(inflater, comment, 0);
             commentsContainer.addView(commentView);
         }
     }
 
-    private View createCommentView(LayoutInflater inflater, DiscussionComment comment, int depth) {
+    private View createCommentView(LayoutInflater inflater, final DiscussionComment comment, int depth) {
         View view = inflater.inflate(R.layout.item_discussion_comment, null);
 
         ImageView ivAvatar = view.findViewById(R.id.iv_avatar);
@@ -290,7 +290,7 @@ public class DiscussionDetailActivity extends Activity {
             return;
         }
 
-        String content = etComment.getText().toString().trim();
+        final String content = etComment.getText().toString().trim();
         if (content.isEmpty()) {
             Toast.makeText(this, "请输入评论内容", Toast.LENGTH_SHORT).show();
             return;
