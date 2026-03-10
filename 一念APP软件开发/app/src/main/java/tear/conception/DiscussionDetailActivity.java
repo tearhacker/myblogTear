@@ -130,7 +130,7 @@ public class DiscussionDetailActivity extends Activity {
 
         BlogApiService.getDiscussionDetail(discussionId, new BlogApiService.ApiCallback() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(final JSONObject response) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -193,6 +193,9 @@ public class DiscussionDetailActivity extends Activity {
         ivAvatar.setImageResource(R.drawable.default_avatar);
         if (discussion.getAvatar() != null && !discussion.getAvatar().isEmpty()) {
             loadAvatar(ivAvatar, discussion.getAvatar());
+        } else if (discussion.getQqNumber() != null && !discussion.getQqNumber().isEmpty()) {
+            String avatarUrl = "https://q1.qlogo.cn/g?b=qq&nk=" + discussion.getQqNumber() + "&s=100";
+            loadAvatar(ivAvatar, avatarUrl);
         }
 
         contentLayout.setVisibility(View.VISIBLE);
@@ -232,6 +235,9 @@ public class DiscussionDetailActivity extends Activity {
         ivAvatar.setImageResource(R.drawable.default_avatar);
         if (comment.getAvatar() != null && !comment.getAvatar().isEmpty()) {
             loadAvatar(ivAvatar, comment.getAvatar());
+        } else if (comment.getQqNumber() != null && !comment.getQqNumber().isEmpty()) {
+            String avatarUrl = "https://q1.qlogo.cn/g?b=qq&nk=" + comment.getQqNumber() + "&s=100";
+            loadAvatar(ivAvatar, avatarUrl);
         }
 
         if (comment.getReplies() != null && !comment.getReplies().isEmpty()) {
@@ -252,7 +258,7 @@ public class DiscussionDetailActivity extends Activity {
 
         BlogApiService.likeDiscussion(discussionId, new BlogApiService.ApiCallback() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(final JSONObject response) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -301,7 +307,7 @@ public class DiscussionDetailActivity extends Activity {
 
         BlogApiService.createComment(discussionId, userId, qqNumber, nickname, avatar, content, null, new BlogApiService.ApiCallback() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(final JSONObject response) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

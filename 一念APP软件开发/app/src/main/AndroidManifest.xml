@@ -99,6 +99,11 @@
             android:windowSoftInputMode="adjustResize|stateHidden"/>
 
         <activity
+            android:name=".DiscussionDetailActivity"
+            android:label="话题详情"
+            android:exported="false"/>
+
+        <activity
             android:name=".FullscreenImageActivity"
             android:label="查看图片"
             android:exported="false"

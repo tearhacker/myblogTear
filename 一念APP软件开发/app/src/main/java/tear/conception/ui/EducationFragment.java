@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tear.conception.DiscussionActivity;
+import tear.conception.DiscussionDetailActivity;
 import tear.conception.R;
 import tear.conception.model.Discussion;
 import tear.conception.module.BlogApiService;
@@ -66,7 +67,7 @@ public class EducationFragment extends Fragment {
         adapter = new DiscussionListAdapter(getActivity(), discussionList);
         adapter.setOnDiscussionItemClickListener(new DiscussionListAdapter.OnDiscussionItemClickListener() {
             @Override
-            public void onDiscussionClick(Discussion discussion, int position) {
+            public void onDiscussionClick(final Discussion discussion, int position) {
                 openDiscussionDetail(discussion);
             }
         });
@@ -101,7 +102,7 @@ public class EducationFragment extends Fragment {
         
         loadMoreLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 if (!isLoading && hasMore) {
                     loadMoreDiscussionList();
                 }
@@ -124,7 +125,7 @@ public class EducationFragment extends Fragment {
         
         BlogApiService.getDiscussionList(currentPage, pageSize, new BlogApiService.ApiCallback() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(final JSONObject response) {
                 if (getActivity() == null) return;
                 
                 isLoading = false;
@@ -133,7 +134,7 @@ public class EducationFragment extends Fragment {
                 try {
                     int code = response.optInt("code", -1);
                     if (code == 200) {
-                        JSONArray listArray = response.optJSONArray("data");
+                        final JSONArray listArray = response.optJSONArray("data");
                         if (listArray != null) {
                             discussionList.clear();
                             for (int i = 0; i < listArray.length(); i++) {
@@ -180,7 +181,7 @@ public class EducationFragment extends Fragment {
         
         BlogApiService.getDiscussionList(currentPage, pageSize, new BlogApiService.ApiCallback() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(final JSONObject response) {
                 if (getActivity() == null) return;
                 
                 isLoading = false;
@@ -188,7 +189,7 @@ public class EducationFragment extends Fragment {
                 try {
                     int code = response.optInt("code", -1);
                     if (code == 200) {
-                        JSONArray listArray = response.optJSONArray("data");
+                        final JSONArray listArray = response.optJSONArray("data");
                         if (listArray != null) {
                             for (int i = 0; i < listArray.length(); i++) {
                                 JSONObject discussionJson = listArray.optJSONObject(i);
@@ -210,7 +211,7 @@ public class EducationFragment extends Fragment {
             }
 
             @Override
-            public void onError(String error) {
+            public void onError(final String error) {
                 if (getActivity() == null) return;
                 
                 isLoading = false;
@@ -221,7 +222,7 @@ public class EducationFragment extends Fragment {
         });
     }
 
-    private void openDiscussionDetail(Discussion discussion) {
+    private void openDiscussionDetail(final Discussion discussion) {
         Intent intent = new Intent(getActivity(), DiscussionDetailActivity.class);
         intent.putExtra("discussionId", discussion.getId());
         startActivity(intent);

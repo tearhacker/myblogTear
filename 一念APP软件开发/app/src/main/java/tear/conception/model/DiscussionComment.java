@@ -34,7 +34,11 @@ public class DiscussionComment {
             comment.id = json.optLong("id", 0L);
             comment.discussionId = json.optLong("discussionId", 0L);
             comment.userId = json.optLong("userId", 0L);
+            // 尝试两种可能的字段名
             comment.qqNumber = json.optString("qqNumber", "");
+            if (comment.qqNumber.isEmpty()) {
+                comment.qqNumber = json.optString("qq_number", "");
+            }
             comment.nickname = json.optString("nickname", "");
             comment.avatar = json.optString("avatar", "");
             comment.content = json.optString("content", "");

@@ -28,7 +28,11 @@ public class Discussion {
         try {
             discussion.id = json.optLong("id", 0L);
             discussion.userId = json.optLong("userId", 0L);
+            // 尝试两种可能的字段名
             discussion.qqNumber = json.optString("qqNumber", "");
+            if (discussion.qqNumber.isEmpty()) {
+                discussion.qqNumber = json.optString("qq_number", "");
+            }
             discussion.nickname = json.optString("nickname", "");
             discussion.avatar = json.optString("avatar", "");
             discussion.title = json.optString("title", "");

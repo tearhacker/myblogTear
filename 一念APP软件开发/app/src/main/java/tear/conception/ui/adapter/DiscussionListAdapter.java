@@ -103,6 +103,9 @@ public class DiscussionListAdapter extends BaseAdapter {
         holder.ivAvatar.setImageResource(R.drawable.default_avatar);
         if (discussion.getAvatar() != null && !discussion.getAvatar().isEmpty()) {
             loadAvatar(holder.ivAvatar, discussion.getAvatar());
+        } else if (discussion.getQqNumber() != null && !discussion.getQqNumber().isEmpty()) {
+            String avatarUrl = "https://q1.qlogo.cn/g?b=qq&nk=" + discussion.getQqNumber() + "&s=100";
+            loadAvatar(holder.ivAvatar, avatarUrl);
         }
         
         convertView.setOnClickListener(new View.OnClickListener() {
