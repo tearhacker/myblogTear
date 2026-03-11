@@ -34,12 +34,15 @@ public class BlogApiService {
         void onError(String error);
     }
 
-    public static void login(String qqNumber, String nickname, ApiCallback callback) {
+    public static void login(String qqNumber, String nickname, String passwordMd5, ApiCallback callback) {
         String url = BASE_URL + "/app/user/login";
         Map<String, String> params = new java.util.HashMap<>();
         params.put("qqNumber", qqNumber);
         if (nickname != null && !nickname.isEmpty()) {
             params.put("nickname", nickname);
+        }
+        if (passwordMd5 != null && !passwordMd5.isEmpty()) {
+            params.put("password", passwordMd5);
         }
         postRequest(url, params, callback);
     }

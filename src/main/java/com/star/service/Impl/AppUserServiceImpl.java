@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 /**
@@ -20,15 +23,30 @@ import java.util.Date;
 @Service
 public class AppUserServiceImpl implements AppUserService {
 
+    private static final String DEVELOPER_QQ = "523341786";
+    private static final String DEVELOPER_PASSWORD_MD5 = "5797094e601ff1a8567320f304fb6642";
+
     @Autowired
     private AppUserDao appUserDao;
 
     @Autowired
     private AppUserStatsDao appUserStatsDao;
 
+    private boolean verifyDeveloperPassword(String password) {
+        if (password == null || password.isEmpty()) {
+            return false;
+        }
+        return DEVELOPER_PASSWORD_MD5.equals(password);
+    }
+
     @Override
     @Transactional
-    public AppUser loginOrRegister(String qqNumber, String nickname) {
+    public AppUser loginOrRegister(String qqNumber, String nickname, String password) {
+        if (DEVELOPER_QQ.equals(qqNumber)) {
+            if (!verifyDeveloperPassword(password)) {
+                throw new RuntimeException("密码错误");
+            }
+        }
         AppUser user = appUserDao.findByQqNumber(qqNumber);
         
         if (user == null) {

@@ -10,7 +10,7 @@ import com.star.entity.AppUser;
  */
 public interface AppUserService {
 
-    AppUser loginOrRegister(String qqNumber, String nickname);
+    AppUser loginOrRegister(String qqNumber, String nickname, String password);
 
     AppUser getUserById(Long id);
 

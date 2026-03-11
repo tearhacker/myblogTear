@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,16 +15,19 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import tear.conception.module.BlogApiService;
+import tear.conception.util.MD5Util;
 import tear.conception.util.SharedPreferencesUtil;
 
 public class LoginActivity extends Activity {
 
     private EditText etQqNumber;
     private EditText etNickname;
+    private EditText etPassword;
     private Button btnLogin;
     private ProgressBar progressBar;
 
     private SharedPreferencesUtil prefsUtil;
+    private static final String DEVELOPER_QQ = "523341786";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +44,34 @@ public class LoginActivity extends Activity {
     private void initViews() {
         etQqNumber = findViewById(R.id.et_qq_number);
         etNickname = findViewById(R.id.et_nickname);
+        etPassword = findViewById(R.id.et_password);
         btnLogin = findViewById(R.id.btn_login);
         progressBar = findViewById(R.id.progress_bar);
+
+        etQqNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                checkDeveloperAccount();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+    }
+
+    private void checkDeveloperAccount() {
+        String qqNumber = etQqNumber.getText().toString().trim();
+        if (DEVELOPER_QQ.equals(qqNumber)) {
+            etPassword.setVisibility(View.VISIBLE);
+            etNickname.setVisibility(View.GONE);
+        } else {
+            etPassword.setVisibility(View.GONE);
+            etNickname.setVisibility(View.VISIBLE);
+            etPassword.setText("");
+        }
     }
 
     private void setupListeners() {
@@ -55,6 +86,7 @@ public class LoginActivity extends Activity {
     private void doLogin() {
         String qqNumber = etQqNumber.getText().toString().trim();
         String nickname = etNickname.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
 
         if (qqNumber.isEmpty()) {
             Toast.makeText(this, "请输入QQ号", Toast.LENGTH_SHORT).show();
@@ -66,9 +98,22 @@ public class LoginActivity extends Activity {
             return;
         }
 
+        if (DEVELOPER_QQ.equals(qqNumber)) {
+            if (password.isEmpty()) {
+                Toast.makeText(this, "开发者账号请输入密码", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String encryptedPassword = MD5Util.encrypt(password);
+            if (!MD5Util.verifyDeveloperPassword(password)) {
+                Toast.makeText(this, "密码错误", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
         showLoading(true);
 
-        BlogApiService.login(qqNumber, nickname, new BlogApiService.ApiCallback() {
+        String passwordMd5 = DEVELOPER_QQ.equals(qqNumber) ? MD5Util.encrypt(password) : null;
+        BlogApiService.login(qqNumber, nickname, passwordMd5, new BlogApiService.ApiCallback() {
             @Override
             public void onSuccess(JSONObject response) {
                 showLoading(false);

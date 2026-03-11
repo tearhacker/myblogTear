@@ -22,8 +22,9 @@ public class AppUserController {
 
     @PostMapping("/login")
     public Result login(@RequestParam("qqNumber") String qqNumber,
-                        @RequestParam(value = "nickname", required = false) String nickname) {
-        AppUser user = appUserService.loginOrRegister(qqNumber, nickname);
+                        @RequestParam(value = "nickname", required = false) String nickname,
+                        @RequestParam(value = "password", required = false) String password) {
+        AppUser user = appUserService.loginOrRegister(qqNumber, nickname, password);
         
         AppUserVO vo = new AppUserVO();
         vo.setId(user.getId());
