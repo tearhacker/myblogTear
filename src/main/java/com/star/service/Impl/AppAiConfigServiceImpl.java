@@ -27,7 +27,15 @@ public class AppAiConfigServiceImpl implements AppAiConfigService {
 
     @Override
     public AppAiConfig getEnabledConfig() {
-        return appAiConfigDao.findEnabled();
+        java.util.List<AppAiConfig> configs = appAiConfigDao.findAll();
+        if (configs != null && !configs.isEmpty()) {
+            for (AppAiConfig config : configs) {
+                if (config.getIsEnabled() != null && config.getIsEnabled() == 1) {
+                    return config;
+                }
+            }
+        }
+        return null;
     }
 
     @Override

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="400dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/love_bg_romantic"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:gravity="center"
+            android:text="☁"
+            android:textSize="40sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="情感树洞"
+            android:textColor="@color/love_primary"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="用心倾听，温柔回应"
+            android:textColor="@color/love_text_light"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#60FFFFFF"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="600dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp">
+
+        <LinearLayout
+            android:id="@+id/ll_share_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+    </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#60FFFFFF"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="💕 一念APP - 情感树洞"
+            android:textColor="@color/love_primary"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="2024-01-01"
+            android:textColor="@color/love_text_light"
+            android:textSize="10sp"/>
+
+    </LinearLayout>
+
+</LinearLayout>

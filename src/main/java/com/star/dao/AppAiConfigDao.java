@@ -16,7 +16,7 @@ public interface AppAiConfigDao {
     @Select("SELECT * FROM app_ai_config WHERE id = #{id}")
     AppAiConfig findById(Long id);
 
-    @Select("SELECT * FROM app_ai_config WHERE is_enabled = 1 LIMIT 1")
+    @Select("SELECT * FROM app_ai_config WHERE is_enabled = 1")
     AppAiConfig findEnabled();
 
     @Select("SELECT * FROM app_ai_config")

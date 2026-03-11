@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#CC000000">
+
+    <tear.conception.ui.view.PetalParticleView
+        android:id="@+id/petal_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/bg_sakura_dialog">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="💌"
+            android:textSize="48sp"
+            android:layout_marginTop="24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="写一封专属情书"
+            android:textColor="#FF69B4"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:letterSpacing="0.1"
+            android:shadowColor="#FF1493"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="8" />
+
+        <View
+            android:layout_width="60dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="12dp"
+            android:background="#33FF69B4" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="让AI帮你写一封专属情书\n记录这份珍贵的心意"
+            android:textColor="#666666"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:lineSpacingExtra="6dp"
+            android:alpha="0.9" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="24dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/btn_write_letter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="写情书"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:background="@drawable/bg_btn_sakura_primary"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/btn_later"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:text="下次吧"
+                android:textColor="#FFB6C1"
+                android:textSize="16sp"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:background="@drawable/bg_btn_sakura_secondary"
+                android:clickable="true"
+                android:focusable="true" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

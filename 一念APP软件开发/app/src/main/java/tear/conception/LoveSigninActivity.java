@@ -47,11 +47,19 @@ public class LoveSigninActivity extends Activity {
     private View continuousDaysCard;
     private LinearLayout llEmotionTreeHole;
     private LinearLayout llDeveloperInfo;
+    private LinearLayout llTimeLoveGame;
+    private TextView tvLoadingMessage;
+    private TextView tvLoadingSubMessage;
+    private HeartParticleView loadingHeartView;
+    private TextView tvHeartLoading;
+    private View loadingOverlay;
 
     private SharedPreferencesUtil prefsUtil;
     private ObjectAnimator breathAnimator;
+    private ObjectAnimator heartBeatAnimator;
     
     private boolean isSignedInToday = false;
+    private boolean isSigningIn = false;
     private int currentDays = 0;
     private int totalDays = 0;
     private long userId = 0;
@@ -122,6 +130,12 @@ public class LoveSigninActivity extends Activity {
         continuousDaysCard = (View) findViewById(R.id.tv_continuous_days).getParent();
         llEmotionTreeHole = findViewById(R.id.ll_emotion_tree_hole);
         llDeveloperInfo = findViewById(R.id.ll_developer_info);
+        llTimeLoveGame = findViewById(R.id.ll_time_love_game);
+        tvLoadingMessage = findViewById(R.id.tv_loading_message);
+        tvLoadingSubMessage = findViewById(R.id.tv_loading_sub_message);
+        loadingHeartView = findViewById(R.id.loading_heart_view);
+        tvHeartLoading = findViewById(R.id.tv_heart_loading);
+        loadingOverlay = findViewById(R.id.loading_overlay);
         
         updateTargetTitle();
     }
@@ -172,6 +186,15 @@ public class LoveSigninActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     openDeveloperInfo();
+                }
+            });
+        }
+        
+        if (llTimeLoveGame != null) {
+            llTimeLoveGame.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openTimeLoveGame();
                 }
             });
         }
@@ -229,6 +252,12 @@ public class LoveSigninActivity extends Activity {
 
     private void openDeveloperInfo() {
         Intent intent = new Intent(this, DeveloperInfoActivity.class);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+    
+    private void openTimeLoveGame() {
+        Intent intent = new Intent(this, TimeLoveGameActivity.class);
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
@@ -371,6 +400,10 @@ public class LoveSigninActivity extends Activity {
     }
 
     private void onLoveSigninClicked() {
+        if (isSigningIn) {
+            return;
+        }
+        
         if (userId > 0 && !qqNumber.isEmpty()) {
             doServerLoveSignin();
         } else {
@@ -461,7 +494,9 @@ public class LoveSigninActivity extends Activity {
     }
     
     private void performLoveSignin(final String finalTargetName) {
+        isSigningIn = true;
         btnLoveSigninContainer.setEnabled(false);
+        showLoading("正在为你生成恋爱寄语...", "每一份思念都值得被温柔以待");
         
         prefsUtil.putBoolean("love_target_name_confirmed_" + userId, true);
         
@@ -489,6 +524,7 @@ public class LoveSigninActivity extends Activity {
                                 prefsUtil.putString("love_target_name", targetName);
                                 updateTargetTitle();
                                 
+                                hideLoading();
                                 playLoveSigninAnimation(message);
                             }
                         });
@@ -497,7 +533,9 @@ public class LoveSigninActivity extends Activity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                isSigningIn = false;
                                 btnLoveSigninContainer.setEnabled(true);
+                                hideLoading();
                                 Toast.makeText(LoveSigninActivity.this, msg, Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -506,7 +544,9 @@ public class LoveSigninActivity extends Activity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            isSigningIn = false;
                             btnLoveSigninContainer.setEnabled(true);
+                            hideLoading();
                             Toast.makeText(LoveSigninActivity.this, "签到失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -518,7 +558,9 @@ public class LoveSigninActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        isSigningIn = false;
                         btnLoveSigninContainer.setEnabled(true);
+                        hideLoading();
                         Toast.makeText(LoveSigninActivity.this, "网络错误: " + error, Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -597,10 +639,66 @@ public class LoveSigninActivity extends Activity {
         animator.start();
     }
 
+    private void showLoading(String message) {
+        showLoading(message, "");
+    }
+
+    private void showLoading(String message, String subMessage) {
+        if (tvLoadingMessage != null) {
+            tvLoadingMessage.setText(message);
+        }
+        if (tvLoadingSubMessage != null) {
+            tvLoadingSubMessage.setText(subMessage);
+            tvLoadingSubMessage.setVisibility(subMessage.isEmpty() ? View.GONE : View.VISIBLE);
+        }
+        if (loadingOverlay != null) {
+            loadingOverlay.setVisibility(View.VISIBLE);
+        }
+        if (loadingHeartView != null) {
+            loadingHeartView.startAnimation(10);
+        }
+        if (tvHeartLoading != null) {
+            startHeartBeatAnimation();
+        }
+    }
+
+    private void hideLoading() {
+        if (loadingOverlay != null) {
+            loadingOverlay.setVisibility(View.GONE);
+        }
+        if (loadingHeartView != null) {
+            loadingHeartView.stopAnimation();
+        }
+        if (tvHeartLoading != null) {
+            stopHeartBeatAnimation();
+        }
+    }
+
+    private void startHeartBeatAnimation() {
+        if (heartBeatAnimator != null) {
+            heartBeatAnimator.cancel();
+        }
+        
+        heartBeatAnimator = ObjectAnimator.ofFloat(tvHeartLoading, "scaleX", 1f, 1.3f, 1f);
+        heartBeatAnimator.setDuration(800);
+        heartBeatAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        heartBeatAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        heartBeatAnimator.start();
+    }
+
+    private void stopHeartBeatAnimation() {
+        if (heartBeatAnimator != null) {
+            heartBeatAnimator.cancel();
+            tvHeartLoading.setScaleX(1f);
+            tvHeartLoading.setScaleY(1f);
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         stopBreathAnimation();
+        stopHeartBeatAnimation();
         if (starParticleView != null) {
             starParticleView.stopAnimation();
         }
@@ -609,6 +707,9 @@ public class LoveSigninActivity extends Activity {
         }
         if (rippleView != null) {
             rippleView.stopRipple();
+        }
+        if (loadingHeartView != null) {
+            loadingHeartView.stopAnimation();
         }
     }
 }

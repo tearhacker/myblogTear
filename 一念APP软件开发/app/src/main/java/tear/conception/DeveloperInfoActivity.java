@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.media.MediaPlayer;
 
 import tear.conception.ui.view.HeartParticleView;
+import tear.conception.util.SharedPreferencesUtil;
 
 public class DeveloperInfoActivity extends Activity {
 
@@ -52,7 +53,8 @@ public class DeveloperInfoActivity extends Activity {
     private TextView tvVersion;
     private HeartParticleView heartParticleView;
     private MediaPlayer bgmPlayer;
-
+    private SharedPreferencesUtil prefsUtil;
+    private String targetName = "";
     private Handler handler = new Handler();
     private int currentTypingPosition = 0;
     private String currentTypingText = "";
@@ -98,6 +100,12 @@ public class DeveloperInfoActivity extends Activity {
         tvQuote = findViewById(R.id.tv_quote);
         tvVersion = findViewById(R.id.tv_version);
         heartParticleView = findViewById(R.id.heart_particle_view);
+        
+        prefsUtil = SharedPreferencesUtil.getInstance(this);
+        targetName = prefsUtil.getString("love_target_name", "");
+        if (targetName == null || targetName.isEmpty()) {
+            targetName = "你心中的TA";
+        }
     }
 
     private void setupCircleAvatar() {
@@ -394,7 +402,7 @@ public class DeveloperInfoActivity extends Activity {
     }
 
     private void showToHerMessage() {
-        tvToHerContent.setText("XXX，\n\n初中那年的阳光，\n照进了我的心里。\n\n这些年，\n我一直在用我的方式，\n追寻那份模糊的记忆。\n\n不知道是否晚了，\n不知道此音能否抵达，\n\n但我知道——\n不悔年轻，不弃少年。");
+        tvToHerContent.setText(targetName + "，\n\n初中那年的阳光，\n照进了我的心里。\n\n这些年，\n我一直在用我的方式，\n追寻那份模糊的记忆。\n\n不知道是否晚了，\n不知道此音能否抵达，\n\n但我知道——\n不悔年轻，不弃少年。");
         
         tvToHerContent.animate()
                 .alpha(0f)

@@ -22,6 +22,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import tear.conception.LoveLetterActivity;
+import tear.conception.ui.dialog.SakuraLoveLetterDialog;
 import tear.conception.ui.view.StarTrailView;
 import tear.conception.util.SharedPreferencesUtil;
 
@@ -76,13 +77,18 @@ public class StarConfessionActivity extends Activity {
     }
 
     private void initStrings() {
+        String targetName = prefsUtil.getString("love_target_name", "");
+        if (targetName == null || targetName.isEmpty()) {
+            targetName = "XXX";
+        }
+        
         memoryTitles = new String[]{
             getString(R.string.star_trail_memory_1_title),
             getString(R.string.star_trail_memory_2_title),
             getString(R.string.star_trail_memory_3_title)
         };
         memoryContents = new String[]{
-            getString(R.string.star_trail_memory_1),
+            getString(R.string.star_trail_memory_1).replace("XXX", targetName),
             getString(R.string.star_trail_memory_2),
             getString(R.string.star_trail_memory_3)
         };
@@ -400,25 +406,21 @@ public class StarConfessionActivity extends Activity {
     }
 
     private void showLoveLetterOption() {
-        new android.app.AlertDialog.Builder(this)
-                .setTitle("💌 写一封情书吧")
-                .setMessage("让AI帮你写一封专属情书，记录这份心意？")
-                .setPositiveButton("写情书", new android.content.DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(android.content.DialogInterface dialog, int which) {
-                        Intent intent = new Intent(StarConfessionActivity.this, LoveLetterActivity.class);
-                        startActivity(intent);
-                        finishWithResult(true);
-                    }
-                })
-                .setNegativeButton("下次吧", new android.content.DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(android.content.DialogInterface dialog, int which) {
-                        finishWithResult(true);
-                    }
-                })
-                .setCancelable(false)
-                .show();
+        SakuraLoveLetterDialog dialog = new SakuraLoveLetterDialog(this);
+        dialog.setOnDialogClickListener(new SakuraLoveLetterDialog.OnDialogClickListener() {
+            @Override
+            public void onWriteLetter() {
+                Intent intent = new Intent(StarConfessionActivity.this, LoveLetterActivity.class);
+                startActivity(intent);
+                finishWithResult(true);
+            }
+
+            @Override
+            public void onLater() {
+                finishWithResult(true);
+            }
+        });
+        dialog.show();
     }
 
     private void finishWithResult(boolean accepted) {

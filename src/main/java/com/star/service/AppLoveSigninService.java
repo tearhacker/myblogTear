@@ -21,4 +21,6 @@ public interface AppLoveSigninService {
     boolean hasSignedInToday(Long userId);
 
     String generateLoveMessage(int continuousDays, boolean useAI);
+
+    String generateLoveMessage(String targetName, int continuousDays, int totalDays, boolean useAI);
 }

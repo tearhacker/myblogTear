@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/game_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <ImageView
+        android:id="@+id/iv_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:background="#000000" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000" />
+
+    <tear.conception.ui.view.PetalParticleView
+        android:id="@+id/petal_particle_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="40dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <LinearLayout
+                android:id="@+id/btn_back"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:gravity="center"
+                android:background="?android:attr/selectableItemBackgroundBorderless">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="←"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tv_petal_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#FFB6C1"
+                    android:textSize="36sp"
+                    android:textStyle="bold"
+                    android:shadowColor="#FF69B4"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="10" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="花瓣"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:alpha="0.8" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tv_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0%"
+                    android:textColor="#FFD700"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="章节进度"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:alpha="0.7" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tv_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:text="点击屏幕，让花瓣飘落"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:alpha="0.7" />
+
+        <LinearLayout
+            android:id="@+id/ll_chapter_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:background="@drawable/game_chapter_info_bg">
+
+            <TextView
+                android:id="@+id/tv_chapter_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="2008年 · 小学"
+                android:textColor="#FFB6C1"
+                android:textSize="14sp"
+                android:alpha="0.9" />
+
+            <TextView
+                android:id="@+id/tv_chapter_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:text="初见"
+                android:textColor="#FFFFFF"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:shadowColor="#FF69B4"
+                android:shadowDx="0"
+                android:shadowDy="2"
+                android:shadowRadius="8" />
+
+            <TextView
+                android:id="@+id/tv_chapter_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="2008年的夏天，\n你干净又好看，\n是我藏在心底的第一份喜欢。"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:lineSpacingExtra="8dp"
+                android:alpha="0.95" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/ending_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#E6000000"
+        android:visibility="gone"
+        android:clickable="true">
+
+        <tear.conception.ui.view.PetalParticleView
+            android:id="@+id/ending_petal_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp">
+
+            <TextView
+                android:id="@+id/tv_ending_target"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="致 欧阳颖"
+                android:textColor="#FF69B4"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:shadowColor="#FF1493"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="25"
+                android:letterSpacing="0.1" />
+
+            <TextView
+                android:id="@+id/tv_ending_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="时光情书"
+                android:textColor="#FFD700"
+                android:textSize="16sp"
+                android:alpha="0.9"
+                android:letterSpacing="0.3" />
+
+            <View
+                android:layout_width="60dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="20dp"
+                android:background="#33FF69B4" />
+
+            <TextView
+                android:id="@+id/tv_ending_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:gravity="center"
+                android:text=""
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:lineSpacingExtra="14dp"
+                android:alpha="0.95"
+                android:letterSpacing="0.05" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/btn_replay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="重新开始"
+                    android:textColor="#FFB6C1"
+                    android:textSize="15sp"
+                    android:paddingLeft="28dp"
+                    android:paddingRight="28dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:background="@drawable/bg_btn_replay"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/btn_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:text="关闭"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:paddingLeft="28dp"
+                    android:paddingRight="28dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:background="@drawable/bg_btn_close"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</FrameLayout>

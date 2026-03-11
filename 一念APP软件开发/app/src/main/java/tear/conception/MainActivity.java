@@ -61,6 +61,7 @@ public class MainActivity extends Activity {
 
     private static final String KEY_LAST_SIGNIN_TIME = "last_signin_time";
     private static final String KEY_SIGNIN_DAYS = "signin_days";
+    private static final String KEY_LAST_GREETING_TIME = "last_greeting_time";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,7 @@ public class MainActivity extends Activity {
         initViews();
         setupBottomNavigation();
         showDefaultFragment();
-        checkAndShowSignIn();
+        checkAndShowGreeting();
     }
 
     private void initViews() {
@@ -235,6 +236,131 @@ public class MainActivity extends Activity {
         }
         transaction.commit();
         currentFragment = targetFragment;
+    }
+
+    private void checkAndShowGreeting() {
+        long lastGreetingTime = prefsUtil.getLong(KEY_LAST_GREETING_TIME, 0);
+        if (!DateUtil.isToday(lastGreetingTime)) {
+            showGreetingIsland();
+            prefsUtil.putLong(KEY_LAST_GREETING_TIME, System.currentTimeMillis());
+        } else {
+            checkAndShowSignIn();
+        }
+    }
+
+    private void showGreetingIsland() {
+        islandContainer.setVisibility(View.VISIBLE);
+        
+        dynamicIsland.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                expandGreetingIsland();
+            }
+        }, 500);
+    }
+
+    private void expandGreetingIsland() {
+        int startWidth = dpToPx(100);
+        int endWidth = dpToPx(280);
+        int startHeight = dpToPx(36);
+        int endHeight = dpToPx(50);
+
+        ValueAnimator widthAnimator = ValueAnimator.ofInt(startWidth, endWidth);
+        widthAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int value = (int) animation.getAnimatedValue();
+                ViewGroup.LayoutParams params = dynamicIsland.getLayoutParams();
+                params.width = value;
+                dynamicIsland.setLayoutParams(params);
+            }
+        });
+
+        ValueAnimator heightAnimator = ValueAnimator.ofInt(startHeight, endHeight);
+        heightAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int value = (int) animation.getAnimatedValue();
+                ViewGroup.LayoutParams params = dynamicIsland.getLayoutParams();
+                params.height = value;
+                dynamicIsland.setLayoutParams(params);
+            }
+        });
+
+        widthAnimator.setDuration(300);
+        heightAnimator.setDuration(300);
+        widthAnimator.start();
+        heightAnimator.start();
+
+        String greeting = getGreetingMessage();
+        islandText.setText(greeting);
+
+        dynamicIsland.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                shrinkGreetingIsland();
+            }
+        }, 3000);
+    }
+
+    private void shrinkGreetingIsland() {
+        int startWidth = dpToPx(280);
+        int endWidth = dpToPx(100);
+        int startHeight = dpToPx(50);
+        int endHeight = dpToPx(36);
+
+        ValueAnimator widthAnimator = ValueAnimator.ofInt(startWidth, endWidth);
+        widthAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int value = (int) animation.getAnimatedValue();
+                ViewGroup.LayoutParams params = dynamicIsland.getLayoutParams();
+                params.width = value;
+                dynamicIsland.setLayoutParams(params);
+            }
+        });
+
+        ValueAnimator heightAnimator = ValueAnimator.ofInt(startHeight, endHeight);
+        heightAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int value = (int) animation.getAnimatedValue();
+                ViewGroup.LayoutParams params = dynamicIsland.getLayoutParams();
+                params.height = value;
+                dynamicIsland.setLayoutParams(params);
+            }
+        });
+
+        widthAnimator.setDuration(300);
+        heightAnimator.setDuration(300);
+        widthAnimator.start();
+        heightAnimator.start();
+
+        heightAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                islandContainer.setVisibility(View.GONE);
+                checkAndShowSignIn();
+            }
+        });
+    }
+
+    private String getGreetingMessage() {
+        int timePeriod = DateUtil.getCurrentTimePeriod();
+        switch (timePeriod) {
+            case DateUtil.TIME_PERIOD_MORNING:
+                return getString(R.string.greeting_morning);
+            case DateUtil.TIME_PERIOD_NOON:
+                return getString(R.string.greeting_noon);
+            case DateUtil.TIME_PERIOD_AFTERNOON:
+                return getString(R.string.greeting_afternoon);
+            case DateUtil.TIME_PERIOD_EVENING:
+                return getString(R.string.greeting_evening);
+            case DateUtil.TIME_PERIOD_NIGHT:
+                return getString(R.string.greeting_night);
+            default:
+                return getString(R.string.greeting_morning);
+        }
     }
 
     private void checkAndShowSignIn() {

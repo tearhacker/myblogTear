@@ -43,7 +43,7 @@ public class DiscussionComment {
             comment.avatar = json.optString("avatar", "");
             comment.content = json.optString("content", "");
             comment.likeCount = json.optInt("likeCount", 0);
-            comment.createTime = json.optString("createTime", "");
+            comment.createTime = parseCreateTime(json, "createTime");
             
             long parentId = json.optLong("parentCommentId", -1);
             comment.parentCommentId = parentId > 0 ? parentId : null;
@@ -76,14 +76,57 @@ public class DiscussionComment {
         return comments;
     }
 
+    private static String parseCreateTime(JSONObject json, String fieldName) {
+        try {
+            if (json.has(fieldName)) {
+                Object value = json.get(fieldName);
+                if (value instanceof Long) {
+                    long timestamp = (Long) value;
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    return sdf.format(new Date(timestamp));
+                } else if (value instanceof Integer) {
+                    long timestamp = ((Integer) value).longValue();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    return sdf.format(new Date(timestamp));
+                } else {
+                    String timeStr = json.optString(fieldName, "");
+                    if (!timeStr.isEmpty()) {
+                        if (timeStr.contains("T")) {
+                            timeStr = timeStr.replace("T", " ");
+                            if (timeStr.contains(".")) {
+                                timeStr = timeStr.substring(0, timeStr.indexOf("."));
+                            }
+                            if (timeStr.contains("+")) {
+                                timeStr = timeStr.substring(0, timeStr.indexOf("+"));
+                            }
+                            timeStr = timeStr.trim();
+                        }
+                        return timeStr;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     public String getFormattedTime() {
         if (createTime == null || createTime.isEmpty()) {
             return "";
         }
         
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-            Date date = sdf.parse(createTime);
+            Date date;
+            
+            if (createTime.contains("T")) {
+                SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+                date = isoFormat.parse(createTime);
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                date = sdf.parse(createTime);
+            }
+            
             long timestamp = date.getTime();
             
             long now = System.currentTimeMillis();

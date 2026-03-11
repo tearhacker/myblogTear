@@ -5,6 +5,7 @@ import com.star.dao.AppUserStatsDao;
 import com.star.entity.AppLoveSignin;
 import com.star.entity.AppUserStats;
 import com.star.service.AppLoveSigninService;
+import com.star.service.AiChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,12 +17,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
 
-/**
- * @Description: 恋爱签到服务实现类
- * @Author: 泪心
- * @QQ群: 435539500
- * @URL: https://github.com/tearhacker/
- */
 @Service
 public class AppLoveSigninServiceImpl implements AppLoveSigninService {
 
@@ -30,6 +25,9 @@ public class AppLoveSigninServiceImpl implements AppLoveSigninService {
 
     @Autowired
     private AppUserStatsDao appUserStatsDao;
+
+    @Autowired
+    private AiChatService aiChatService;
 
     private static final String[] LOVE_MESSAGES = {
         "暗恋是一场漫长的告白，每一天都在心里说爱你。",
@@ -64,13 +62,15 @@ public class AppLoveSigninServiceImpl implements AppLoveSigninService {
             }
         }
 
-        String loveMessage = generateLoveMessage(continuousDays, false);
-
-        int loveLevel = Math.min(10, continuousDays / 7 + 1);
-
         if (targetName == null || targetName.trim().isEmpty()) {
             targetName = "欧阳颖";
         }
+
+        int totalDays = appLoveSigninDao.countByUserId(userId) + 1;
+
+        String loveMessage = generateLoveMessage(targetName, continuousDays, totalDays, true);
+
+        int loveLevel = Math.min(10, continuousDays / 7 + 1);
 
         AppLoveSignin signin = new AppLoveSignin();
         signin.setUserId(userId);
@@ -81,9 +81,7 @@ public class AppLoveSigninServiceImpl implements AppLoveSigninService {
         signin.setContinuousDays(continuousDays);
         signin.setLoveMessage(loveMessage);
         signin.setLoveLevel(loveLevel);
-        signin.setAiGenerated(0);
-        
-        int totalDays = appLoveSigninDao.countByUserId(userId) + 1;
+        signin.setAiGenerated(1);
         signin.setTotalDays(totalDays);
         
         appLoveSigninDao.insert(signin);
@@ -118,6 +116,21 @@ public class AppLoveSigninServiceImpl implements AppLoveSigninService {
     public String generateLoveMessage(int continuousDays, boolean useAI) {
         if (useAI) {
             return "AI生成的恋爱寄语（待对接大模型API）";
+        }
+        
+        Random random = new Random();
+        return LOVE_MESSAGES[random.nextInt(LOVE_MESSAGES.length)];
+    }
+
+    public String generateLoveMessage(String targetName, int continuousDays, int totalDays, boolean useAI) {
+        if (useAI) {
+            try {
+                String aiMessage = aiChatService.generateLoveSigninMessage(targetName, continuousDays, totalDays);
+                if (aiMessage != null && !aiMessage.isEmpty() && !aiMessage.startsWith("AI服务")) {
+                    return aiMessage;
+                }
+            } catch (Exception e) {
+            }
         }
         
         Random random = new Random();

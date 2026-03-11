@@ -5,6 +5,7 @@ import com.star.dao.AppUserStatsDao;
 import com.star.entity.AppSignin;
 import com.star.entity.AppUserStats;
 import com.star.service.AppSigninService;
+import com.star.service.AiChatService;
 import com.star.vo.AppSigninVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,12 +18,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
 
-/**
- * @Description: 一念签到服务实现类
- * @Author: 泪心
- * @QQ群: 435539500
- * @URL: https://github.com/tearhacker/
- */
 @Service
 public class AppSigninServiceImpl implements AppSigninService {
 
@@ -31,6 +26,9 @@ public class AppSigninServiceImpl implements AppSigninService {
 
     @Autowired
     private AppUserStatsDao appUserStatsDao;
+
+    @Autowired
+    private AiChatService aiChatService;
 
     private static final String[] DEFAULT_MESSAGES = {
         "一念放下，万般自在。今日的你，已比昨日更从容。",
@@ -70,7 +68,9 @@ public class AppSigninServiceImpl implements AppSigninService {
             }
         }
 
-        String signinMessage = generateSigninMessage(continuousDays, false);
+        int totalDays = appSigninDao.countByUserId(userId) + 1;
+
+        String signinMessage = generateSigninMessage(continuousDays, totalDays, true);
 
         AppSignin signin = new AppSignin();
         signin.setUserId(userId);
@@ -78,9 +78,9 @@ public class AppSigninServiceImpl implements AppSigninService {
         signin.setSigninDate(Date.valueOf(LocalDate.now()));
         signin.setSigninTime(new java.util.Date());
         signin.setContinuousDays(continuousDays);
-        signin.setTotalDays(appSigninDao.countByUserId(userId) + 1);
+        signin.setTotalDays(totalDays);
         signin.setSigninMessage(signinMessage);
-        signin.setAiGenerated(0);
+        signin.setAiGenerated(1);
         appSigninDao.insert(signin);
 
         appUserStatsDao.incrementSigninDays(userId);
@@ -143,6 +143,21 @@ public class AppSigninServiceImpl implements AppSigninService {
     public String generateSigninMessage(int continuousDays, boolean useAI) {
         if (useAI) {
             return "AI生成的签到寄语（待对接大模型API）";
+        }
+        
+        Random random = new Random();
+        return DEFAULT_MESSAGES[random.nextInt(DEFAULT_MESSAGES.length)];
+    }
+
+    public String generateSigninMessage(int continuousDays, int totalDays, boolean useAI) {
+        if (useAI) {
+            try {
+                String aiMessage = aiChatService.generateDailySigninMessage(continuousDays, totalDays);
+                if (aiMessage != null && !aiMessage.isEmpty() && !aiMessage.startsWith("AI服务")) {
+                    return aiMessage;
+                }
+            } catch (Exception e) {
+            }
         }
         
         Random random = new Random();

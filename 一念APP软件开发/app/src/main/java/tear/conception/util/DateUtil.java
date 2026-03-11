@@ -4,12 +4,19 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class DateUtil {
     
     private static final long MINUTE = 60 * 1000;
     private static final long HOUR = 60 * MINUTE;
     private static final long DAY = 24 * HOUR;
+    
+    public static final int TIME_PERIOD_MORNING = 0;
+    public static final int TIME_PERIOD_NOON = 1;
+    public static final int TIME_PERIOD_AFTERNOON = 2;
+    public static final int TIME_PERIOD_EVENING = 3;
+    public static final int TIME_PERIOD_NIGHT = 4;
 
     public static String formatTime(long timestamp) {
         long now = System.currentTimeMillis();
@@ -60,5 +67,29 @@ public class DateUtil {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTimeInMillis();
+    }
+    
+    public static int getCurrentTimePeriod() {
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        
+        if (hour >= 5 && hour < 12) {
+            return TIME_PERIOD_MORNING;
+        } else if (hour >= 12 && hour < 14) {
+            return TIME_PERIOD_NOON;
+        } else if (hour >= 14 && hour < 18) {
+            return TIME_PERIOD_AFTERNOON;
+        } else if (hour >= 18 && hour < 22) {
+            return TIME_PERIOD_EVENING;
+        } else {
+            return TIME_PERIOD_NIGHT;
+        }
+    }
+    
+    public static String getBeijingTimeString() {
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        return sdf.format(calendar.getTime());
     }
 }

@@ -73,4 +73,12 @@
     <string name="star_trail_accept_message">我们的故事，从今天开始。</string>
     <string name="star_trail_wait_message">没关系，我的星空永远为你守候。</string>
     <string name="star_trail_hint_tap">点击星星，听听我的心事</string>
+    
+    <string name="game_intro_content">本游戏由豆包人工智能生成，除了开发者真挚内容陈述，其他都是虚化信息。\n\n为保护开发者隐私，为守护那份珍贵的记忆，不会泄露分毫关于现实世界的信息。\n\n任何念头都是灵光一现，以前我没有能力将天马行空转换为有色视觉，如今我终于有能力将自己的一切创造实现在现实中。\n\n如果你不同意虚拟内容，请离开。</string>
+    
+    <string name="greeting_morning">亲爱的陌生人，早上好</string>
+    <string name="greeting_noon">亲爱的陌生人，中午好</string>
+    <string name="greeting_afternoon">亲爱的陌生人，下午好</string>
+    <string name="greeting_evening">亲爱的陌生人，晚上好</string>
+    <string name="greeting_night">亲爱的陌生人，夜深了，早点休息</string>
 </resources>

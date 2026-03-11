@@ -49,7 +49,7 @@ public class BlogApiService {
         Map<String, String> params = new java.util.HashMap<>();
         params.put("userId", String.valueOf(userId));
         params.put("qqNumber", qqNumber);
-        postRequest(url, params, callback);
+        postRequestWithTimeout(url, params, 30000, 60000, callback);
     }
 
     public static void getTodaySignin(long userId, ApiCallback callback) {
@@ -70,7 +70,7 @@ public class BlogApiService {
         if (targetName != null && !targetName.isEmpty()) {
             params.put("targetName", targetName);
         }
-        postRequest(url, params, callback);
+        postRequestWithTimeout(url, params, 30000, 60000, callback);
     }
 
     public static void getTodayLoveSignin(long userId, ApiCallback callback) {
@@ -376,6 +376,26 @@ public class BlogApiService {
         postRequest(url, new java.util.HashMap<String, String>(), callback);
     }
 
+    private static String sanitizeErrorMessage(String message) {
+        if (message == null || message.isEmpty()) {
+            return "网络连接失败";
+        }
+        if (message.contains("121.35.251.197") || message.contains(":80") || 
+            message.contains("http://") || message.contains("https://")) {
+            return "网络连接失败，请检查网络设置";
+        }
+        if (message.contains("timeout") || message.contains("Timeout")) {
+            return "网络请求超时，请稍后重试";
+        }
+        if (message.contains("UnknownHost") || message.contains("Unable to resolve host")) {
+            return "网络连接失败，请检查网络设置";
+        }
+        if (message.contains("Connection refused") || message.contains("ECONNREFUSED")) {
+            return "服务器暂时无法访问，请稍后重试";
+        }
+        return "网络连接失败";
+    }
+
     private static void getRequestWithTimeout(final String urlString, final int connectTimeout, final int readTimeout, final ApiCallback callback) {
         executor.execute(new Runnable() {
             @Override
@@ -408,7 +428,7 @@ public class BlogApiService {
                         mainHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onError("服务器错误: " + responseCode);
+                                callback.onError("服务器暂时无法访问");
                             }
                         });
                     }
@@ -417,7 +437,7 @@ public class BlogApiService {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onError("网络错误: " + e.getMessage());
+                            callback.onError(sanitizeErrorMessage(e.getMessage()));
                         }
                     });
                 }
@@ -473,7 +493,7 @@ public class BlogApiService {
                         mainHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onError("服务器错误: " + responseCode);
+                                callback.onError("服务器暂时无法访问");
                             }
                         });
                     }
@@ -482,7 +502,7 @@ public class BlogApiService {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onError("网络错误: " + e.getMessage());
+                            callback.onError(sanitizeErrorMessage(e.getMessage()));
                         }
                     });
                 }
@@ -522,7 +542,7 @@ public class BlogApiService {
                         mainHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onError("请求失败: " + responseCode);
+                                callback.onError("请求失败，请稍后重试");
                             }
                         });
                     }
@@ -531,7 +551,7 @@ public class BlogApiService {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onError("网络错误: " + e.getMessage());
+                            callback.onError(sanitizeErrorMessage(e.getMessage()));
                         }
                     });
                 }
@@ -587,7 +607,7 @@ public class BlogApiService {
                         mainHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onError("请求失败: " + responseCode);
+                                callback.onError("请求失败，请稍后重试");
                             }
                         });
                     }
@@ -596,7 +616,7 @@ public class BlogApiService {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onError("网络错误: " + e.getMessage());
+                            callback.onError(sanitizeErrorMessage(e.getMessage()));
                         }
                     });
                 }

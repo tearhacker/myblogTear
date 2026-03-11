@@ -60,13 +60,16 @@ public class UserCenterFragment extends Fragment {
     private TextView tvNickname;
     private TextView tvQqNumber;
     private ImageView ivAvatar;
-
+    private TextView tvLoadingMessage;
+    private View loadingOverlay;
+    
     private SharedPreferencesUtil prefsUtil;
     
     private static final String KEY_LAST_SIGNIN_TIME = "last_signin_time";
     private static final String KEY_SIGNIN_DAYS = "signin_days";
     
     private boolean isSignedInToday = false;
+    private boolean isSigningIn = false;
     private int currentDays = 0;
     private long userId = 0;
     private String qqNumber = "";
@@ -150,6 +153,8 @@ public class UserCenterFragment extends Fragment {
         tvNickname = view.findViewById(R.id.tv_nickname);
         tvQqNumber = view.findViewById(R.id.tv_qq_number);
         ivAvatar = view.findViewById(R.id.iv_avatar);
+        tvLoadingMessage = view.findViewById(R.id.tv_loading_message);
+        loadingOverlay = view.findViewById(R.id.loading_overlay);
     }
 
     private void setupClickListeners() {
@@ -267,25 +272,12 @@ public class UserCenterFragment extends Fragment {
     }
 
     private void updateSigninStatus() {
-        currentDays = prefsUtil.getInt(KEY_SIGNIN_DAYS, 0);
-        long lastSigninTime = prefsUtil.getLong(KEY_LAST_SIGNIN_TIME, 0);
-        
         tvCheckinDays.setVisibility(View.VISIBLE);
-        tvCheckinDays.setText("已连续签到 " + currentDays + " 天");
-        circleProgress.setDays(currentDays, 30);
-        
-        isSignedInToday = DateUtil.isToday(lastSigninTime);
-        
-        if (isSignedInToday) {
-            circleProgress.setSignedIn(true);
-            tvSigninStatus.setVisibility(View.VISIBLE);
-            tvSigninStatus.setText("明日再来吧~");
-        } else {
-            circleProgress.setSignedIn(false);
-            tvSigninStatus.setVisibility(View.GONE);
-        }
-        
-        updateMilestone();
+        tvCheckinDays.setText("已连续签到 0 天");
+        circleProgress.setDays(0, 30);
+        circleProgress.setSignedIn(false);
+        tvSigninStatus.setVisibility(View.GONE);
+        tvMilestone.setVisibility(View.GONE);
     }
 
     private void updateMilestone() {
@@ -314,6 +306,10 @@ public class UserCenterFragment extends Fragment {
     }
 
     private void onSigninClicked() {
+        if (isSigningIn) {
+            return;
+        }
+        
         if (userId > 0 && !qqNumber.isEmpty()) {
             doServerSignin();
         } else {
@@ -349,6 +345,9 @@ public class UserCenterFragment extends Fragment {
     }
 
     private void doServerSignin() {
+        isSigningIn = true;
+        showLoading("正在为你生成签到寄语...");
+        
         BlogApiService.doSignin(userId, qqNumber, new BlogApiService.ApiCallback() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -363,6 +362,7 @@ public class UserCenterFragment extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                hideLoading();
                                 playSigninAnimation(newDays, message, isMilestone);
                             }
                         });
@@ -371,6 +371,8 @@ public class UserCenterFragment extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                isSigningIn = false;
+                                hideLoading();
                                 Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -379,6 +381,8 @@ public class UserCenterFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            isSigningIn = false;
+                            hideLoading();
                             Toast.makeText(getActivity(), "签到失败", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -390,6 +394,8 @@ public class UserCenterFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        isSigningIn = false;
+                        hideLoading();
                         doLocalSignin();
                     }
                 });
@@ -398,24 +404,12 @@ public class UserCenterFragment extends Fragment {
     }
 
     private void doLocalSignin() {
-        long lastSigninTime = prefsUtil.getLong(KEY_LAST_SIGNIN_TIME, 0);
-        int signinDays = prefsUtil.getInt(KEY_SIGNIN_DAYS, 0);
-
-        if (DateUtil.isToday(lastSigninTime)) {
-            Toast.makeText(getActivity(), "今日已签到", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (DateUtil.isSameDay(lastSigninTime, System.currentTimeMillis() - 24 * 60 * 60 * 1000)) {
-            signinDays++;
-        } else {
-            signinDays = 1;
-        }
-
-        prefsUtil.putLong(KEY_LAST_SIGNIN_TIME, System.currentTimeMillis());
-        prefsUtil.putInt(KEY_SIGNIN_DAYS, signinDays);
-        
-        playSigninAnimation(signinDays, "签到成功！", false);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getActivity(), "网络连接失败，请检查网络后重试", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void playSigninAnimation(final int newDays, final String message, final boolean isMilestone) {
@@ -470,6 +464,21 @@ public class UserCenterFragment extends Fragment {
         
         Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
         starParticleView.startAnimation(40);
+    }
+
+    private void showLoading(String message) {
+        if (tvLoadingMessage != null) {
+            tvLoadingMessage.setText(message);
+        }
+        if (loadingOverlay != null) {
+            loadingOverlay.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void hideLoading() {
+        if (loadingOverlay != null) {
+            loadingOverlay.setVisibility(View.GONE);
+        }
     }
 
     private void onSupportDeveloperClicked() {

@@ -41,7 +41,7 @@ public class Discussion {
             discussion.viewCount = json.optInt("viewCount", 0);
             discussion.commentCount = json.optInt("commentCount", 0);
             discussion.likeCount = json.optInt("likeCount", 0);
-            discussion.createTime = json.optString("createTime", "");
+            discussion.createTime = parseCreateTime(json, "createTime");
             discussion.updateTime = json.optString("updateTime", "");
             discussion.auditTime = json.optString("auditTime", "");
             discussion.auditUserId = json.optLong("auditUserId", 0L);
@@ -50,6 +50,41 @@ public class Discussion {
             e.printStackTrace();
         }
         return discussion;
+    }
+
+    private static String parseCreateTime(JSONObject json, String fieldName) {
+        try {
+            if (json.has(fieldName)) {
+                Object value = json.get(fieldName);
+                if (value instanceof Long) {
+                    long timestamp = (Long) value;
+                    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault());
+                    return sdf.format(new java.util.Date(timestamp));
+                } else if (value instanceof Integer) {
+                    long timestamp = ((Integer) value).longValue();
+                    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault());
+                    return sdf.format(new java.util.Date(timestamp));
+                } else {
+                    String timeStr = json.optString(fieldName, "");
+                    if (!timeStr.isEmpty()) {
+                        if (timeStr.contains("T")) {
+                            timeStr = timeStr.replace("T", " ");
+                            if (timeStr.contains(".")) {
+                                timeStr = timeStr.substring(0, timeStr.indexOf("."));
+                            }
+                            if (timeStr.contains("+")) {
+                                timeStr = timeStr.substring(0, timeStr.indexOf("+"));
+                            }
+                            timeStr = timeStr.trim();
+                        }
+                        return timeStr;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     public Long getId() {

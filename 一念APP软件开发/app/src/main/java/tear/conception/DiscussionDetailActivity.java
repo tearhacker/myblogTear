@@ -190,13 +190,14 @@ public class DiscussionDetailActivity extends Activity {
         String timeText = formatTime(discussion.getCreateTime());
         tvTime.setText(timeText);
 
-        ivAvatar.setImageResource(R.drawable.default_avatar);
-        if (discussion.getAvatar() != null && !discussion.getAvatar().isEmpty()) {
+        ivAvatar.setImageResource(R.drawable.huatiava);
+        // 不再从网络加载头像，统一使用本地图片
+        /*if (discussion.getAvatar() != null && !discussion.getAvatar().isEmpty()) {
             loadAvatar(ivAvatar, discussion.getAvatar());
         } else if (discussion.getQqNumber() != null && !discussion.getQqNumber().isEmpty()) {
             String avatarUrl = "https://q1.qlogo.cn/g?b=qq&nk=" + discussion.getQqNumber() + "&s=100";
             loadAvatar(ivAvatar, avatarUrl);
-        }
+        }*/
 
         contentLayout.setVisibility(View.VISIBLE);
     }
@@ -232,13 +233,14 @@ public class DiscussionDetailActivity extends Activity {
         tvLikeCount.setText(formatCount(comment.getLikeCount()));
         tvTime.setText(comment.getFormattedTime());
 
-        ivAvatar.setImageResource(R.drawable.default_avatar);
-        if (comment.getAvatar() != null && !comment.getAvatar().isEmpty()) {
+        ivAvatar.setImageResource(R.drawable.huatiava);
+        // 不再从网络加载头像，统一使用本地图片
+        /*if (comment.getAvatar() != null && !comment.getAvatar().isEmpty()) {
             loadAvatar(ivAvatar, comment.getAvatar());
         } else if (comment.getQqNumber() != null && !comment.getQqNumber().isEmpty()) {
             String avatarUrl = "https://q1.qlogo.cn/g?b=qq&nk=" + comment.getQqNumber() + "&s=100";
             loadAvatar(ivAvatar, avatarUrl);
-        }
+        }*/
 
         if (comment.getReplies() != null && !comment.getReplies().isEmpty()) {
             repliesContainer.setVisibility(View.VISIBLE);
@@ -365,8 +367,16 @@ public class DiscussionDetailActivity extends Activity {
         }
 
         try {
-            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault());
-            java.util.Date date = sdf.parse(timeString);
+            java.util.Date date;
+            
+            if (timeString.contains("T")) {
+                java.text.SimpleDateFormat isoFormat = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault());
+                date = isoFormat.parse(timeString);
+            } else {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault());
+                date = sdf.parse(timeString);
+            }
+            
             long timestamp = date.getTime();
 
             long now = System.currentTimeMillis();
@@ -391,30 +401,65 @@ public class DiscussionDetailActivity extends Activity {
     }
 
     private void loadAvatar(final ImageView imageView, final String url) {
+        if (url == null || url.isEmpty()) {
+            return;
+        }
+
         new AsyncTask<String, Void, Bitmap>() {
+            private final java.lang.ref.WeakReference<ImageView> imageViewRef = new java.lang.ref.WeakReference<>(imageView);
+
             @Override
             protected Bitmap doInBackground(String... params) {
+                HttpURLConnection conn = null;
+                InputStream input = null;
                 try {
                     URL imageUrl = new URL(params[0]);
-                    HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
-                    conn.setConnectTimeout(5000);
-                    conn.setReadTimeout(5000);
+                    conn = (HttpURLConnection) imageUrl.openConnection();
+                    conn.setConnectTimeout(15000);
+                    conn.setReadTimeout(15000);
                     conn.setDoInput(true);
+                    conn.setRequestMethod("GET");
+                    conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+                    conn.setRequestProperty("Accept", "image/*");
+                    conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
+                    conn.setInstanceFollowRedirects(true);
                     conn.connect();
-                    InputStream input = conn.getInputStream();
-                    Bitmap bitmap = BitmapFactory.decodeStream(input);
-                    input.close();
-                    return bitmap;
+                    
+                    int responseCode = conn.getResponseCode();
+                    if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_MOVED_PERM || responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
+                        input = conn.getInputStream();
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inPreferredConfig = Bitmap.Config.RGB_565;
+                        Bitmap bitmap = BitmapFactory.decodeStream(input, null, options);
+                        return bitmap;
+                    } else {
+                        android.util.Log.e("AvatarLoad", "Response code: " + responseCode + " for URL: " + params[0]);
+                        return null;
+                    }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    android.util.Log.e("AvatarLoad", "Error loading avatar: " + e.getMessage(), e);
                     return null;
+                } finally {
+                    if (input != null) {
+                        try {
+                            input.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (conn != null) {
+                        conn.disconnect();
+                    }
                 }
             }
 
             @Override
             protected void onPostExecute(Bitmap result) {
-                if (result != null && imageView != null) {
-                    imageView.setImageBitmap(result);
+                ImageView iv = imageViewRef.get();
+                if (iv != null && result != null) {
+                    iv.setImageBitmap(result);
+                } else if (iv != null && result == null) {
+                    android.util.Log.w("AvatarLoad", "Failed to load avatar, keeping default");
                 }
             }
         }.execute(url);

@@ -269,13 +269,131 @@
                 android:text="从初中到现在，一直都在..."
                 android:textSize="13sp"
                 android:textColor="@color/love_text_light"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="30dp"
                 android:alpha="0.8"
                 android:letterSpacing="0.1"/>
+
+            <LinearLayout
+                android:id="@+id/ll_time_love_game"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:background="@drawable/bg_glass_card"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:elevation="4dp">
+
+                <TextView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="🌸"
+                    android:textSize="32sp"
+                    android:gravity="center"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="时光情书 · 只为你开花"
+                        android:textSize="16sp"
+                        android:textColor="@color/love_primary"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="点击花瓣，诉说你的思念"
+                        android:textSize="12sp"
+                        android:textColor="@color/love_text_light"
+                        android:layout_marginTop="4dp"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="→"
+                    android:textSize="20sp"
+                    android:textColor="@color/love_primary"
+                    android:alpha="0.6"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
     </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/loading_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="40dp"
+            android:background="@drawable/bg_glass_card">
+
+            <tear.conception.ui.view.HeartParticleView
+                android:id="@+id/loading_heart_view"
+                android:layout_width="200dp"
+                android:layout_height="200dp"/>
+
+            <TextView
+                android:id="@+id/tv_heart_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="❤"
+                android:textSize="48sp"
+                android:textColor="@color/love_heart"
+                android:layout_marginTop="-100dp"
+                android:layout_marginBottom="16dp"
+                android:shadowColor="#80FF4081"
+                android:shadowDx="0"
+                android:shadowDy="2"
+                android:shadowRadius="6"/>
+
+            <TextView
+                android:id="@+id/tv_loading_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="正在为你生成恋爱寄语..."
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:letterSpacing="0.05"/>
+
+            <TextView
+                android:id="@+id/tv_loading_sub_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="每一份思念都值得被温柔以待"
+                android:textSize="13sp"
+                android:textColor="@color/love_text_light"
+                android:alpha="0.8"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/ll_developer_info"

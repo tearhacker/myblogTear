@@ -13,4 +13,8 @@ public interface AiChatService {
     String chatWithTemplate(String templateKey, String... params);
 
     String generateSigninMessage(int days);
+
+    String generateDailySigninMessage(int continuousDays, int totalDays);
+
+    String generateLoveSigninMessage(String targetName, int continuousDays, int totalDays);
 }

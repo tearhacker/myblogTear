@@ -24,4 +24,6 @@ public interface AppSigninService {
     boolean hasSignedInToday(Long userId);
 
     String generateSigninMessage(int continuousDays, boolean useAI);
+
+    String generateSigninMessage(int continuousDays, int totalDays, boolean useAI);
 }

@@ -15,12 +15,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-/**
- * @Description: AI对话服务实现类 - 火山云豆包API
- * @Author: 泪心
- * @QQ群: 435539500
- * @URL: https://github.com/tearhacker/
- */
 @Service
 public class AiChatServiceImpl implements AiChatService {
 
@@ -59,6 +53,62 @@ public class AiChatServiceImpl implements AiChatService {
         return chatWithTemplate("signin", String.valueOf(days));
     }
 
+    @Override
+    public String generateDailySigninMessage(int continuousDays, int totalDays) {
+        String prompt = buildDailySigninPrompt(continuousDays, totalDays);
+        return callAiApi(appAiConfigService.getEnabledConfig(), prompt);
+    }
+
+    private String buildDailySigninPrompt(int continuousDays, int totalDays) {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("你是一位充满智慧和温暖的人生导师。请为用户生成一段每日签到寄语。\n\n");
+        prompt.append("背景信息：\n");
+        prompt.append("- 用户已连续签到：").append(continuousDays).append("天\n");
+        prompt.append("- 用户累计签到：").append(totalDays).append("天\n");
+        prompt.append("- 这是一个名为「一念」的签到应用，寓意一念放下、万般自在\n\n");
+        prompt.append("核心主题：\n");
+        prompt.append("1. 激励普通人坚持自己的梦想，不忘初心\n");
+        prompt.append("2. 鼓励做回真实的自己，不再随波逐流\n");
+        prompt.append("3. 人生总有逆境，度过了终会柳暗花明又一村\n");
+        prompt.append("4. 从泪心到本心，找回最好的自己\n\n");
+        prompt.append("要求：\n");
+        prompt.append("1. 寄语要励志、温暖、有深度，能给人力量\n");
+        prompt.append("2. 结合签到天数，给予鼓励和祝福\n");
+        prompt.append("3. 字数控制在30-60字之间\n");
+        prompt.append("4. 语言真诚自然，不要说教\n");
+        prompt.append("5. 可以适当引用诗词或名言\n");
+        prompt.append("6. 每次生成的内容要有变化，不要重复\n");
+        prompt.append("7. 直接输出寄语内容，不要加引号或其他符号\n");
+        
+        return prompt.toString();
+    }
+
+    @Override
+    public String generateLoveSigninMessage(String targetName, int continuousDays, int totalDays) {
+        String prompt = buildLoveSigninPrompt(targetName, continuousDays, totalDays);
+        return callAiApi(appAiConfigService.getEnabledConfig(), prompt);
+    }
+
+    private String buildLoveSigninPrompt(String targetName, int continuousDays, int totalDays) {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("你是一位浪漫的恋爱心理专家和诗人。请为用户生成一段恋爱签到寄语。\n\n");
+        prompt.append("背景信息：\n");
+        prompt.append("- 用户暗恋的对象：").append(targetName).append("\n");
+        prompt.append("- 已连续签到：").append(continuousDays).append("天\n");
+        prompt.append("- 累计签到：").append(totalDays).append("天\n");
+        prompt.append("- 这是一个从内心的暗恋表达，用户坚持每天签到记录思念\n\n");
+        prompt.append("要求：\n");
+        prompt.append("1. 寄语要温馨、浪漫、有深度，能触动人心\n");
+        prompt.append("2. 结合签到天数，给予鼓励和祝福\n");
+        prompt.append("3. 字数控制在30-60字之间\n");
+        prompt.append("4. 不要太肉麻，要真诚自然\n");
+        prompt.append("5. 可以适当引用诗词或名言\n");
+        prompt.append("6. 每次生成的内容要有变化，不要重复\n");
+        prompt.append("7. 直接输出寄语内容，不要加引号或其他符号\n");
+        
+        return prompt.toString();
+    }
+
     private String callAiApi(AppAiConfig config, String userMessage) {
         HttpURLConnection conn = null;
         try {
@@ -68,8 +118,8 @@ public class AiChatServiceImpl implements AiChatService {
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Authorization", "Bearer " + config.getApiKey());
             conn.setDoOutput(true);
-            conn.setConnectTimeout(30000);
-            conn.setReadTimeout(60000);
+            conn.setConnectTimeout(60000);
+            conn.setReadTimeout(120000);
 
             JSONObject requestBody = new JSONObject();
             requestBody.put("model", config.getModelName());
@@ -103,16 +153,19 @@ public class AiChatServiceImpl implements AiChatService {
                     if (choice != null) {
                         JSONObject message = choice.getJSONObject("message");
                         if (message != null) {
-                            return message.getString("content");
+                            String content = message.getString("content");
+                            if (content != null && !content.trim().isEmpty()) {
+                                return content;
+                            }
                         }
                     }
                 }
-                return "AI响应格式错误";
+                return null;
             } else {
-                return "AI服务调用失败: " + responseCode;
+                return null;
             }
         } catch (Exception e) {
-            return "AI服务异常: " + e.getMessage();
+            return null;
         } finally {
             if (conn != null) {
                 conn.disconnect();

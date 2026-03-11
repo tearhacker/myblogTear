@@ -19,7 +19,8 @@
         android:theme="@style/AppTheme"
         android:resizeableActivity="true"
         android:name=".GlobalApplication"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config">
 
         <activity
             android:name=".SplashActivity"
@@ -91,6 +92,12 @@
             android:label="表白者"
             android:exported="false"
             android:theme="@style/LoveTheme"/>
+
+        <activity
+            android:name=".TimeLoveGameActivity"
+            android:label="时光情书"
+            android:exported="false"
+            android:theme="@style/TimeLoveGameTheme"/>
 
         <activity
             android:name=".DiscussionActivity"
