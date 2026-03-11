@@ -362,7 +362,7 @@ public class DeveloperInfoActivity extends Activity {
 
     private void loadJourneyContent() {
         addTimelineItem("🎮 早期", "游戏外挂开发，专注于王者荣耀逆向安全攻防，主要利用代码或服务器实现游戏外挂透视或技能自瞄效果。持续了大概两年左右。");
-        addTimelineItem("🎓 毕业", "从南昌大学共青学院毕业，通过贵人网友直接抵达深圳该公司上班。可惜技术死宅的性格，把工资谈低了。");
+        addTimelineItem("🎓 毕业", "从南大毕业，偶遇贵人直接抵达深圳该公司上班。可惜技术死宅的性格，把工资谈低了。");
         addTimelineItem("💡 公益", "持续一年时间一边工作一边为外挂社区免费发光发热，别人收费我公益，别人圈钱我砸钱公益，最终反而招致祸患。低估了人性，还是沉浸在校园的温室中。");
         addTimelineItem("🚀 转型", "2026年开春后，彻底放弃了外挂，转向正向职业程序员开发，开发了多款个人版精品作品，如微信小程序亦心装修工作室系统，如这个一念APP软件。");
     }
