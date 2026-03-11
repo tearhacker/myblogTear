@@ -64,7 +64,7 @@ public class LoveSigninActivity extends Activity {
     private int totalDays = 0;
     private long userId = 0;
     private String qqNumber = "";
-    private String targetName = "欧阳颖";
+    private String targetName = "Ta";
     
     private int totalDaysTapCount = 0;
     private long lastTotalDaysTapTime = 0;
@@ -98,7 +98,7 @@ public class LoveSigninActivity extends Activity {
         prefsUtil = SharedPreferencesUtil.getInstance(this);
         userId = prefsUtil.getLong("user_id", 0);
         qqNumber = prefsUtil.getString("qq_number", "");
-        targetName = prefsUtil.getString("love_target_name", "欧阳颖");
+        targetName = prefsUtil.getString("love_target_name", "Ta");
 
         initViews();
         setupListeners();
@@ -366,7 +366,7 @@ public class LoveSigninActivity extends Activity {
                                 tvLoveStatus.setText("");
                                 if (etTargetName != null) {
                                     etTargetName.setVisibility(View.VISIBLE);
-                                    etTargetName.setHint("喜欢TA:欧阳颖");
+                                    etTargetName.setHint("喜欢Ta");
                                 }
                             }
                         });
@@ -441,7 +441,7 @@ public class LoveSigninActivity extends Activity {
     }
 
     private void doServerLoveSignin() {
-        String inputTargetName = "欧阳颖";
+        String inputTargetName = "Ta";
         if (etTargetName != null) {
             String input = etTargetName.getText().toString().trim();
             if (!input.isEmpty()) {
@@ -451,7 +451,7 @@ public class LoveSigninActivity extends Activity {
         
         boolean hasConfirmedTargetName = prefsUtil.getBoolean("love_target_name_confirmed_" + userId, false);
         
-        if (!hasConfirmedTargetName && !inputTargetName.equals("欧阳颖")) {
+        if (!hasConfirmedTargetName && !inputTargetName.equals("Ta")) {
             showLoveDeclarationDialog(inputTargetName);
             return;
         }

@@ -42,7 +42,7 @@ public class LoveLetterActivity extends Activity {
 
     private SharedPreferencesUtil prefsUtil;
     private int loveDays = 0;
-    private String targetName = "欧阳颖";
+    private String targetName = "Ta";
     private String currentLetter = "";
 
     @Override
@@ -62,7 +62,7 @@ public class LoveLetterActivity extends Activity {
 
         prefsUtil = SharedPreferencesUtil.getInstance(this);
         loveDays = prefsUtil.getInt("love_total_days", 0);
-        targetName = prefsUtil.getString("target_name", "欧阳颖");
+        targetName = prefsUtil.getString("love_target_name", "Ta");
 
         initViews();
         setupListeners();

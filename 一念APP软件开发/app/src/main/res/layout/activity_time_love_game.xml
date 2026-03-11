@@ -198,7 +198,7 @@
                 android:id="@+id/tv_ending_target"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="致 欧阳颖"
+                android:text="致 Ta"
                 android:textColor="#FF69B4"
                 android:textSize="36sp"
                 android:textStyle="bold"
